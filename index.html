@@ -25,9 +25,10 @@
 .feature-tab-n{font-size:13px;letter-spacing:.08em;width:22px;color:#7a7a7a}
 .feature-panel{flex:999 1 520px;min-width:0;background:#f8f7f9;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;gap:28px;padding:clamp(24px,4vw,40px)}
 .feature-panel h3{margin:0;font-size:clamp(20px,2.2vw,26px);font-weight:500;line-height:1.15;letter-spacing:-.02em;color:#6840a6;text-wrap:balance}
-#feature-desc{display:flex;flex-direction:column;gap:16px}
-#feature-desc p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
-#feature-caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.feature-desc{display:flex;flex-direction:column;gap:16px}
+.feature-desc p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
+.feature-caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.explore-h2{text-wrap:nowrap}
 .cap{padding:9px 14px;border-radius:9999px;background:#fff;font-size:15px;line-height:1.3}
 
 /* Open source (dark) */
@@ -51,7 +52,7 @@
 @media (max-width:800px){
   .hero-grid{grid-template-columns:minmax(0,1fr)}
   .hero h1 .sub{white-space:normal}
-  .explore-h2{text-wrap:balance!important}
+  .explore-h2{text-wrap:balance}
   .launch-3d{display:none}
   .launch-body{width:100%}
 }
@@ -115,17 +116,17 @@
   <div class="wrap sec stack" style="gap:clamp(40px,5vw,56px)">
     <div class="stack" style="gap:16px">
       <div class="eyebrow">Explore the platform</div>
-      <h2 id="explore-h2" class="explore-h2" style="margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:500;line-height:1.02;letter-spacing:-.025em;text-wrap:nowrap">Everything you need to run learning across an organization</h2>
+      <h2 id="explore-h2" class="explore-h2" style="margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:500;line-height:1.02;letter-spacing:-.025em">Everything you need to run learning across an organization</h2>
       <p class="lead">Ten modules cover course delivery, people and roles, assessment and skills. Pick one to see what it does and how it looks.</p>
     </div>
     <div class="explore-body">
       <div id="feature-tabs" class="feature-tabs" role="tablist" aria-orientation="vertical" aria-label="Platform modules"></div>
       <div id="feature-panel" class="feature-panel" role="tabpanel">
-        <h3 id="feature-tag"></h3>
+        <h3 id="feature-tag">Create, deliver and manage training programs</h3>
         <div id="feature-clip"></div>
         <div>
-          <div id="feature-desc"></div>
-          <div id="feature-caps"></div>
+          <div id="feature-desc" class="feature-desc"></div>
+          <div id="feature-caps" class="feature-caps"></div>
         </div>
       </div>
     </div>
