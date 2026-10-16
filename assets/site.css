@@ -35,12 +35,11 @@ button{font-family:inherit}
 
 /* Header */
 .site-header{position:sticky;top:0;z-index:50;background:#f8f7f9}
-.site-header .wrap{padding-top:28px;padding-bottom:16px;display:flex;align-items:center;gap:12px 36px;flex-wrap:wrap}
+.header-bar{padding:14px 32px;display:flex;align-items:center;gap:12px 36px;flex-wrap:wrap}
 .site-nav{display:flex;gap:8px 24px;flex-wrap:wrap;font-size:16px}
 .site-nav a{color:#181818}.site-nav a:hover{color:#6840a6}
 .site-nav a[aria-current]{color:#6840a6;font-weight:500}
-.header-actions{margin-left:auto;display:flex;gap:24px;align-items:center;font-size:16px}
-.header-actions .btn{height:44px;padding:0 22px;font-size:16px}
+.header-cta{margin-left:auto;height:44px;padding:0 22px;font-size:16px}
 
 /* Inner-page hero */
 .page-hero{background:#f8f7f9}
