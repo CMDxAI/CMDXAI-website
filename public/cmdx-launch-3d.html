@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMDX launch</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9"
+  }
+}
+</script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:transparent}
+canvas{display:block;outline:none}
+</style>
+</head>
+<body>
+<script type="module">
+// Course cards + progress ring, slowly turning. Drag to orbit.
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const bg = `#${new URLSearchParams(location.search).get('bg') || '2f1d4d'}`;
+document.body.style.background = bg;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 500);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enableZoom = false;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+controls.autoRotate = !reduced;
+controls.autoRotateSpeed = 1.2;
+controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d2c4, 1.0));
+const key = new THREE.DirectionalLight(0xffffff, 2.2);
+key.position.set(4, 7, 5);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.bias = -0.0002;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xfff4e6, 0.5);
+fill.position.set(-5, 3, -4);
+scene.add(fill);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.ShadowMaterial({ opacity: 0.18 }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const purple = new THREE.MeshStandardMaterial({ color: 0x764ec4, roughness: 0.4, metalness: 0.2 });
+const deep = new THREE.MeshStandardMaterial({ color: 0x3d2466, roughness: 0.55, metalness: 0.15 });
+const lilac = new THREE.MeshStandardMaterial({ color: 0xcdbaed, roughness: 0.6, metalness: 0.05 });
+const white = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0.0 });
+const green = new THREE.MeshStandardMaterial({ color: 0x12c49e, emissive: 0x12c49e, emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.1 });
+
+const model = new THREE.Group();
+
+const rr = (w, h, r) => { const s = new THREE.Shape(); s.moveTo(-w/2+r,-h/2); s.lineTo(w/2-r,-h/2); s.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r); s.lineTo(w/2,h/2-r); s.quadraticCurveTo(w/2,h/2,w/2-r,h/2); s.lineTo(-w/2+r,h/2); s.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r); s.lineTo(-w/2,-h/2+r); s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2); return s; };
+
+// Base: rounded terminal slab.
+const baseGeo = new THREE.ExtrudeGeometry(rr(1.7, 1.2, 0.1), { depth: 0.1, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.015, bevelSegments: 3 });
+baseGeo.center();
+const base = new THREE.Mesh(baseGeo, deep);
+base.rotation.x = -Math.PI/2; base.position.y = 0.05;
+model.add(base);
+
+// Course cards rising in a staggered stack.
+const cards = new THREE.Group();
+const cardMats = [purple, lilac, white, purple];
+for (let i = 0; i < 4; i++) {
+  const g = new THREE.ExtrudeGeometry(rr(0.9 - i*0.08, 0.56 - i*0.05, 0.06), { depth: 0.035, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.008, bevelSegments: 2 });
+  g.center();
+  const c = new THREE.Mesh(g, cardMats[i]);
+  c.rotation.x = -Math.PI/2 + 0.18; c.rotation.z = -0.12 + i*0.08;
+  c.position.set(-0.15 + i*0.1, 0.32 + i*0.22, -0.05 + i*0.03);
+  c.userData.y0 = c.position.y;
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.42 - i*0.04, 0.012, 0.05), i === 2 ? deep : white);
+  bar.position.set(-0.14, 0.03, -0.15); c.add(bar);
+  const l1 = new THREE.Mesh(new THREE.BoxGeometry(0.56 - i*0.05, 0.01, 0.025), i === 2 ? lilac : deep); l1.position.set(-0.07, 0.03, -0.04); c.add(l1);
+  const l2 = new THREE.Mesh(new THREE.BoxGeometry(0.38 - i*0.04, 0.01, 0.025), i === 2 ? lilac : deep); l2.position.set(-0.16, 0.03, 0.03); c.add(l2);
+  cards.add(c);
+}
+model.add(cards);
+
+// Progress ring with a green completed arc, floating to the right.
+const ring = new THREE.Group();
+const track = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.035, 16, 64), deep);
+const done = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.042, 16, 64, Math.PI * 1.45), green); done.rotation.z = Math.PI / 2;
+const tick = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.05), white); tick.rotation.z = Math.PI/4; tick.position.set(0.03,-0.02,0);
+const tick2 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 0.05), white); tick2.rotation.z = -Math.PI/4; tick2.position.set(-0.09,-0.05,0);
+ring.add(track, done, tick, tick2);
+ring.position.set(0.72, 0.95, 0.15); ring.rotation.y = -0.5;
+model.add(ring);
+
+model.position.y = 0.02;
+model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+scene.add(model);
+
+// Frame the camera to the model's bounds and rest it on the ground.
+const box = new THREE.Box3().setFromObject(model);
+ground.position.y = box.min.y;
+const sphere = box.getBoundingSphere(new THREE.Sphere());
+const dist = (sphere.radius / Math.tan((camera.fov * Math.PI) / 360)) * 1.35;
+camera.position.copy(sphere.center).add(new THREE.Vector3(1, 0.55, 1.25).normalize().multiplyScalar(dist));
+camera.near = Math.max(dist / 100, 0.01);
+camera.far = dist * 100;
+controls.target.copy(sphere.center);
+const span = sphere.radius * 3;
+Object.assign(key.shadow.camera, { left: -span, right: span, top: span, bottom: -span });
+key.shadow.camera.updateProjectionMatrix();
+
+const fit = () => {
+  const w = innerWidth || 1, h = innerHeight || 1;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+};
+fit();
+addEventListener('resize', fit);
+
+let t = 0;
+renderer.setAnimationLoop(() => {
+  if (!reduced) {
+    t += 0.016;
+    cards.children.forEach((c, i) => { c.position.y = c.userData.y0 + Math.sin(t * 1.1 + i * 0.7) * 0.025; });
+    ring.position.y = 0.95 + Math.sin(t * 0.9) * 0.04;
+    ring.rotation.y = -0.5 + Math.sin(t * 0.6) * 0.25;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

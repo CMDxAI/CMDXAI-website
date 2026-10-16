@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download CMDX</title>
+<meta name="description" content="Run CMDX yourself with the free open source edition, or get help from the team with CMDX Enterprise Services.">
+<link rel="icon" href="assets/wordmark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.editions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.edition{padding:clamp(28px,4vw,44px);border-radius:16px;display:flex;flex-direction:column;gap:18px}
+.edition h2{margin:0;font-size:clamp(26px,3vw,34px);font-weight:500;letter-spacing:-.025em;line-height:1.05}
+.edition .tagline{font-size:18px;font-weight:500}
+.edition>p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.checks li{display:flex;gap:12px;align-items:center;font-size:16px}
+.checks li::before{content:"✓";color:#6840a6;font-weight:500}
+.badge{padding:6px 14px;border-radius:9999px;background:#6840a6;color:#fff;font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.install{margin:0;background:#fff;padding:22px 26px;font-family:"Source Sans Pro",ui-monospace,monospace;font-size:15px;line-height:1.7;overflow:auto;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a href="./" style="display:inline-flex"><img src="assets/wordmark.svg" alt="CMDX" width="107" height="26" style="display:block"></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="./">Home</a>
+      <a href="open-source.html">Open Source</a>
+      <a href="features.html">Features</a>
+      <a href="why-cmdx.html">Why CMDX?</a>
+    </nav>
+    <div class="header-actions">
+      <a href="https://github.com/CMDxAI/cmdx-LMS" class="link-dark">GitHub</a>
+      <a href="download.html" class="btn btn-primary">Download</a>
+    </div>
+  </div>
+</header>
+<main>
+<section class="page-hero">
+  <div class="wrap">
+    <div class="eyebrow">Choose how to get started</div>
+    <h1 class="h1-xl">Two ways to run CMDX</h1>
+  </div>
+</section>
+
+<section>
+  <div class="wrap sec">
+    <div class="editions">
+      <div class="edition" style="background:#f3ecfe">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2>CMDX Open Source</h2><span class="badge">Free</span></div>
+        <div class="tagline hl">Free, self-hosted and community supported.</div>
+        <p>For organizations that want to deploy and run the platform themselves.</p>
+        <ul class="checks"><li>Open source platform</li><li>Self-managed deployment</li><li>Community resources</li><li>Customization flexibility</li><li>Community-driven improvements</li></ul>
+        <div style="margin-top:auto;padding-top:8px"><a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lg btn-primary">Download CMDX</a></div>
+      </div>
+      <div id="enterprise" class="edition" style="background:#f8f7f9">
+        <h2>CMDX Enterprise Services</h2>
+        <div class="tagline">Help from the team that builds CMDX.</div>
+        <p>For organizations that want professional help with deployment, customization, integration or ongoing management.</p>
+        <ul class="checks"><li>Enterprise implementation</li><li>Custom development and integrations</li><li>Deployment and infrastructure support</li><li>Training and administrator enablement</li><li>Technical maintenance and support</li></ul>
+        <div style="margin-top:auto;padding-top:8px"><a href="mailto:hello@cmdx.ai?subject=CMDX%20Enterprise%20Services" class="btn btn-lg btn-light">Talk to our team</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#f8f7f9">
+  <div class="wrap sec">
+    <div class="split">
+      <div class="stack" style="gap:16px">
+        <h2 class="h2">Up and running in minutes</h2>
+        <p class="lead">Clone the repository, run the rebuild script, and finish the six guided steps in the browser.</p>
+      </div>
+      <pre class="install"><code>git clone https://github.com/CMDxAI/cmdx-LMS.git
+cd cmdx-LMS
+./scripts/dev-rebuild.sh
+<span class="hl">→ http://localhost:8081/install</span></code></pre>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="stack" style="gap:14px;max-width:420px">
+        <img src="assets/wordmark.svg" alt="CMDX" width="132" height="32" style="display:block">
+        <p style="margin:0;font-size:20px;line-height:1.25;font-weight:500;letter-spacing:-.01em">Open source learning, <span class="hl">run on your terms.</span></p>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#7a7a7a">An open source LMS for organizations, with AI built in. MIT licensed.</p>
+      </div>
+      <div class="foot-cols">
+        <nav class="foot-col" aria-label="Platform"><div class="head">Platform</div><a href="features.html" class="link-dark">Features</a><a href="features.html#ai" class="link-dark">AI capabilities</a><a href="features.html#roadmap" class="link-dark">Roadmap</a><a href="why-cmdx.html" class="link-dark">Why CMDX?</a></nav>
+        <nav class="foot-col" aria-label="Open Source"><div class="head">Open Source</div><a href="#" class="link-dark">Blog</a><a href="https://github.com/CMDxAI/cmdx-LMS" class="link-dark">GitHub</a><a href="https://github.com/CMDxAI/cmdx-LMS#documentation" class="link-dark">Documentation</a><a href="open-source.html" class="link-dark">Community</a></nav>
+        <nav class="foot-col" aria-label="Company"><div class="head">Company</div><a href="about.html" class="link-dark">About us</a><a href="download.html#enterprise" class="link-dark">Enterprise services</a><a href="mailto:hello@cmdx.ai" class="link-dark">Talk to our team</a></nav>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 CMDX. All rights reserved.</span><span>MIT License</span></div>
+  </div>
+</footer>
+</body>
+</html>
