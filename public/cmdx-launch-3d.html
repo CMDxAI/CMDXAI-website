@@ -28,7 +28,7 @@ canvas{display:block;outline:none}
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const bg = '#' + (new URLSearchParams(location.search).get('bg') || '2f1d4d');
+const bg = `#${new URLSearchParams(location.search).get('bg') || '2f1d4d'}`;
 document.body.style.background = bg;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
