@@ -35,7 +35,7 @@ button{font-family:inherit}
 
 /* Header */
 .site-header{position:sticky;top:0;z-index:50;background:#f8f7f9}
-.site-header .wrap{padding-top:14px;padding-bottom:14px;display:flex;align-items:center;gap:12px 36px;flex-wrap:wrap}
+.site-header .wrap{padding-top:28px;padding-bottom:16px;display:flex;align-items:center;gap:12px 36px;flex-wrap:wrap}
 .site-nav{display:flex;gap:8px 24px;flex-wrap:wrap;font-size:16px}
 .site-nav a{color:#181818}.site-nav a:hover{color:#6840a6}
 .site-nav a[aria-current]{color:#6840a6;font-weight:500}
