@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMDX Features</title>
+<meta name="description" content="Five steps from install to a running training program, the AI built into CMDX, and the product roadmap.">
+<link rel="icon" href="assets/wordmark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.steps-card{background:#fff;border-radius:16px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:24px}
+#step-tabs{grid-template-columns:repeat(auto-fit,minmax(min(100%,128px),1fr))}
+.step-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between}
+.step-head h3{margin:0;font-size:clamp(22px,2.4vw,30px);font-weight:500;line-height:1.1;letter-spacing:-.02em;color:#6840a6}
+.clip-well{min-width:0;background:#f8f7f9;border-radius:12px;padding:clamp(16px,3vw,32px)}
+
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px}
+.ai-card{background:#f8f7f9;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ai-card .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ai-card .icon{width:48px;height:48px;border-radius:12px;background:#f3ecfe;color:#6840a6;display:flex;align-items:center;justify-content:center}
+.ai-card .tag{padding:5px 10px;border-radius:9999px;background:#fff;color:#6840a6;font-size:13px;font-weight:500;box-shadow:inset 0 0 0 1px #cdbaed}
+.ai-card h3{margin:0;font-size:17px;font-weight:500;line-height:1.25;letter-spacing:-.01em}
+.ai-card p{margin:0;font-size:14px;line-height:1.5;color:#3d3d3d;text-wrap:pretty}
+
+.timeline-scroll{overflow-x:auto;margin:0 -24px;padding:6px 24px 8px}
+.timeline{position:relative;margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;min-width:760px}
+.timeline::before{content:"";position:absolute;top:19px;left:20px;right:calc((100% - 48px) / 5 - 20px);height:2px;background:linear-gradient(90deg,#6840a6 0%,#cdbaed 22%,#cdbaed 100%);pointer-events:none}
+.timeline li{display:flex;flex-direction:column;gap:20px;min-width:0}
+.timeline .dot{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:9999px;background:#fff;color:#6840a6;font-size:14px;font-weight:500;box-shadow:inset 0 0 0 1px #cdbaed,0 0 0 6px #f8f7f9}
+.timeline .first .dot{background:#6840a6;color:#fff;box-shadow:0 0 0 6px #f3ecfe}
+.timeline .date{font-size:clamp(20px,1.8vw,24px);font-weight:500;letter-spacing:-.02em;color:#6840a6}
+.timeline .kind{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#7a7a7a}
+.timeline .box{background:#fff;box-shadow:inset 0 0 0 1px #ebe9ee;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.timeline .first .box{box-shadow:inset 0 0 0 1px #cdbaed}
+.timeline .box b{font-size:18px;font-weight:500;line-height:1.2}
+.timeline .box span{font-size:15px;line-height:1.5;color:#3d3d3d}
+
+.shaped{background:#2f1d4d;color:#fff;border-radius:16px;padding:clamp(24px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px 48px;align-items:center}
+.who{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:12px;background:#fff;color:#181818}
+.who .icon{width:44px;height:44px;border-radius:10px;background:#f3ecfe;color:#6840a6;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.who .label{font-size:15px;font-weight:500;line-height:1.3}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a href="./" style="display:inline-flex"><img src="assets/wordmark.svg" alt="CMDX" width="107" height="26" style="display:block"></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="./">Home</a>
+      <a href="open-source.html">Open Source</a>
+      <a href="features.html" aria-current="page">Features</a>
+      <a href="why-cmdx.html">Why CMDX?</a>
+    </nav>
+    <div class="header-actions">
+      <a href="https://github.com/CMDxAI/cmdx-LMS" class="link-dark">GitHub</a>
+      <a href="download.html" class="btn btn-primary">Download</a>
+    </div>
+  </div>
+</header>
+<main>
+<section class="page-hero">
+  <div class="wrap">
+    <div class="stack" style="gap:14px">
+      <div class="eyebrow">Get started in five simple steps</div>
+      <h1 class="h1-md">Five steps from install to a <span class="hl">running program</span></h1>
+      <p class="lead">Deploy, set up your organization, add people, create content, then assign and track.</p>
+    </div>
+    <div class="steps-card">
+      <div id="step-tabs" class="step-tabs" role="tablist" aria-label="Steps"></div>
+      <div id="step-panel" role="tabpanel" class="stack" style="gap:20px">
+        <div class="step-head">
+          <h3 id="step-title">Deploy CMDX</h3>
+          <div style="display:flex;gap:8px">
+            <button id="step-prev" type="button" class="btn btn-md btn-soft" aria-label="Previous step">← Previous</button>
+            <button id="step-next" type="button" class="btn btn-md btn-primary" aria-label="Next step">Next →</button>
+          </div>
+        </div>
+        <div class="clip-well"><div id="step-clip"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ai">
+  <div class="wrap sec stack" style="gap:clamp(32px,4vw,48px)">
+    <div class="stack" style="gap:14px">
+      <div class="eyebrow">AI-powered learning</div>
+      <h2 class="h2-sm"><span class="hl">AI</span> built into the <span class="hl">platform</span></h2>
+      <p class="lead">Connect the AI provider you choose to take admin off trainers and give learners help in context.</p>
+    </div>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <div class="top"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="display:block"><path d="M 8.654 17.192 L 8.654 16.119 C 8.654 16.012 8.672 15.911 8.71 15.818 C 8.747 15.725 8.809 15.635 8.896 15.548 L 13.987 10.483 C 14.085 10.397 14.188 10.333 14.294 10.292 C 14.401 10.251 14.507 10.231 14.613 10.231 C 14.724 10.231 14.835 10.252 14.948 10.295 C 15.061 10.338 15.16 10.403 15.246 10.489 L 16.171 11.433 C 16.253 11.531 16.316 11.634 16.359 11.741 C 16.402 11.847 16.423 11.953 16.423 12.06 C 16.423 12.166 16.403 12.273 16.362 12.382 C 16.321 12.49 16.257 12.594 16.171 12.692 L 11.106 17.758 C 11.019 17.845 10.929 17.907 10.835 17.944 C 10.743 17.981 10.642 18 10.535 18 L 9.462 18 C 9.23 18 9.037 17.923 8.884 17.77 C 8.73 17.617 8.654 17.424 8.654 17.192 Z M 9.538 17.115 L 10.488 17.115 L 13.956 13.642 L 13.031 12.679 L 9.538 16.166 L 9.538 17.115 Z M 1.615 18 C 1.155 18 0.771 17.846 0.463 17.538 C 0.154 17.229 0 16.845 0 16.385 L 0 1.615 C 0 1.155 0.154 0.771 0.463 0.463 C 0.771 0.154 1.155 0 1.615 0 L 8.829 0 C 9.044 0 9.254 0.044 9.457 0.131 C 9.66 0.218 9.834 0.334 9.979 0.479 L 13.521 4.021 C 13.666 4.166 13.782 4.34 13.869 4.543 C 13.956 4.746 14 4.956 14 5.171 L 14 6.846 C 14 6.988 13.952 7.107 13.857 7.203 C 13.761 7.299 13.642 7.346 13.5 7.346 C 13.358 7.346 13.239 7.299 13.143 7.203 C 13.048 7.107 13 6.988 13 6.846 L 13 5 L 9.808 5 C 9.576 5 9.383 4.923 9.23 4.77 C 9.077 4.617 9 4.424 9 4.192 L 9 1 L 1.615 1 C 1.461 1 1.32 1.064 1.192 1.192 C 1.064 1.32 1 1.461 1 1.615 L 1 16.385 C 1 16.538 1.064 16.68 1.192 16.808 C 1.32 16.936 1.461 17 1.615 17 L 5.769 17 C 5.912 17 6.031 17.048 6.126 17.143 C 6.222 17.239 6.269 17.358 6.269 17.5 C 6.269 17.642 6.222 17.761 6.126 17.857 C 6.031 17.952 5.912 18 5.769 18 L 1.615 18 Z M 13.506 13.148 L 13.031 12.679 L 13.956 13.642 L 13.506 13.148 Z" fill="currentColor" transform="matrix(1 0 0 1 5 3)"/></svg></div><span class="tag">Planned</span></div>
+        <h3>AI content generation</h3>
+        <p>Draft course outlines, materials and quiz questions for trainers to edit and approve.</p>
+      </div>
+      <div class="ai-card">
+        <div class="top"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="display:block"><path d="M 2.86 11.5 C 2.603 11.355 2.399 11.158 2.248 10.909 C 2.097 10.66 2.021 10.381 2.021 10.071 L 2.021 6.194 L 0.429 5.312 C 0.284 5.224 0.176 5.122 0.106 5.003 C 0.035 4.885 0 4.753 0 4.609 C 0 4.464 0.035 4.333 0.106 4.215 C 0.176 4.097 0.284 3.995 0.429 3.907 L 7.249 0.188 C 7.37 0.12 7.494 0.072 7.62 0.043 C 7.747 0.014 7.88 0 8.021 0 C 8.162 0 8.296 0.014 8.422 0.043 C 8.549 0.072 8.672 0.12 8.794 0.187 L 16.515 4.373 C 16.656 4.456 16.763 4.561 16.836 4.687 C 16.908 4.813 16.944 4.948 16.944 5.094 L 16.944 10.494 C 16.944 10.636 16.896 10.754 16.8 10.85 C 16.704 10.946 16.586 10.994 16.444 10.994 C 16.302 10.994 16.183 10.946 16.087 10.85 C 15.992 10.754 15.944 10.636 15.944 10.494 L 15.944 5.171 L 14.021 6.194 L 14.021 10.071 C 14.021 10.381 13.946 10.66 13.794 10.909 C 13.643 11.158 13.439 11.355 13.183 11.5 L 8.798 13.873 C 8.674 13.944 8.549 13.993 8.422 14.022 C 8.296 14.051 8.162 14.065 8.021 14.065 C 7.88 14.065 7.747 14.051 7.62 14.022 C 7.494 13.993 7.369 13.944 7.244 13.873 L 2.86 11.5 Z M 7.79 8.194 C 7.88 8.245 7.96 8.271 8.031 8.271 C 8.101 8.271 8.182 8.245 8.271 8.194 L 14.852 4.61 L 8.271 1.044 C 8.182 0.993 8.101 0.967 8.031 0.967 C 7.96 0.967 7.88 0.993 7.79 1.044 L 1.191 4.61 L 7.79 8.194 Z M 7.771 13.027 C 7.861 13.078 7.944 13.104 8.021 13.104 C 8.098 13.104 8.182 13.078 8.271 13.027 L 12.733 10.615 C 12.835 10.551 12.909 10.477 12.954 10.394 C 12.999 10.311 13.021 10.205 13.021 10.077 L 13.021 6.744 L 8.804 9.046 C 8.68 9.117 8.553 9.166 8.425 9.195 C 8.297 9.224 8.162 9.238 8.021 9.238 C 7.88 9.238 7.746 9.224 7.617 9.195 C 7.489 9.166 7.363 9.117 7.238 9.046 L 3.021 6.744 L 3.021 10.077 C 3.021 10.179 3.044 10.279 3.089 10.375 C 3.133 10.471 3.207 10.551 3.31 10.615 L 7.771 13.027 Z" fill="currentColor" transform="matrix(1 0 0 1 3.979 4.390)"/></svg></div><span class="tag">Planned</span></div>
+        <h3>AI-assisted learning</h3>
+        <p>Help for learners in the context of the course they are taking.</p>
+      </div>
+      <div class="ai-card">
+        <div class="top"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="display:block"><path d="M 9.25 11.302 L 10.9 12.317 C 11.045 12.408 11.193 12.401 11.344 12.295 C 11.496 12.189 11.553 12.047 11.516 11.869 L 11.073 9.983 L 12.542 8.719 C 12.683 8.595 12.724 8.451 12.663 8.288 C 12.603 8.124 12.482 8.034 12.3 8.017 L 10.383 7.842 L 9.623 6.081 C 9.552 5.919 9.428 5.838 9.25 5.838 C 9.072 5.838 8.948 5.919 8.877 6.081 L 8.117 7.842 L 6.2 8.017 C 6.018 8.034 5.897 8.124 5.836 8.288 C 5.776 8.451 5.817 8.595 5.958 8.719 L 7.427 9.983 L 6.985 11.869 C 6.947 12.047 7.004 12.189 7.156 12.295 C 7.307 12.401 7.455 12.408 7.6 12.317 L 9.25 11.302 Z M 6.323 16.25 L 3.865 16.25 C 3.418 16.25 3.037 16.093 2.722 15.778 C 2.407 15.463 2.25 15.082 2.25 14.635 L 2.25 12.177 L 0.46 10.381 C 0.302 10.219 0.186 10.04 0.111 9.843 C 0.037 9.646 0 9.449 0 9.25 C 0 9.051 0.037 8.854 0.111 8.657 C 0.186 8.46 0.302 8.281 0.46 8.119 L 2.25 6.323 L 2.25 3.865 C 2.25 3.418 2.407 3.037 2.722 2.722 C 3.037 2.407 3.418 2.25 3.865 2.25 L 6.323 2.25 L 8.119 0.46 C 8.281 0.302 8.46 0.186 8.657 0.112 C 8.854 0.037 9.051 0 9.25 0 C 9.449 0 9.646 0.037 9.843 0.112 C 10.04 0.186 10.219 0.302 10.381 0.46 L 12.177 2.25 L 14.635 2.25 C 15.082 2.25 15.463 2.407 15.778 2.722 C 16.093 3.037 16.25 3.418 16.25 3.865 L 16.25 6.323 L 18.041 8.119 C 18.198 8.281 18.314 8.46 18.389 8.657 C 18.463 8.854 18.5 9.051 18.5 9.25 C 18.5 9.449 18.463 9.646 18.389 9.843 C 18.314 10.04 18.198 10.219 18.041 10.381 L 16.25 12.177 L 16.25 14.635 C 16.25 15.082 16.093 15.463 15.778 15.778 C 15.463 16.093 15.082 16.25 14.635 16.25 L 12.177 16.25 L 10.381 18.041 C 10.219 18.198 10.04 18.314 9.843 18.389 C 9.646 18.463 9.449 18.5 9.25 18.5 C 9.051 18.5 8.854 18.463 8.657 18.389 C 8.46 18.314 8.281 18.198 8.119 18.041 L 6.323 16.25 Z M 6.75 15.25 L 8.808 17.308 C 8.923 17.423 9.071 17.481 9.25 17.481 C 9.429 17.481 9.577 17.423 9.692 17.308 L 11.75 15.25 L 14.635 15.25 C 14.814 15.25 14.962 15.192 15.077 15.077 C 15.192 14.962 15.25 14.814 15.25 14.635 L 15.25 11.75 L 17.308 9.692 C 17.423 9.577 17.481 9.429 17.481 9.25 C 17.481 9.071 17.423 8.923 17.308 8.808 L 15.25 6.75 L 15.25 3.865 C 15.25 3.686 15.192 3.538 15.077 3.423 C 14.962 3.308 14.814 3.25 14.635 3.25 L 11.75 3.25 L 9.692 1.192 C 9.577 1.077 9.429 1.019 9.25 1.019 C 9.071 1.019 8.923 1.077 8.808 1.192 L 6.75 3.25 L 3.865 3.25 C 3.686 3.25 3.539 3.308 3.423 3.423 C 3.308 3.538 3.25 3.686 3.25 3.865 L 3.25 6.75 L 1.192 8.808 C 1.077 8.923 1.019 9.071 1.019 9.25 C 1.019 9.429 1.077 9.577 1.192 9.692 L 3.25 11.75 L 3.25 14.635 C 3.25 14.814 3.308 14.962 3.423 15.077 C 3.539 15.192 3.686 15.25 3.865 15.25 L 6.75 15.25 Z" fill="currentColor" transform="matrix(1 0 0 1 2.750 2.750)"/></svg></div><span class="tag">Planned</span></div>
+        <h3>AI-powered skills analysis</h3>
+        <p>Map results to competencies and surface skill gaps by role.</p>
+      </div>
+      <div class="ai-card">
+        <div class="top"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="display:block"><path d="M 17.384 8.063 L 13.449 6.345 C 12.649 5.996 12.011 5.358 11.663 4.553 L 9.945 0.62 C 9.781 0.246 9.411 0 9.002 0 C 8.593 0 8.223 0.246 8.064 0.62 L 6.346 4.553 C 5.993 5.358 5.36 5.996 4.555 6.345 L 0.616 8.063 C 0.241 8.227 0 8.597 0 9.002 C 0 9.407 0.241 9.782 0.611 9.945 L 4.619 11.72 C 5.42 12.073 6.053 12.711 6.402 13.52 L 8.064 17.38 C 8.223 17.754 8.593 18 9.002 18 L 9.006 18 C 9.415 18 9.781 17.759 9.945 17.384 L 11.663 13.456 C 12.011 12.65 12.649 12.013 13.449 11.664 L 17.384 9.945 C 17.759 9.782 18 9.411 18 9.002 C 18 8.593 17.759 8.227 17.384 8.063 Z M 12.933 10.48 C 11.831 10.962 10.957 11.832 10.479 12.939 L 9.006 16.307 L 7.586 13.008 C 7.112 11.901 6.243 11.022 5.14 10.536 L 1.683 9.006 L 5.072 7.529 C 6.174 7.047 7.048 6.172 7.53 5.07 L 9.002 1.693 L 10.479 5.07 C 10.957 6.177 11.831 7.047 12.933 7.529 L 16.312 9.002 L 12.933 10.48 Z" fill="currentColor" transform="matrix(1 0 0 1 3 3)"/></svg></div><span class="tag">Planned</span></div>
+        <h3>Learning recommendations</h3>
+        <p>Suggest the next course or plan based on role and progress.</p>
+      </div>
+      <div class="ai-card">
+        <div class="top"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="display:block"><path d="M 3.731 12.5 L 4.731 12.5 L 4.731 8 L 3.731 8 L 3.731 12.5 Z M 11.269 12.5 L 12.269 12.5 L 12.269 3 L 11.269 3 L 11.269 12.5 Z M 7.5 12.5 L 8.5 12.5 L 8.5 10 L 7.5 10 L 7.5 12.5 Z M 7.5 8 L 8.5 8 L 8.5 6 L 7.5 6 L 7.5 8 Z M 1.615 16 C 1.155 16 0.771 15.846 0.463 15.538 C 0.154 15.229 0 14.845 0 14.385 L 0 1.615 C 0 1.155 0.154 0.771 0.463 0.463 C 0.771 0.154 1.155 0 1.615 0 L 14.385 0 C 14.845 0 15.229 0.154 15.538 0.463 C 15.846 0.771 16 1.155 16 1.615 L 16 14.385 C 16 14.845 15.846 15.229 15.538 15.538 C 15.229 15.846 14.845 16 14.385 16 L 1.615 16 Z M 1.615 15 L 14.385 15 C 14.539 15 14.68 14.936 14.808 14.808 C 14.936 14.68 15 14.539 15 14.385 L 15 1.615 C 15 1.461 14.936 1.32 14.808 1.192 C 14.68 1.064 14.539 1 14.385 1 L 1.615 1 C 1.461 1 1.32 1.064 1.192 1.192 C 1.064 1.32 1 1.461 1 1.615 L 1 14.385 C 1 14.539 1.064 14.68 1.192 14.808 C 1.32 14.936 1.461 15 1.615 15 Z" fill="currentColor" transform="matrix(1 0 0 1 4 4)"/></svg></div><span class="tag">Planned</span></div>
+        <h3>Learning analytics</h3>
+        <p>Spot trends in completion, scores and engagement across teams.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" style="background:#f8f7f9">
+  <div class="wrap sec stack" style="gap:clamp(40px,5vw,56px)">
+    <div class="stack" style="gap:16px">
+      <div class="eyebrow">Product roadmap</div>
+      <h2 class="h2">Roadmap</h2>
+      <h3 class="h3-sub">Five releases between October and December</h3>
+    </div>
+    <div class="timeline-scroll">
+      <ol class="timeline">
+        <li class="first"><span class="dot">01</span><div class="stack" style="gap:4px"><div class="date">October 15</div><div class="kind">First release</div></div><div class="box"><b>CMDX Learning</b><span>Core learning and training management</span></div></li>
+        <li><span class="dot">02</span><div class="stack" style="gap:4px"><div class="date">October 30</div><div class="kind">Target</div></div><div class="box"><b>Enterprise Training</b><span>Instructor-led training, hybrid training, SCORM</span></div></li>
+        <li><span class="dot">03</span><div class="stack" style="gap:4px"><div class="date">November 15</div><div class="kind">Target</div></div><div class="box"><b>Skills &amp; Competencies</b><span>Skills framework, competency mapping, skill gap analysis</span></div></li>
+        <li><span class="dot">04</span><div class="stack" style="gap:4px"><div class="date">November 26</div><div class="kind">Target</div></div><div class="box"><b>Learning Plans</b><span>Structured learning paths and development programs</span></div></li>
+        <li><span class="dot">05</span><div class="stack" style="gap:4px"><div class="date">December 5</div><div class="kind">Target</div></div><div class="box"><b>AI Capabilities</b><span>AI-assisted learning and intelligent training features</span></div></li>
+      </ol>
+    </div>
+    <div class="shaped">
+      <div class="stack" style="gap:12px">
+        <h3 style="margin:0;font-size:clamp(24px,2.6vw,32px);font-weight:500;line-height:1.1;letter-spacing:-.02em">Shaped by the <span style="color:#cdbaed">people who use it</span></h3>
+        <p style="margin:0;font-size:17px;line-height:1.55;text-wrap:pretty">Priorities come from organizations running CMDX and from contributors on GitHub. Open an issue to argue for something.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+          <a href="https://github.com/CMDxAI/cmdx-LMS/issues/new" class="btn btn-md btn-inv">Open an issue</a>
+          <a href="https://github.com/CMDxAI/cmdx-LMS/discussions" class="btn btn-md btn-dim">Join the discussion</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px">
+        <div class="who"><span class="icon"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="display:block"><path d="M 4.877 5.123 C 4.292 4.539 4 3.831 4 3 C 4 2.169 4.292 1.462 4.877 0.877 C 5.461 0.292 6.169 0 7 0 C 7.831 0 8.538 0.292 9.123 0.877 C 9.708 1.462 10 2.169 10 3 C 10 3.831 9.708 4.539 9.123 5.123 C 8.538 5.708 7.831 6 7 6 C 6.169 6 5.461 5.708 4.877 5.123 Z M 0 13.231 L 0 11.585 C 0 11.124 0.116 10.726 0.348 10.391 C 0.58 10.055 0.908 9.787 1.331 9.589 C 2.142 9.194 2.979 8.869 3.84 8.614 C 4.702 8.359 5.755 8.231 7 8.231 L 7.235 8.231 C 7.296 8.231 7.371 8.235 7.458 8.242 C 7.388 8.414 7.334 8.582 7.293 8.747 C 7.253 8.912 7.214 9.073 7.177 9.231 L 7 9.231 C 5.881 9.231 4.905 9.346 4.072 9.575 C 3.239 9.804 2.485 10.101 1.808 10.465 C 1.504 10.626 1.293 10.794 1.176 10.969 C 1.059 11.145 1 11.35 1 11.585 L 1 12.231 L 7.3 12.231 C 7.349 12.389 7.408 12.558 7.479 12.74 C 7.549 12.921 7.627 13.085 7.711 13.231 L 0 13.231 Z M 13.212 13.712 L 13.066 12.558 C 12.788 12.5 12.527 12.403 12.282 12.266 C 12.036 12.13 11.815 11.957 11.619 11.746 L 10.535 12.177 L 10.112 11.458 L 11.031 10.766 C 10.921 10.481 10.866 10.187 10.866 9.885 C 10.866 9.582 10.921 9.289 11.031 9.004 L 10.131 8.273 L 10.554 7.554 L 11.619 8.004 C 11.803 7.794 12.02 7.623 12.272 7.493 C 12.524 7.363 12.788 7.269 13.066 7.212 L 13.212 6.058 L 14.058 6.058 L 14.185 7.212 C 14.462 7.269 14.726 7.364 14.978 7.496 C 15.23 7.628 15.447 7.801 15.631 8.016 L 16.696 7.554 L 17.119 8.285 L 16.219 9.016 C 16.329 9.293 16.385 9.584 16.385 9.891 C 16.385 10.197 16.329 10.488 16.219 10.766 L 17.139 11.458 L 16.715 12.177 L 15.631 11.746 C 15.435 11.957 15.214 12.13 14.968 12.266 C 14.723 12.403 14.462 12.5 14.185 12.558 L 14.058 13.712 L 13.212 13.712 Z M 14.893 11.163 C 15.246 10.809 15.423 10.383 15.423 9.885 C 15.423 9.386 15.246 8.96 14.893 8.607 C 14.54 8.254 14.114 8.077 13.616 8.077 C 13.117 8.077 12.691 8.254 12.338 8.607 C 11.984 8.96 11.808 9.386 11.808 9.885 C 11.808 10.383 11.984 10.809 12.338 11.163 C 12.691 11.516 13.117 11.693 13.616 11.693 C 14.114 11.693 14.54 11.516 14.893 11.163 Z M 8.413 4.412 C 8.804 4.021 9 3.55 9 3 C 9 2.45 8.804 1.979 8.413 1.587 C 8.021 1.196 7.55 1 7 1 C 6.45 1 5.979 1.196 5.588 1.587 C 5.196 1.979 5 2.45 5 3 C 5 3.55 5.196 4.021 5.588 4.412 C 5.979 4.804 6.45 5 7 5 C 7.55 5 8.021 4.804 8.413 4.412 Z" fill="currentColor" transform="matrix(1 0 0 1 3 5.385)"/></svg></span><span class="label">Organizations running CMDX</span></div>
+        <div class="who"><span class="icon"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="display:block"><path d="M 3.077 15.538 L 1.373 17.242 C 1.12 17.495 0.829 17.553 0.497 17.417 C 0.166 17.28 0 17.031 0 16.671 L 0 3.154 C 0 2.694 0.154 2.309 0.463 2.001 C 0.771 1.693 1.155 1.538 1.615 1.538 L 10.962 1.538 C 11.104 1.538 11.226 1.593 11.328 1.701 C 11.43 1.809 11.474 1.935 11.462 2.077 C 11.449 2.206 11.395 2.316 11.299 2.405 C 11.204 2.494 11.091 2.538 10.962 2.538 L 1.615 2.538 C 1.461 2.538 1.32 2.603 1.192 2.731 C 1.064 2.859 1 3 1 3.154 L 1 16.183 L 2.65 14.538 L 16.385 14.538 C 16.538 14.538 16.68 14.474 16.808 14.346 C 16.936 14.218 17 14.077 17 13.923 L 17 7.481 C 17 7.338 17.048 7.219 17.143 7.124 C 17.239 7.028 17.358 6.981 17.5 6.981 C 17.642 6.981 17.761 7.028 17.857 7.124 C 17.952 7.219 18 7.338 18 7.481 L 18 13.923 C 18 14.383 17.846 14.768 17.538 15.076 C 17.229 15.384 16.845 15.538 16.385 15.538 L 3.077 15.538 Z M 14.231 4.269 C 13.744 3.782 13.5 3.192 13.5 2.5 C 13.5 1.808 13.744 1.218 14.231 0.731 C 14.718 0.244 15.308 0 16 0 C 16.692 0 17.282 0.244 17.769 0.731 C 18.256 1.218 18.5 1.808 18.5 2.5 C 18.5 3.192 18.256 3.782 17.769 4.269 C 17.282 4.756 16.692 5 16 5 C 15.308 5 14.718 4.756 14.231 4.269 Z M 1 3.154 L 1 15.923 L 1 2.538 L 1 3.154 Z" fill="currentColor" transform="matrix(1 0 0 1 3 1.462)"/></svg></span><span class="label">Contributors on GitHub</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="stack" style="gap:14px;max-width:420px">
+        <img src="assets/wordmark.svg" alt="CMDX" width="132" height="32" style="display:block">
+        <p style="margin:0;font-size:20px;line-height:1.25;font-weight:500;letter-spacing:-.01em">Open source learning, <span class="hl">run on your terms.</span></p>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#7a7a7a">An open source LMS for organizations, with AI built in. MIT licensed.</p>
+      </div>
+      <div class="foot-cols">
+        <nav class="foot-col" aria-label="Platform"><div class="head">Platform</div><a href="features.html" class="link-dark">Features</a><a href="features.html#ai" class="link-dark">AI capabilities</a><a href="features.html#roadmap" class="link-dark">Roadmap</a><a href="why-cmdx.html" class="link-dark">Why CMDX?</a></nav>
+        <nav class="foot-col" aria-label="Open Source"><div class="head">Open Source</div><a href="#" class="link-dark">Blog</a><a href="https://github.com/CMDxAI/cmdx-LMS" class="link-dark">GitHub</a><a href="https://github.com/CMDxAI/cmdx-LMS#documentation" class="link-dark">Documentation</a><a href="open-source.html" class="link-dark">Community</a></nav>
+        <nav class="foot-col" aria-label="Company"><div class="head">Company</div><a href="about.html" class="link-dark">About us</a><a href="download.html#enterprise" class="link-dark">Enterprise services</a><a href="mailto:hello@cmdx.ai" class="link-dark">Talk to our team</a></nav>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 CMDX. All rights reserved.</span><span>MIT License</span></div>
+  </div>
+</footer>
+<script type="module" src="assets/features.js"></script>
+</body>
+</html>
