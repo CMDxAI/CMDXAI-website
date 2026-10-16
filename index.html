@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMDX — The open source learning platform</title>
+<meta name="description" content="CMDX is an open source, MIT licensed LMS for organizations, with AI course generation and learner insights built in.">
+<link rel="icon" href="assets/wordmark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* Hero */
+.hero{background:#f8f7f9;overflow:hidden;padding-bottom:clamp(40px,6vw,80px)}
+.hero-grid{padding-top:clamp(40px,6vw,80px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px 40px;align-items:center}
+.hero h1{margin:0;font-size:clamp(40px,4.6vw,72px);line-height:1.04;letter-spacing:-.03em;font-weight:500;display:flex;flex-direction:column;gap:8px}
+.hero h1 .sub{font-size:.52em;line-height:1.15;letter-spacing:-.015em;font-weight:400;white-space:nowrap}
+.points{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;max-width:560px}
+.points li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 16px;align-items:baseline;padding:14px 0;box-shadow:inset 0 1px 0 #d0cfd1;font-size:17px;line-height:1.4}
+.points li:last-child{box-shadow:inset 0 1px 0 #d0cfd1,inset 0 -1px 0 #d0cfd1}
+
+/* Explore */
+.explore-body{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-start}
+.feature-tabs{flex:1 1 280px;display:flex;flex-direction:column;gap:2px}
+.feature-tab{display:flex;align-items:center;gap:16px;min-height:48px;padding:10px 16px;border:0;border-radius:8px;cursor:pointer;text-align:left;font-size:16px;font-weight:500;background:transparent;color:#181818}
+.feature-tab:hover,.feature-tab[aria-selected="true"]{background:#f3ecfe;color:#6840a6}
+.feature-tab-n{font-size:13px;letter-spacing:.08em;width:22px;color:#7a7a7a}
+.feature-panel{flex:999 1 520px;min-width:0;background:#f8f7f9;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;gap:28px;padding:clamp(24px,4vw,40px)}
+.feature-panel h3{margin:0;font-size:clamp(20px,2.2vw,26px);font-weight:500;line-height:1.15;letter-spacing:-.02em;color:#6840a6;text-wrap:balance}
+#feature-desc{display:flex;flex-direction:column;gap:16px}
+#feature-desc p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
+#feature-caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.cap{padding:9px 14px;border-radius:9999px;background:#fff;font-size:15px;line-height:1.3}
+
+/* Open source (dark) */
+.dark{background:#181818;color:#fff}
+.oss-card{background:#fff;color:#181818;border-radius:16px;padding:clamp(24px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px 56px;align-items:center}
+
+/* Community */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.card{background:#fff;padding:28px;display:flex;flex-direction:column;gap:12px}
+.card h3{margin:0;font-size:22px;font-weight:500;line-height:1.15;letter-spacing:-.02em}
+.card p{margin:0;font-size:16px;line-height:1.55}
+
+/* Get started */
+.launch{position:relative;overflow:hidden;border-radius:16px;background:#2f1d4d;color:#fff;isolation:isolate}
+.launch-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:.22;filter:saturate(.4);z-index:0;pointer-events:none}
+.launch-shade{position:absolute;inset:0;background:linear-gradient(90deg,#2f1d4d 0%,rgba(47,29,77,.96) 45%,rgba(47,29,77,.55) 100%);z-index:1;pointer-events:none}
+.launch-3d{position:absolute;top:0;right:0;bottom:0;width:min(46%,520px);z-index:2;display:flex;align-items:center;justify-content:center}
+.launch-3d iframe{display:block;width:100%;height:100%;max-height:460px;border:0;background:transparent}
+.launch-body{position:relative;z-index:3;padding:clamp(32px,5vw,72px);display:flex;flex-direction:column;gap:28px;max-width:720px;width:min(100%,60%);box-sizing:border-box}
+
+@media (max-width:800px){
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero h1 .sub{white-space:normal}
+  .explore-h2{text-wrap:balance!important}
+  .launch-3d{display:none}
+  .launch-body{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="./" style="display:inline-flex"><img src="assets/wordmark.svg" alt="CMDX" width="107" height="26" style="display:block"></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="./" aria-current="page">Home</a>
+      <a href="open-source.html">Open Source</a>
+      <a href="features.html">Features</a>
+      <a href="why-cmdx.html">Why CMDX?</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="stack" style="gap:24px">
+      <h1>
+        <span>The <span class="hl">open source</span></span>
+        <span class="sub">learning platform for every <span class="hl" style="font-weight:500">organization</span></span>
+      </h1>
+      <ol class="points">
+        <li><span class="num">01</span><span><span style="font-weight:500">No vendor lock-in</span><span class="muted"> · </span>Open source, MIT licensed, on your own infrastructure.</span></li>
+        <li><span class="num">02</span><span><span style="font-weight:500">AI inside</span><span class="muted"> · </span>Course generation and learner insights, built in.</span></li>
+        <li><span class="num">03</span><span><span style="font-weight:500">Exclusive features</span><span class="muted"> · </span>Blended learning, skills mapping and certifications.</span></li>
+      </ol>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-primary">Download free</a>
+        <a href="https://demo.cmdx.ai" class="btn btn-light">Live demo</a>
+      </div>
+    </div>
+    <div style="min-width:0;width:min(100%,560px);justify-self:center">
+      <svg viewBox="0 0 440 360" width="560" height="458" role="img" aria-label="A Command X window with a prompt and a solution block, a learner in front" style="display:block;width:100%;height:auto;font-family:'Stack Sans Text',-apple-system,sans-serif">
+        <circle cx="220" cy="186" r="170" fill="#f3ecfe"/>
+        <rect x="40" y="40" width="360" height="280" rx="16" fill="#fff" stroke="#d0cfd1" stroke-width="2"/>
+        <circle cx="62" cy="62" r="4" fill="#d0cfd1"/><circle cx="76" cy="62" r="4" fill="#d0cfd1"/><circle cx="90" cy="62" r="4" fill="#d0cfd1"/>
+        <text x="220" y="66" text-anchor="middle" font-size="11" letter-spacing="1.5" fill="#7a7a7a">COMMAND X</text>
+        <line x1="40" y1="84" x2="400" y2="84" stroke="#ebe9ee" stroke-width="2"/>
+        <path d="M64 110 L76 120 L64 130" fill="none" stroke="#6840a6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="86" y="104" width="32" height="32" rx="8" fill="#6840a6"/><line x1="94" y1="112" x2="110" y2="128" stroke="#fff" stroke-width="4" stroke-linecap="round"/><line x1="110" y1="112" x2="94" y2="128" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <rect x="130" y="116" width="150" height="9" rx="4" fill="#cdbaed"/><rect x="286" y="112" width="3" height="16" fill="#6840a6"/>
+        <rect x="130" y="150" width="240" height="130" rx="12" fill="#f3ecfe"/>
+        <text x="358" y="170" text-anchor="end" font-size="10" letter-spacing="1.5" fill="#6840a6">SOLUTION</text>
+        <circle cx="164" cy="185" r="18" fill="#6840a6"/><path d="M155 185 L162 192 L174 178" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="194" y="178" width="120" height="8" rx="4" fill="#fff"/><rect x="194" y="194" width="90" height="8" rx="4" fill="#fff"/>
+        <rect x="150" y="226" width="180" height="8" rx="4" fill="#fff"/><rect x="150" y="242" width="120" height="8" rx="4" fill="#fff"/>
+        <circle cx="46" cy="250" r="16" fill="#2f1d4d"/><rect x="28" y="270" width="36" height="64" rx="18" fill="#2f1d4d"/><line x1="60" y1="286" x2="84" y2="270" stroke="#2f1d4d" stroke-width="10" stroke-linecap="round"/>
+        <text x="46" y="350" text-anchor="middle" font-size="10" letter-spacing="1.5" fill="#7a7a7a">LEARNER</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="explore" aria-labelledby="explore-h2">
+  <div class="wrap sec stack" style="gap:clamp(40px,5vw,56px)">
+    <div class="stack" style="gap:16px">
+      <div class="eyebrow">Explore the platform</div>
+      <h2 id="explore-h2" class="explore-h2" style="margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:500;line-height:1.02;letter-spacing:-.025em;text-wrap:nowrap">Everything you need to run learning across an organization</h2>
+      <p class="lead">Ten modules cover course delivery, people and roles, assessment and skills. Pick one to see what it does and how it looks.</p>
+    </div>
+    <div class="explore-body">
+      <div id="feature-tabs" class="feature-tabs" role="tablist" aria-orientation="vertical" aria-label="Platform modules"></div>
+      <div id="feature-panel" class="feature-panel" role="tabpanel">
+        <h3 id="feature-tag"></h3>
+        <div id="feature-clip"></div>
+        <div>
+          <div id="feature-desc"></div>
+          <div id="feature-caps"></div>
+        </div>
+      </div>
+    </div>
+    <div><a href="features.html" style="font-size:17px;font-weight:500">How to get started in five steps →</a></div>
+  </div>
+</section>
+
+<section class="dark" aria-labelledby="oss-h2">
+  <div class="wrap sec stack" style="gap:clamp(40px,5vw,64px)">
+    <div class="split">
+      <div class="stack" style="gap:16px">
+        <div class="eyebrow">Open source</div>
+        <h2 id="oss-h2" style="margin:0;font-size:clamp(36px,5vw,72px);font-weight:500;line-height:.96;letter-spacing:-.035em;text-wrap:balance"><span style="white-space:nowrap;color:#cdbaed">Open source</span> at the core, <span style="color:#cdbaed">MIT licensed.</span></h2>
+      </div>
+      <div class="stack" style="gap:14px">
+        <h3 style="margin:0;font-size:clamp(20px,2vw,24px);font-weight:500;line-height:1.2">A platform that changes with you</h3>
+        <p class="lead">CMDX is open source so organizations are not locked into a rigid learning environment. Host it where you want, change the workflows and interfaces, connect it to your other systems, and add what you need as training requirements change.</p>
+      </div>
+    </div>
+    <div class="oss-card">
+      <div class="stack" style="gap:10px">
+        <h3 style="margin:0;font-size:clamp(22px,2.4vw,28px);font-weight:500;line-height:1.1;letter-spacing:-.02em">Developed in the open</h3>
+        <p style="margin:0;font-size:17px;line-height:1.55;text-wrap:pretty">Developers, trainers and organizations improve CMDX together on GitHub. Issues, discussions and pull requests are public.</p>
+        <p style="margin:0;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#7a7a7a">License · MIT</p>
+      </div>
+      <div class="stack" style="gap:8px;justify-self:end;width:min(100%,320px)">
+        <a href="download.html" class="btn btn-primary">Download the open source edition</a>
+        <div style="display:flex;gap:8px">
+          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-soft" style="flex:1;padding:0 16px">GitHub repository</a>
+          <a href="https://github.com/CMDxAI/cmdx-LMS#documentation" class="btn btn-soft" style="flex:1;padding:0 16px">Documentation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#f8f7f9" aria-labelledby="community-h2">
+  <div class="wrap sec stack" style="gap:clamp(40px,5vw,56px)">
+    <div class="split">
+      <div class="stack" style="gap:16px">
+        <div class="eyebrow">Join the open source community</div>
+        <h2 id="community-h2" style="margin:0;font-size:clamp(32px,4vw,52px);font-weight:500;line-height:1.02;letter-spacing:-.025em;text-wrap:balance">Good software is built together</h2>
+        <h3 style="margin:0;font-size:clamp(20px,2vw,24px);font-weight:500;line-height:1.2">Join the CMDX community</h3>
+      </div>
+      <div class="stack" style="gap:14px">
+        <p class="lead">CMDX is meant to be shaped by the people who use it: developers, trainers and the organizations that run it.</p>
+        <p class="lead">If you write code, run training, or are weighing up an open source LMS, there is a place for you here.</p>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><h3>For Developers</h3><p>Contribute code, build integrations and fix what bothers you.</p></div>
+      <div class="card"><h3>For Organizations</h3><p>Deploy CMDX, report what works and what does not, and help shape the roadmap.</p></div>
+      <div class="card"><h3>For Learning Professionals</h3><p>Share training methods and ideas from running real programs.</p></div>
+      <div class="card"><h3>For Open Source Enthusiasts</h3><p>Help with discussions, documentation and testing.</p></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <a href="open-source.html" class="btn btn-lg btn-primary">Join the community</a>
+      <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lg btn-light">Contribute on GitHub</a>
+      <a href="https://github.com/CMDxAI/cmdx-LMS#documentation" class="btn btn-lg btn-light">Documentation</a>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="start-h2">
+  <div class="wrap sec">
+    <div class="launch on-dark">
+      <img class="launch-bg" src="assets/app/learn.png" alt="" aria-hidden="true" width="2880" height="1640" loading="lazy">
+      <div class="launch-shade" aria-hidden="true"></div>
+      <div class="launch-3d" aria-hidden="true">
+        <iframe src="cmdx-launch-3d.html?bg=2f1d4d" title="Course cards and a progress ring in 3D, drag to rotate" loading="lazy" tabindex="-1"></iframe>
+      </div>
+      <div class="launch-body">
+        <div class="stack" style="gap:16px">
+          <div class="eyebrow">Get started today</div>
+          <h2 id="start-h2" style="margin:0;font-size:clamp(32px,4.2vw,60px);font-weight:500;line-height:1.0;letter-spacing:-.03em;text-wrap:balance">Start running your own learning platform <span style="color:#cdbaed">today.</span></h2>
+          <p style="margin:0;font-size:clamp(20px,2vw,24px);line-height:1.2;font-weight:500">Open source, built for organizations, with AI included.</p>
+        </div>
+        <div class="stack" style="gap:10px;font-size:18px;line-height:1.55;text-wrap:pretty">
+          <p style="margin:0">Clone the repository, run the installer and you have a working LMS in minutes.</p>
+          <p style="margin:0;font-weight:500">Everything you need to get started is in the repository and the docs.</p>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-inv">Download free</a>
+          <a href="https://demo.cmdx.ai" class="btn btn-dim">Live demo</a>
+          <a href="open-source.html" class="btn btn-dim">Join the community</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="stack" style="gap:14px;max-width:420px">
+        <img src="assets/wordmark.svg" alt="CMDX" width="132" height="32" style="display:block">
+        <p style="margin:0;font-size:20px;line-height:1.25;font-weight:500;letter-spacing:-.01em">Open source learning, <span class="hl">run on your terms.</span></p>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#7a7a7a">An open source LMS for organizations, with AI built in. MIT licensed.</p>
+      </div>
+      <div class="foot-cols">
+        <nav class="foot-col" aria-label="Platform"><div class="head">Platform</div><a href="features.html" class="link-dark">Features</a><a href="features.html#ai" class="link-dark">AI capabilities</a><a href="features.html#roadmap" class="link-dark">Roadmap</a><a href="why-cmdx.html" class="link-dark">Why CMDX?</a></nav>
+        <nav class="foot-col" aria-label="Open Source"><div class="head">Open Source</div><a href="#" class="link-dark">Blog</a><a href="https://github.com/CMDxAI/cmdx-LMS" class="link-dark">GitHub</a><a href="https://github.com/CMDxAI/cmdx-LMS#documentation" class="link-dark">Documentation</a><a href="open-source.html" class="link-dark">Community</a></nav>
+        <nav class="foot-col" aria-label="Company"><div class="head">Company</div><a href="about.html" class="link-dark">About us</a><a href="download.html#enterprise" class="link-dark">Enterprise services</a><a href="mailto:hello@cmdx.ai" class="link-dark">Talk to our team</a></nav>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 CMDX. All rights reserved.</span><span>MIT License</span></div>
+  </div>
+</footer>
+
+<script type="module" src="assets/home.js"></script>
+</body>
+</html>
