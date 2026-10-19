@@ -2,7 +2,7 @@
 import { el, tabs } from './clip.js';
 
 const TRACKS = [
-  { label: 'For deployment', primary: ['download.html', 'Download'], secondary: ['https://github.com/CMDxAI/cmdx-LMS/blob/main/SETUP_GUIDE.md', 'Full setup guide'], steps: [
+  { label: 'For deployment', primary: ['/download', 'Download'], secondary: ['https://github.com/CMDxAI/cmdx-LMS/blob/main/SETUP_GUIDE.md', 'Full setup guide'], steps: [
     { title: 'Start the backend', code: 'cd backend\npython -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n\nuvicorn main:app --reload' },
     { title: 'Start the frontend', code: 'cd frontend\nnpm install\nnpm run web' },
     { title: 'Create an empty database', code: 'CREATE DATABASE lms;' },
