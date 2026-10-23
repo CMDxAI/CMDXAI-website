@@ -12,6 +12,7 @@
       "!**/node_modules",
       "!**/assets",
       "!**/.claude",
+      "!docs-site",
       "!package-lock.json"
     ]
   },
