@@ -1,0 +1,125 @@
+/* Copied from Claude Design project "CMDX Design System - New UX" (a15dc6b0), tokens/semantic.css.
+   Do not edit here; re-copy from the design project.
+   Only change: the global `a` / `a:hover` rules are removed. Docusaurus puts its theme CSS in
+   cascade layers, so unlayered link rules here would restyle every navbar, sidebar and TOC link;
+   custom.css maps --ifm-link-color / --ifm-link-hover-color instead. */
+
+/* Semantic aliases over the raw Figma variables in fig-tokens.css.
+   Every value here points at a token the source file defines; nothing is invented.
+   Float tokens from Figma are unitless — the *-px aliases below wrap them in calc(). */
+
+:root {
+  /* ── Type ─────────────────────────────────────────────── */
+  --font-text: "Stack Sans Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* @kind font */
+  --font-headline: "Stack Sans Headline", "Stack Sans Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* @kind font */
+  --font-ui: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* @kind font */
+  --font-alt: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* @kind font */
+
+  --text-xs: 12px; /* @kind font */
+  --text-sm: 13px; /* @kind font */
+  --text-base: 14px; /* @kind font */
+  --text-md: 16px; /* @kind font */
+  --text-lg: 17px; /* @kind font */
+  --text-xl: 20px; /* @kind font */
+  --text-2xl: 24px; /* @kind font */
+  --text-3xl: 32px; /* @kind font */
+  --leading-flat: 100%; /* @kind font */
+  --tracking-wide: 0.020em; /* @kind font */
+
+  /* ── Surfaces ─────────────────────────────────────────── */
+  --surface-page: var(--white-0); /* @kind color */
+  --surface-card: var(--white-0); /* @kind color */
+  --surface-subtle: var(--grey-20); /* @kind color */
+  --surface-muted: var(--grey-70); /* @kind color */
+  --surface-rail: var(--grey-20); /* @kind color */
+  --surface-nav: var(--purple-700); /* @kind color */
+  --surface-nav-edge: var(--purple-800); /* @kind color */
+  --surface-accent-soft: var(--purple-matt-20); /* @kind color */
+  --surface-accent-softest: var(--purple-matt-10); /* @kind color */
+
+  /* ── Ink ──────────────────────────────────────────────── */
+  --text-primary: var(--grey-800); /* @kind color */
+  --text-secondary: var(--grey-400); /* @kind color */
+  --text-tertiary: var(--grey-300); /* @kind color */
+  --text-on-dark: var(--white-0); /* @kind color */
+  --text-accent: var(--purple-400); /* @kind color */
+  --text-accent-strong: var(--purple-200); /* @kind color */
+  --text-accent-deep: var(--purple-600); /* @kind color */
+
+  /* ── Lines & rings (the system draws edges as 1px inset shadows) ── */
+  --border-hairline: var(--grey-100); /* @kind color */
+  --border-soft: var(--grey-90); /* @kind color */
+  --border-accent: var(--purple-matt-100); /* @kind color */
+  --ring: inset 0 0 0 1px var(--grey-100); /* @kind shadow */
+  --ring-soft: inset 0 0 0 1px var(--grey-90); /* @kind shadow */
+  --ring-accent: inset 0 0 0 1px var(--purple-matt-100); /* @kind shadow */
+  --ring-accent-deep: inset 0 0 0 1px var(--purple-600); /* @kind shadow */
+  --ring-success: inset 0 0 0 1px var(--misc-phaie-16b492); /* @kind shadow */
+  --ring-danger: inset 0 0 0 1px var(--misc-phaie-f22226); /* @kind shadow */
+
+  /* ── Elevation ────────────────────────────────────────── */
+  --elevation-header: 0px 4px 4px -1px rgba(12,12,13,0.1), 0px 4px 4px -1px rgba(12,12,13,0.05); /* @kind shadow */
+  --elevation-card: 0px 1px 4px 0px rgba(0,0,0,0.15); /* @kind shadow */
+  --elevation-glass: 0px 2px 8px 0px rgba(12,12,13,0.05); /* @kind shadow */
+
+  /* ── Gradients ────────────────────────────────────────── */
+  --gradient-primary: linear-gradient(180deg, rgb(102,74,148) 0%, rgb(84,62,118) 100%); /* @kind color */
+  --gradient-surface-up: linear-gradient(0deg, rgb(246,244,248) 0%, rgb(255,255,255) 100%); /* @kind color */
+  --gradient-surface-down: linear-gradient(180deg, rgb(255,255,255) 0%, rgb(246,244,248) 100%); /* @kind color */
+  --gradient-protect: linear-gradient(-90deg, rgb(248,247,249) 20.19%, rgba(248,247,249,0.7) 59.62%, rgba(248,247,249,0) 100%); /* @kind color */
+
+  /* Learning-catalog card headers (Color=Bg1…Bg7) */
+  --lc-bg1: linear-gradient(77.209deg, rgb(142,112,188) 0%, rgb(152,128,190) 100%); /* @kind color */
+  --lc-bg2: linear-gradient(77.209deg, rgb(124,152,100) 0%, rgb(132,156,112) 100%); /* @kind color */
+  --lc-bg3: linear-gradient(77.209deg, rgb(120,130,182) 0%, rgb(138,146,190) 100%); /* @kind color */
+  --lc-bg4: linear-gradient(77.209deg, rgb(160,140,82) 0%, rgb(178,156,88) 100%); /* @kind color */
+  --lc-bg5: linear-gradient(77.209deg, rgb(180,112,104) 0%, rgb(188,124,116) 100%); /* @kind color */
+  --lc-bg6: linear-gradient(77.209deg, rgb(144,130,118) 0%, rgb(152,140,130) 100%); /* @kind color */
+  --lc-bg7: linear-gradient(77.209deg, rgb(76,156,130) 0%, rgb(86,180,150) 100%); /* @kind color */
+
+  /* ── Status ───────────────────────────────────────────── */
+  --status-success: var(--green-100); /* @kind color */
+  --status-success-bg: var(--green-10); /* @kind color */
+  --status-success-line: var(--green-30); /* @kind color */
+  --status-warning: var(--orange-100); /* @kind color */
+  --status-warning-bg: var(--orange-10); /* @kind color */
+  --status-warning-line: var(--orange-30); /* @kind color */
+  --status-danger: var(--red-100); /* @kind color */
+  --status-danger-bg: var(--red-10); /* @kind color */
+  --status-info: var(--border-blue); /* @kind color */
+  --status-info-bg: var(--softer-blue); /* @kind color */
+  --status-notice-bg: var(--yellow-10); /* @kind color */
+
+  /* ── Geometry (unitless Figma floats wrapped for CSS) ─── */
+  --r-4: calc(var(--radius-4) * 1px); /* @kind radius */
+  --r-6: calc(var(--radius-6) * 1px); /* @kind radius */
+  --r-8: calc(var(--radius-8) * 1px); /* @kind radius */
+  --r-16: calc(var(--radius-16) * 1px); /* @kind radius */
+  --r-22: calc(var(--radius-22) * 1px); /* @kind radius */
+  --r-28: calc(var(--radius-28) * 1px); /* @kind radius */
+  --r-36: calc(var(--radius-36) * 1px); /* @kind radius */
+  --r-pill: calc(var(--radius-full) * 1px); /* @kind radius */
+
+  --s-3: calc(var(--space-3) * 1px); /* @kind spacing */
+  --s-4: calc(var(--sapce-4) * 1px); /* @kind spacing */
+  --s-5: calc(var(--space-5) * 1px); /* @kind spacing */
+  --s-6: calc(var(--space-6) * 1px); /* @kind spacing */
+  --s-8: calc(var(--space-8) * 1px); /* @kind spacing */
+  --s-10: calc(var(--space-10) * 1px); /* @kind spacing */
+  --s-12: calc(var(--space-12) * 1px); /* @kind spacing */
+  --s-15: calc(var(--space-15) * 1px); /* @kind spacing */
+  --s-18: calc(var(--space-18) * 1px); /* @kind spacing */
+  --s-20: calc(var(--space-20) * 1px); /* @kind spacing */
+  --s-24: calc(var(--space-24) * 1px); /* @kind spacing */
+  --s-25: calc(var(--space-25) * 1px); /* @kind spacing */
+  --s-30: calc(var(--space-30) * 1px); /* @kind spacing */
+}
+
+body { font-family: var(--font-text); color: var(--text-primary); background: var(--surface-page); }
+
+/* Figma negative auto-layout gaps. CSS ignores a negative `gap`, so the
+   overlap is re-created with negative margins between siblings. */
+.fig-ng-col-16 > * + * { margin-top: -16px; }
+.fig-ng-col-2 > * + * { margin-top: -2px; }
+.fig-ng-row-4 > * + * { margin-left: -4px; }
+.fig-ng-row-5 > * + * { margin-left: -5px; }

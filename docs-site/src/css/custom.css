@@ -1,0 +1,101 @@
+/* Infima → CMDX design tokens (fig-tokens.css, semantic.css, fonts.css load first).
+   Mapping and gaps: .claude/skills/cmdx-docs-writer/references/design-tokens.md.
+   Only token references here; the few literals are documented gap choices. */
+
+:root {
+  --ifm-color-primary: var(--text-accent);
+  --ifm-color-primary-dark: var(--purple-450);
+  --ifm-color-primary-darker: var(--text-accent-deep);
+  --ifm-color-primary-darkest: var(--surface-nav);
+  --ifm-color-primary-light: var(--text-accent-strong);
+  --ifm-color-primary-lighter: var(--purple-matt-300);
+  --ifm-color-primary-lightest: var(--border-accent);
+  --ifm-link-color: var(--text-accent);
+  --ifm-link-hover-color: var(--text-accent-strong);
+
+  --ifm-background-color: var(--surface-page);
+  --ifm-background-surface-color: var(--surface-subtle);
+  --ifm-font-color-base: var(--text-primary);
+  --ifm-color-content-secondary: var(--text-secondary);
+  --ifm-color-emphasis-100: var(--grey-20);
+  --ifm-color-emphasis-200: var(--grey-70);
+  --ifm-color-emphasis-300: var(--border-hairline);
+  --ifm-toc-border-color: var(--border-hairline);
+  --ifm-hr-background-color: var(--border-hairline);
+
+  --ifm-font-family-base: var(--font-text);
+  --ifm-heading-font-family: var(--font-text);
+  /* Gap: no monospace token. */
+  --ifm-font-family-monospace: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ifm-font-size-base: var(--text-md);
+  --ifm-h1-font-size: var(--text-3xl);
+  --ifm-h2-font-size: var(--text-2xl);
+  --ifm-h3-font-size: var(--text-xl);
+  /* Gap: system line-height is 100%; 1.55 body matches the website. */
+  --ifm-line-height-base: 1.55;
+  --ifm-heading-line-height: 1.2;
+  /* Hanken is loaded at 300–600; 700 would be faux bold. */
+  --ifm-heading-font-weight: 600;
+  --ifm-font-weight-bold: 600;
+
+  --ifm-global-radius: var(--r-8);
+  --ifm-code-border-radius: var(--r-8);
+  --ifm-card-border-radius: var(--r-16);
+  --ifm-badge-border-radius: var(--r-pill);
+  --ifm-global-shadow-lw: var(--elevation-card);
+  --ifm-global-shadow-md: var(--elevation-glass);
+  --ifm-navbar-shadow: var(--elevation-header);
+  --ifm-navbar-background-color: var(--surface-page);
+  --ifm-menu-color-background-active: var(--surface-accent-soft);
+  --ifm-spacing-horizontal: var(--s-20);
+  --ifm-spacing-vertical: var(--s-24);
+  --doc-sidebar-width: 244px;
+
+  --ifm-code-background: var(--surface-subtle);
+  --docusaurus-highlighted-code-line-bg: var(--surface-accent-soft);
+}
+
+/* Gap: no focus ring token beyond the text field. */
+:focus-visible {
+  outline: 2px solid var(--text-accent-deep);
+  outline-offset: 2px;
+}
+
+/* Edges are 1px inset rings, not borders. */
+.card,
+div[class*='codeBlockContainer'] {
+  box-shadow: var(--ring);
+}
+
+/* Admonitions: status colours fail contrast as text, so they only colour ring and icon. */
+.theme-admonition {
+  --ifm-alert-border-left-width: 0;
+  --ifm-alert-foreground-color: var(--text-primary);
+  background: var(--admonition-bg);
+  box-shadow: inset 0 0 0 1px var(--admonition-ring);
+}
+.theme-admonition [class*='admonitionIcon'] svg {
+  fill: var(--admonition-icon);
+}
+.theme-admonition-note,
+.theme-admonition-info {
+  --admonition-bg: var(--status-info-bg);
+  --admonition-ring: var(--status-info);
+  --admonition-icon: var(--status-info);
+}
+.theme-admonition-tip {
+  --admonition-bg: var(--surface-accent-softest);
+  --admonition-ring: var(--border-accent);
+  --admonition-icon: var(--text-accent);
+}
+.theme-admonition-warning,
+.theme-admonition-caution {
+  --admonition-bg: var(--status-warning-bg);
+  --admonition-ring: var(--status-warning-line);
+  --admonition-icon: var(--status-warning);
+}
+.theme-admonition-danger {
+  --admonition-bg: var(--status-danger-bg);
+  --admonition-ring: var(--status-danger);
+  --admonition-icon: var(--status-danger);
+}

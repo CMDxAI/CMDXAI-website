@@ -18,3 +18,24 @@ jobs:
       - run: npm ci
 
       - run: npm run check
+
+  docs:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs-site
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      # onBrokenLinks: 'throw', so broken links fail here instead of in the deploy.
+      - run: npm run build
