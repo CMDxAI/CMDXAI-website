@@ -2,6 +2,7 @@
 // ponytail: no backend on GitHub Pages, so Send hands the message to the visitor's mail app;
 // swap the submit handler for a fetch() to a form service if messages must arrive without it.
 const TO = 'hello@cmdx.ai';
+const MAX_MAILTO = 2000;
 let dlg;
 
 function build() {
@@ -37,14 +38,30 @@ function build() {
       </div>
     </div>`;
   document.body.append(dlg);
-  // Clicks on the dialog box itself (not its content) are backdrop clicks.
-  dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
+  // Clicks on the dialog box itself (not its content) are backdrop clicks. A click whose press
+  // started inside the content (e.g. a text selection dragged outside) also targets the dialog,
+  // so the press must start on the backdrop too.
+  let pressedBackdrop = false;
+  dlg.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === dlg; });
+  dlg.addEventListener('click', (e) => {
+    if ((e.target === dlg && pressedBackdrop) || e.target.closest('[data-close]')) dlg.close();
+  });
   const form = dlg.querySelector('form');
+  const msg = form.elements.message;
+  msg.addEventListener('input', () => msg.setCustomValidity(''));
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const f = new FormData(form);
     const body = `Name: ${f.get('name')}\nEmail: ${f.get('email')}\nOrganization: ${f.get('organization')}\n\n${f.get('message')}`;
-    location.href = `mailto:${TO}?subject=${encodeURIComponent('Getting started with CMDX')}&body=${encodeURIComponent(body)}`;
+    const url = `mailto:${TO}?subject=${encodeURIComponent('Getting started with CMDX')}&body=${encodeURIComponent(body)}`;
+    // ponytail: ~2000 chars is the smallest common mailto limit (Outlook on Windows); past it the
+    // mail app may not open, so ask for a shorter message instead of showing "sent".
+    if (url.length > MAX_MAILTO) {
+      msg.setCustomValidity(`This message is too long to pass to your email app. Shorten it, or email ${TO} directly.`);
+      msg.reportValidity();
+      return;
+    }
+    location.href = url;
     dlg.classList.add('sent');
   });
 }
@@ -55,5 +72,6 @@ document.addEventListener('click', (e) => {
   if (!dlg) build();
   dlg.classList.remove('sent');
   dlg.querySelector('form').reset();
+  dlg.querySelector('textarea').setCustomValidity('');
   dlg.showModal();
 });
