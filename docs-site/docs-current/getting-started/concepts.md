@@ -10,42 +10,43 @@ ai_drafted: true
 tags: [getting-started]
 ---
 
-CMDX is built on five ideas:
+One CMDX install hosts many **tenants**. Inside each tenant:
 
-- a **tenant** holds everything;
-- **courses** give learning a structure;
-- **learning items** hold the content;
-- **categories** sort courses and learning items so people can find and manage them;
-- **enrollments** give learners access.
+- **users** are given **roles**;
+- **categories** sort **courses** and **learning items**;
+- **enrollments** connect users to courses or learning items, and track their **completion**.
 
 One idea sets CMDX apart: content isn't copied into courses. You create a learning item once, then place it in every course that needs it.
 
 ## Everything lives in a tenant
 
 ```mermaid
-flowchart LR
-  accTitle: What a tenant contains
-  accDescr: A tenant contains people, categories, learning items and courses. Categories sort both courses and learning items. Learning items are placed in courses. Learners enroll in courses.
+flowchart TB
+  accTitle: How a CMDX install is organized
+  accDescr: One CMDX install holds many tenants, such as Tenant A and Tenant B, kept apart from each other. Inside a tenant, roles are given to users. Courses and learning items are mapped to categories. A user is connected to a course or a learning item through an enrollment, and the enrollment tracks the user's completion.
 
-  subgraph tenant[Tenant]
-    direction LR
-    categories["Categories<br/>sort courses and items"]
-    items["Learning items<br/>videos, quizzes, SCORM packages, files"]
-    courses["Courses<br/>divided into sections"]
-    people["People<br/>learners, instructors, administrators"]
-    categories -- sort --> items
-    categories -- sort --> courses
-    items -- placed in --> courses
-    people -- learners enroll in --> courses
+  cmdx["CMDX install"]
+  cmdx --> tenantA
+  cmdx --> tenantB["Tenant B<br/>its own users, roles, categories and content"]
+
+  subgraph tenantA[Tenant A]
+    direction TB
+    roles["Roles"] -- given to --> users["Users"]
+    users -- enrolled through --> enrollment["Enrollment"]
+    enrollment -- to a course --> courses["Courses"]
+    enrollment -- to a learning item --> items["Learning items"]
+    enrollment -- tracks --> completion["Completion"]
+    courses -- mapped to --> categories["Categories"]
+    items -- mapped to --> categories
   end
 ```
 
-A tenant is your own space in CMDX, set up for one company, school or team. Each tenant's people, courses and content are kept apart from every other tenant's.
+A tenant is the space for one company, school or team. Each tenant's users and content are kept apart from every other tenant's.
 
-- **People.** People join a tenant as members, and each member has a role there, such as learner, instructor or administrator. Members can be grouped into departments. A person can belong to more than one tenant, with a different role in each.
+- **Users and roles.** Users join a tenant as members. Each member has a role, such as learner, instructor or administrator, and the role decides what they can do. Members can be grouped into departments. A person can belong to more than one tenant, with a different role in each.
 - **Categories.** A category works like a folder for courses and learning items, and categories can contain other categories. A category covers the whole tenant, or only the departments you choose. A sub-category takes its parent's departments unless you narrow them.
-- **Courses.** Each course has one main category and can be added to others. Sections divide a course into parts. A section can contain other sections, up to three levels deep.
-- **Learning items.** Videos, quizzes, SCORM packages, files and assignments. They belong to the tenant, not to a course, and can be in any number of categories.
+- **Courses and learning items.** A learning item is one piece of content: a video, quiz, SCORM package, file or assignment. A course arranges learning items into sections, and a section can contain other sections, up to three levels deep. Each course has one main category and can be added to others. A learning item can be in any number of categories.
+- **Enrollment and completion.** An enrollment gives a user access to a course, or to a learning item on its own. It records how far the user has got and when they complete it.
 
 ## Content is placed, not copied
 
@@ -90,9 +91,7 @@ Both link a learning item to something else, so they're easy to mix up. A catego
 
 Items placed in a course are listed under that course's category too, so you don't have to add them to it one by one. Roles given on a category normally apply to every course in it, including courses added to it as an extra category.
 
-## Enrollment gives access
-
-Learners enroll in a course, and that gives them access to the items placed in it.
+## Learning items outside a course
 
 A learning item doesn't have to be in a course. A **standalone** item has no placement, and learners enroll in the item itself. If you later place it in a course, the progress learners already made carries over.
 
