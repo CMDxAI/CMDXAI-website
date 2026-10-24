@@ -15,8 +15,9 @@
   --ifm-background-color: var(--surface-page);
   --ifm-background-surface-color: var(--surface-subtle);
   --ifm-font-color-base: var(--text-primary);
-  /* --text-secondary is 4.29:1 on white, below AA for text under 18px (Phase 0 gap). Infima uses
-     this for small text (pager labels, table of contents), so it maps to --text-primary. */
+  /* Gap: --text-secondary is 4.29:1 on white, below AA for text under 18px. Infima uses this for
+     small text (pager labels, table of contents, tabs), so it maps to --text-primary until the
+     design system has an AA-passing secondary grey. */
   --ifm-color-content-secondary: var(--text-primary);
   --ifm-color-emphasis-100: var(--grey-20);
   --ifm-color-emphasis-200: var(--grey-70);
@@ -161,9 +162,12 @@ div[class*='codeBlockContainer'] {
   font-size: var(--text-base);
 }
 
-/* WCAG 1.4.1: links in body text are underlined, not told apart by colour alone. */
-.theme-doc-markdown a:not(.hash-link) {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+/* WCAG 1.4.1: links in body text are underlined, not told apart by colour alone. Uses Infima's
+   variable (as .alert does), so cards, buttons and heading anchors can still opt out. */
+.markdown {
+  --ifm-link-decoration: underline;
 }
-
+.markdown .hash-link {
+  --ifm-link-decoration: none;
+  --ifm-link-hover-decoration: none;
+}
