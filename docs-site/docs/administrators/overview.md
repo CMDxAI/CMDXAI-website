@@ -11,7 +11,7 @@ last_verified: 2026-10-23
 tags: [overview]
 ---
 
-This guide is for tenant and system administrators, IT teams running an install, and Moodle migration leads. Use it to install and upgrade CMDX, configure tenants, SSO, roles, backups and feature flags, and migrate from Moodle.
+This guide is for tenant and system administrators and IT teams running an install. Use it to install and upgrade CMDX, configure tenants, SSO, roles and feature flags, and keep an install running.
 
 :::note
 This section is being written. Pages appear in the sidebar as they are published.

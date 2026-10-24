@@ -27,6 +27,7 @@ const config: Config = {
     [
       'classic',
       {
+        // Versioned instance (docs/): developers/, administrators/.
         docs: {
           routeBasePath: '/',
           sidebarPath: './sidebars.ts',
@@ -35,13 +36,37 @@ const config: Config = {
         blog: false,
         theme: {
           customCss: [
-            './src/css/fonts.css',
-            './src/css/fig-tokens.css',
-            './src/css/semantic.css',
+            './src/css/tokens/fonts.css',
+            './src/css/tokens/fig-tokens.css',
+            './src/css/tokens/semantic.css',
             './src/css/custom.css',
           ],
         },
       } satisfies Preset.Options,
+    ],
+  ],
+
+  // Unversioned instances: these audiences always track the current release. Each needs its own
+  // routeBasePath; a second instance at '/' is shadowed by the versioned one and builds as 404.
+  // No sidebarPath: Docusaurus autogenerates 'defaultSidebar' from the folder.
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'getting-started',
+        path: 'docs-current/getting-started',
+        routeBasePath: 'getting-started',
+        editUrl: 'https://github.com/CMDxAI/CMDXAI-website/tree/main/docs-site/',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'users',
+        path: 'docs-current/users',
+        routeBasePath: 'users',
+        editUrl: 'https://github.com/CMDxAI/CMDXAI-website/tree/main/docs-site/',
+      },
     ],
   ],
 
@@ -59,6 +84,13 @@ const config: Config = {
         href: '/',
       },
       items: [
+        {
+          type: 'docSidebar',
+          sidebarId: 'defaultSidebar',
+          docsPluginId: 'getting-started',
+          position: 'left',
+          label: 'Get started',
+        },
         { type: 'docSidebar', sidebarId: 'developers', position: 'left', label: 'Developers' },
         {
           type: 'docSidebar',
@@ -66,7 +98,13 @@ const config: Config = {
           position: 'left',
           label: 'Administrators',
         },
-        { type: 'docSidebar', sidebarId: 'users', position: 'left', label: 'Users' },
+        {
+          type: 'docSidebar',
+          sidebarId: 'defaultSidebar',
+          docsPluginId: 'users',
+          position: 'left',
+          label: 'Users',
+        },
         { href: 'https://cmdx.ai', label: 'cmdx.ai', position: 'right', target: '_self' },
       ],
     },
