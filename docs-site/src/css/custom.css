@@ -15,7 +15,9 @@
   --ifm-background-color: var(--surface-page);
   --ifm-background-surface-color: var(--surface-subtle);
   --ifm-font-color-base: var(--text-primary);
-  --ifm-color-content-secondary: var(--text-secondary);
+  /* --text-secondary is 4.29:1 on white, below AA for text under 18px (Phase 0 gap). Infima uses
+     this for small text (pager labels, table of contents), so it maps to --text-primary. */
+  --ifm-color-content-secondary: var(--text-primary);
   --ifm-color-emphasis-100: var(--grey-20);
   --ifm-color-emphasis-200: var(--grey-70);
   --ifm-color-emphasis-300: var(--border-hairline);
@@ -157,5 +159,11 @@ div[class*='codeBlockContainer'] {
   box-shadow: inset 0 1px 0 var(--border-hairline);
   text-align: left;
   font-size: var(--text-base);
+}
+
+/* WCAG 1.4.1: links in body text are underlined, not told apart by colour alone. */
+.theme-doc-markdown a:not(.hash-link) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
