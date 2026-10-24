@@ -49,6 +49,7 @@
   --ifm-navbar-link-color: var(--text-primary);
   --ifm-navbar-link-hover-color: var(--text-accent);
   --ifm-navbar-item-padding-horizontal: var(--s-12);
+  --ifm-navbar-padding-horizontal: var(--s-30);
   --ifm-footer-background-color: var(--surface-subtle);
   --ifm-footer-link-color: var(--text-primary);
   --ifm-footer-link-hover-color: var(--text-accent);
@@ -107,67 +108,21 @@ div[class*='codeBlockContainer'] {
   --admonition-icon: var(--status-danger);
 }
 
-/* Links to cmdx.ai are same-site, so no external-link icon. */
-.navbar [class*='iconExternalLink'],
+/* Footer links to cmdx.ai are same-site, so no external-link icon. The navbar keeps it on
+   'cmdx.ai', which leaves the docs. */
 .footer [class*='iconExternalLink'] {
   display: none;
 }
 
-/* Navbar, cmdx.ai header pattern. */
+/* Navbar */
+.navbar__logo {
+  height: 26px;
+}
 .navbar__link {
   font-size: var(--text-md);
 }
 .navbar__link--active {
   font-weight: 500;
-}
-.navbar-docs-home {
-  font-weight: 600;
-}
-.navbar__logo {
-  height: 26px;
-}
-.navbar-cta {
-  align-items: center;
-  height: 44px;
-  padding: 0 var(--s-20);
-  border-radius: var(--r-pill);
-  background: var(--text-accent);
-  color: var(--text-on-dark);
-  font-weight: 500;
-}
-.navbar-cta:hover {
-  background: var(--purple-450);
-  color: var(--text-on-dark);
-}
-
-/* Desktop: wrap the docs links onto a second row under the site links. */
-@media (min-width: 997px) {
-  :root {
-    --ifm-navbar-height: 7rem;
-  }
-  .navbar {
-    padding: var(--s-12) var(--s-30);
-  }
-  .navbar__inner {
-    align-items: flex-start;
-  }
-  .navbar__items:not(.navbar__items--right) {
-    flex-wrap: wrap;
-    row-gap: var(--s-8);
-  }
-  .navbar-cta {
-    display: inline-flex;
-  }
-  .navbar-row-break {
-    flex-basis: 100%;
-    height: 0;
-    padding: 0;
-  }
-}
-@media (max-width: 996px) {
-  .navbar-row-break {
-    display: none;
-  }
 }
 
 /* Footer, cmdx.ai footer pattern. */
