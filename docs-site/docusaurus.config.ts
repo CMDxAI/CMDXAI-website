@@ -77,29 +77,13 @@ const config: Config = {
       disableSwitch: true,
       respectPrefersColorScheme: false,
     },
-    // Mirrors the cmdx.ai header: site links and the contact button on row 1, docs links on row 2.
-    // Absolute cmdx.ai links open in the same tab (same origin in production).
     navbar: {
       logo: {
         alt: 'CMDX',
         src: 'img/wordmark.svg',
-        href: 'https://cmdx.ai/',
-        target: '_self',
+        href: '/',
       },
       items: [
-        { href: 'https://cmdx.ai/', label: 'Home', position: 'left', target: '_self' },
-        { href: 'https://cmdx.ai/open-source', label: 'Open Source', position: 'left', target: '_self' },
-        { href: 'https://cmdx.ai/features', label: 'Features', position: 'left', target: '_self' },
-        { href: 'https://cmdx.ai/why-cmdx', label: 'Why CMDX?', position: 'left', target: '_self' },
-        // Empty full-width item that wraps the docs links onto a second row (custom.css).
-        { type: 'html', value: '<span></span>', position: 'left', className: 'navbar-row-break' },
-        {
-          to: '/',
-          label: 'Docs',
-          position: 'left',
-          className: 'navbar-docs-home',
-          activeBaseRegex: '^/docs/?$',
-        },
         {
           type: 'docSidebar',
           sidebarId: 'defaultSidebar',
@@ -121,13 +105,7 @@ const config: Config = {
           position: 'left',
           label: 'Users',
         },
-        // The website opens a contact dialog here; mailto is its no-JavaScript fallback.
-        {
-          href: 'mailto:hello@cmdx.ai?subject=Getting%20started%20with%20CMDX',
-          label: 'Get started',
-          position: 'right',
-          className: 'navbar-cta',
-        },
+        { href: 'https://cmdx.ai/', label: 'cmdx.ai', position: 'right', target: '_self' },
       ],
     },
     // Mirrors the cmdx.ai footer. Links to the private GitHub repo and the placeholder Blog link are left out.
