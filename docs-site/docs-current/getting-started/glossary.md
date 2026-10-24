@@ -20,6 +20,7 @@ The terms used across CMDX and its documentation. If you are coming from another
 | Term | Meaning | Elsewhere called |
 | --- | --- | --- |
 | administrator | A person who manages a tenant or a whole CMDX install: its users, roles and settings. | admin, superuser |
+| category | A folder that sorts courses and learning items within a tenant. Categories can contain other categories, and a category can be limited to some departments. | course category, folder |
 | course | The container learners enroll in. A course holds learning items, which can be grouped into sections. | class, program |
 | enroll, enrollment | To enroll is to add a learner to a course. An enrollment is the record that the learner belongs to that course. | register |
 | event | A notice that something happened in CMDX, such as a learner being enrolled in a course, that other parts of CMDX can react to. <!-- TODO: verify: how events differ from hooks; Phase 0 says hooks are synchronous and events asynchronous, the backend hooks doc calls hooks the in-process event bus --> | signal |
