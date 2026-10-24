@@ -1,0 +1,21 @@
+/* Copied from Claude Design project "CMDX Design System - New UX" (a15dc6b0), tokens/fonts.css.
+   Only change: @fontsource versions pinned to @5.2.5, matching assets/site.css. */
+
+/* CMDX webfonts.
+   SUBSTITUTION NOTICE — the Figma source specifies "Stack Sans Text" and
+   "Stack Sans Headline" (a licensed family; no binaries shipped with the file).
+   Both are mapped here to Hanken Grotesk, the closest freely-available
+   humanist grotesque with a true 300 Light. Drop real Stack Sans woff2 files
+   into assets/fonts/ and swap the src: lines below to restore the brand face.
+   "Source Sans Pro" is mapped to its current release, Source Sans 3.
+   "Inter" is the real family. */
+
+@font-face{font-family:"Stack Sans Text";font-style:normal;font-weight:300;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-300-normal.woff2) format("woff2")}
+@font-face{font-family:"Stack Sans Text";font-style:normal;font-weight:400;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Stack Sans Text";font-style:normal;font-weight:500;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Stack Sans Text";font-style:normal;font-weight:600;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:300;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-300-normal.woff2) format("woff2")}
+@font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:400;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.2.5/files/hanken-grotesk-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans Pro";font-style:normal;font-weight:400;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.2.5/files/source-sans-3-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans Pro";font-style:normal;font-weight:600;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.2.5/files/source-sans-3-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.2.5/files/inter-latin-400-normal.woff2) format("woff2")}

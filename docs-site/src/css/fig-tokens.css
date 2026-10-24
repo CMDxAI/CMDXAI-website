@@ -1,0 +1,94 @@
+/* Copied from Claude Design project "CMDX Design System - New UX" (a15dc6b0), tokens/fig-tokens.css.
+   Do not edit here; re-copy from the design project. */
+
+/* Generated from Figma Variables. First mode = :root default.
+   FLOAT tokens are unitless — multiply by 1px in calc() where a length is needed. */
+
+:root {
+  --black-100: rgba(12,12,13,0.05); /* @kind color */
+  --black-200: rgba(12,12,13,0.1); /* @kind color */
+  --border-blue: rgb(184,206,236); /* @kind color */
+  --border-radius: 6; /* @kind radius */
+  --color-80: rgb(228,227,229); /* @kind color */
+  --depth-0: 0; /* @kind other */
+  --depth-100: 4; /* @kind other */
+  --depth-negative-025: -1; /* @kind other */
+  --gold-100: rgb(226,156,14); /* @kind color */
+  --green-100: rgb(18,196,158); /* @kind color */
+  --green-10: rgb(238,254,250); /* @kind color */
+  --green-30: rgb(168,218,206); /* @kind color */
+  --grey-100: rgb(208,207,209); /* @kind color */
+  --grey-10: rgb(250,250,250); /* @kind color */
+  --grey-20: rgb(248,247,249); /* @kind color */
+  --grey-300: rgb(155,155,155); /* @kind color */
+  --grey-400: rgb(122,122,122); /* @kind color */
+  --grey-70: rgb(238,237,239); /* @kind color */
+  --grey-800: rgb(24,24,24); /* @kind color */
+  --grey-90: rgb(218,217,219); /* @kind color */
+  --icon-large: 40; /* @kind spacing */
+  --misc-phaie-000000: rgb(0,0,0); /* @kind color */
+  --misc-phaie-12c49e: rgb(18,196,158); /* @kind color */
+  --misc-phaie-16b492: rgb(22,180,146); /* @kind color */
+  --misc-phaie-5c20be: rgb(92,32,190); /* @kind color */
+  --misc-phaie-8468b2: rgb(132,104,178); /* @kind color */
+  --misc-phaie-a4a4a4: rgb(164,164,164); /* @kind color */
+  --misc-phaie-c8b8e0: rgb(200,184,224); /* @kind color */
+  --misc-phaie-cdbaed: rgb(205,186,237); /* @kind color */
+  --misc-phaie-d9d9d9: rgb(217,217,217); /* @kind color */
+  --misc-phaie-dedede: rgb(222,222,222); /* @kind color */
+  --misc-phaie-e68416: rgb(230,132,22); /* @kind color */
+  --misc-phaie-eefefa: rgb(238,254,250); /* @kind color */
+  --misc-phaie-f22226: rgb(242,34,38); /* @kind color */
+  --misc-phaie-fef4f4: rgb(254,244,244); /* @kind color */
+  --orange-100: rgb(230,132,22); /* @kind color */
+  --orange-10: rgb(254,246,238); /* @kind color */
+  --orange-30: rgb(240,200,154); /* @kind color */
+  --purple-200-20: rgba(118,78,196,0.2); /* @kind color */
+  --purple-200: rgb(118,78,196); /* @kind color */
+  --purple-250: rgb(102,74,154); /* @kind color */
+  --purple-400: rgb(104,64,166); /* @kind color */
+  --purple-450: rgb(94,66,140); /* @kind color */
+  --purple-600: rgb(61,36,102); /* @kind color */
+  --purple-700: rgb(47,29,77); /* @kind color */
+  --purple-800: rgb(26,10,52); /* @kind color */
+  --purple-light-br: rgb(94,66,140); /* @kind color */
+  --purple-matt-100: rgb(205,186,237); /* @kind color */
+  --purple-matt-10: rgb(248,244,254); /* @kind color */
+  --purple-matt-20: rgb(243,236,254); /* @kind color */
+  --purple-matt-300: rgb(132,104,178); /* @kind color */
+  --purple-matt-400: rgb(102,74,148); /* @kind color */
+  --purple-matt-500: rgb(84,62,118); /* @kind color */
+  --purple-matt-50: rgb(228,218,244); /* @kind color */
+  --purple-matt-600: rgb(70,56,92); /* @kind color */
+  --radius-16: 16; /* @kind radius */
+  --radius-22: 22; /* @kind radius */
+  --radius-28: 28; /* @kind radius */
+  --radius-36: 36; /* @kind radius */
+  --radius-4: 4; /* @kind radius */
+  --radius-6: 6; /* @kind radius */
+  --radius-8: 8; /* @kind radius */
+  --radius-full: 9999; /* @kind radius */
+  --red-100: rgb(242,34,38); /* @kind color */
+  --red-10: rgb(254,244,244); /* @kind color */
+  --sapce-4: 4; /* @kind spacing */
+  --soft-beige: rgb(242,238,233); /* @kind color */
+  --soft-blue: rgb(194,228,252); /* @kind color */
+  --soft-lilac: rgb(222,224,250); /* @kind color */
+  --softer-blue: rgb(236,244,255); /* @kind color */
+  --space-10: 10; /* @kind spacing */
+  --space-12: 12; /* @kind spacing */
+  --space-15: 15; /* @kind spacing */
+  --space-18: 18; /* @kind spacing */
+  --space-20: 20; /* @kind spacing */
+  --space-24: 24; /* @kind spacing */
+  --space-25: 25; /* @kind spacing */
+  --space-30: 30; /* @kind spacing */
+  --space-3: 3; /* @kind spacing */
+  --space-5: 5; /* @kind spacing */
+  --space-6: 6; /* @kind spacing */
+  --space-8: 8; /* @kind spacing */
+  --transparent: rgba(255,255,255,0); /* @kind color */
+  --white-0: rgb(255,255,255); /* @kind color */
+  --white: rgb(255,255,255); /* @kind color */
+  --yellow-10: rgb(255,252,236); /* @kind color */
+}
