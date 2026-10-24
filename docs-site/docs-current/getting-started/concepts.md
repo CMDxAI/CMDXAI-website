@@ -10,17 +10,14 @@ ai_drafted: true
 tags: [getting-started]
 ---
 
-One CMDX install hosts many **tenants**. Inside each tenant, learning is set up and taken in this order:
+CMDX organizes learning in four layers. Read them in order, from the outermost boundary to one learner finishing one item:
 
-1. **users** join and are given **roles**;
-2. **categories** are created;
-3. **courses** and **learning items** are created and mapped to categories;
-4. users are **enrolled** in a course or a learning item;
-5. CMDX tracks each enrollment to **completion**.
+1. **Tenant.** One company, school or team owns its departments, members and all of its content.
+2. **Catalog.** Every learning item, of any kind, is one entry in the tenant's catalog, sorted into categories.
+3. **Structure.** Courses arrange learning items into sections. One item can appear in many courses without being copied.
+4. **Learner's path.** A learner is enrolled, makes progress, meets the completion rules and completes the item.
 
-One idea sets CMDX apart: content isn't copied into courses. You create a learning item once, then place it in every course that needs it.
-
-## Everything lives in a tenant
+## 1. The tenant
 
 ```mermaid
 ---
@@ -29,35 +26,51 @@ config:
     wrappingWidth: 300
 ---
 flowchart TB
-  accTitle: How a CMDX install is organized
-  accDescr: One CMDX install holds many tenants, such as Tenant A and Tenant B, kept apart from each other. Inside a tenant, five steps happen in order. 1, users join and are given roles. 2, categories are created. 3, courses and learning items are created and mapped to categories. 4, users are enrolled in a course or a learning item. 5, completion is tracked for each enrollment.
+  accTitle: The tenant boundary
+  accDescr: One CMDX install hosts many tenants. Inside Tenant A are departments, members and learning content. Members sit in departments. Departments limit where categories apply. Members are enrolled in learning content. Tenant B has its own departments, members and content, and never sees Tenant A's.
 
   subgraph tenantA["Tenant A"]
     direction TB
-    s1["1. Users join and are given roles"]
-    s2["2. Categories are created"]
-    s3["3. Courses and learning items are created and mapped to categories"]
-    s4["4. Users are enrolled in a course or a learning item"]
-    s5["5. Completion is tracked for each enrollment"]
-    s1 --> s2 --> s3 --> s4 --> s5
+    depts["Departments: a tree, where a parent covers its children"]
+    members["Members: each has a role, such as learner, instructor or administrator"]
+    content["Learning content: categories, learning items, courses, trainings, enrollments, groups and gradebooks"]
+    members -- sit in --> depts
+    depts -- limit where categories apply --> content
+    members -- are enrolled in --> content
   end
-  tenantB["Tenant B<br/>its own users, roles, categories and content"]
+  tenantB["Tenant B: its own departments, members and content"]
   cmdx["CMDX install"]
   cmdx --> tenantA
   cmdx --> tenantB
 ```
 
-A tenant is the space for one company, school or team. Each tenant's users and content are kept apart from every other tenant's.
+One CMDX install hosts many tenants. A tenant is the space for one company, school or team. Everything a person does in CMDX happens inside one tenant, and one tenant never sees another tenant's data.
 
-1. **Users and roles.** Users join a tenant as members. Each member has a role, such as learner, instructor or administrator, and the role decides what they can do. Members can be grouped into departments. A person can belong to more than one tenant, with a different role in each.
-2. **Categories.** A category works like a folder for courses and learning items, and categories can contain other categories. A category covers the whole tenant, or only the departments you choose. A sub-category takes its parent's departments unless you narrow them.
-3. **Courses and learning items.** A learning item is one piece of content: a video, quiz, SCORM package, file or assignment. A course arranges learning items into sections, and a section can contain other sections, up to three levels deep. Each course has one main category and can be added to others. A learning item can be in any number of categories.
-4. **Enrollment.** An enrollment gives a user access to a course, or to a learning item on its own.
-5. **Completion.** Each enrollment records how far the user has got, and when they complete the course or item.
+- **Departments** form a tree inside the tenant. A parent department covers the departments beneath it. In learning, departments do one job: they limit where a category applies.
+- **Members** are the people in the tenant. Each member has a role, such as learner, instructor, course author or administrator, and can sit in a department. A person can belong to more than one tenant, with a different role in each. Roles can also be given on one course or one category.
+- **Learning content** is everything else: categories, learning items, courses, trainings, enrollments, groups and gradebooks. All of it belongs to the tenant.
 
-## Content is placed, not copied
+## 2. The catalog
 
-Say you build a fire safety quiz. New starters must take it in order as part of their induction. In the annual refresher it's optional. You don't make two quizzes. You place the same quiz in both courses, with different settings:
+Every learning item is one entry in the tenant's catalog, whatever its kind:
+
+- courses;
+- quizzes and assignments;
+- SCORM packages;
+- videos and other media;
+- files, HTML pages and web links;
+- feedback forms;
+- instructor-led trainings.
+
+Each item starts as a draft, is published when it's ready, and can later be archived.
+
+**Categories** sort the catalog. A category works like a folder, and categories can contain other categories. A category covers the whole tenant, or only the departments you choose; a sub-category takes its parent's departments unless you narrow them. Each course has one main category and can be added to others. Any other learning item can be in any number of categories.
+
+## 3. Structure
+
+A course arranges learning items into **sections**. A section can contain other sections, up to three levels deep. A section can wait for another section to be finished, or open on a set date.
+
+Learning items aren't copied into courses. Say you build a fire safety quiz. New starters must take it in order as part of their induction. In the annual refresher it's optional. You place the same quiz in both courses, with different settings:
 
 ```mermaid
 flowchart LR
@@ -83,11 +96,14 @@ A **placement** puts one learning item into one course or section. The item keep
 - how much it counts toward the course grade;
 - optionally, its own completion rule, such as a higher pass mark for this course.
 
-An item can be placed in many courses, but only once in the same course or section.
+An item can be placed in many courses, but only once in the same course or section. An item can also require another item first, optionally with a minimum score.
 
-## Categories and placements do different jobs
+Two kinds of learning sit beside courses:
 
-Both link a learning item to something else, so they're easy to mix up. A category says what the item is about. A placement says where learners take it.
+- An **instructor-led training** runs as sessions, online or at a location, with a capacity and attendance. It's an item in the catalog like any other, and can include other learning items in order.
+- A **standalone** item isn't placed in any course. Learners enroll in the item itself. If you later place it in a course, the progress learners already made carries over.
+
+Categories and placements are easy to mix up, because both link an item to something else:
 
 | | Category | Placement |
 | --- | --- | --- |
@@ -96,17 +112,39 @@ Both link a learning item to something else, so they're easy to mix up. A catego
 | How many | any number per item; a course has one main category | one per course or section |
 | Changes for learners | how content is grouped when they browse | order, whether it's required, grading and completion |
 
-Items placed in a course are listed under that course's category too, so you don't have to add them to it one by one. Roles given on a category normally apply to every course in it, including courses added to it as an extra category.
+## 4. A learner's path
 
-## Learning items outside a course
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 300
+---
+flowchart TB
+  accTitle: A learner's path through an item
+  accDescr: A learner is enrolled by hand, in bulk, by enrolling themselves, with an enrollment key, or by a rule. The enrollment moves from pending to active. CMDX tracks progress on each item and rolls it up to the section and the enrollment. When all the completion rules are met, the item is completed. Scores also go to the gradebook. A completion rule can then enroll the learner in the next item.
 
-A learning item doesn't have to be in a course. A **standalone** item has no placement, and learners enroll in the item itself. If you later place it in a course, the progress learners already made carries over.
+  ways["How learners get in: by hand, in bulk, self-enrollment, an enrollment key, or a rule"]
+  enrollment["Enrollment: pending, then active"]
+  progress["Progress: tracked per item, rolled up to the section and the enrollment"]
+  rules["Completion rules: are they all met?"]
+  done["Completed"]
+  gradebook["Gradebook"]
+  ways --> enrollment --> progress --> rules -- yes --> done
+  progress -- scores --> gradebook
+  done -. a rule can enroll the learner in the next item .-> enrollment
+```
 
-## Progress is kept per course
+1. **The learner is enrolled.** An enrollment connects a member to a learning item: a course, a training, a quiz or any other item. Someone can enroll learners one at a time or in bulk, learners can enroll themselves, or they can use an enrollment key. Rules can also enroll learners on their own:
+   - a **group** rule follows a group's membership;
+   - a **context** rule enrolls everyone in a tenant, category, department or role;
+   - a **completion** rule enrolls a learner in the next item when they complete, pass or score above a set mark on this one.
+2. **The enrollment becomes active.** It moves from pending to active. It can also expire, be dropped or be revoked.
+3. **Progress is tracked.** CMDX records each learner's status, score, time spent and attempts on every item, and rolls them up to the section and the enrollment. Progress is kept separately for every placement, so a learner who passes the fire safety quiz in the induction course hasn't completed it in the refresher yet. Order and prerequisites decide when the next item unlocks.
+4. **The completion rules are checked.** Rules include viewing or downloading the item, marking it complete, reaching a score, spending a set time, watching enough of a video, a SCORM status, or a submission being graded or passed. Rules can be combined with AND and OR.
+5. **The item is completed.** When all the rules are met, CMDX records the completion and its date. Scores also go to the gradebook.
 
-CMDX tracks each learner's progress separately for every placement. A new starter who passes the fire safety quiz in the induction course hasn't completed it in the refresher yet.
-
-There's one exception. For videos and other media, CMDX also records how much of the item each learner has watched. That record is called **mastery**. It belongs to the item, so it counts in every course the item is in.
+For videos and other media, CMDX also records how much of the item each learner has watched. That record is called **mastery**. It belongs to the item, not to a placement, so it counts in every course the item is in.
 
 ## What this means in practice
 
