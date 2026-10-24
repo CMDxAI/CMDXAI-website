@@ -23,20 +23,27 @@ CMDX treats a learning item as content in its own right. A course doesn't own it
 ```mermaid
 flowchart TB
   accTitle: How CMDX content fits together
-  accDescr: A tenant contains courses. A course contains sections, and sections can contain more sections. Placements put a learning item into a course or a section. One learning item can have many placements. Learners are enrolled in a course, or in a learning item that stands alone.
+  accDescr: Everything sits inside one tenant. The tenant has learners, courses and learning items. A course contains sections, and sections can contain more sections. Placements put a learning item into a course or a section, and one learning item can have many placements. A learner is enrolled in a course, or in a standalone learning item that is in no course.
 
-  tenant[Tenant] --> course[Course]
-  course --> section[Section]
-  section --> subsection[Section inside a section]
-  course -- placement --> item[Learning item]
-  section -- placement --> item
-  learner[Learner] -- enrollment --> course
-  learner -- enrollment --> standalone[Standalone learning item]
+  subgraph tenant[Tenant]
+    learner[Learner]
+    course[Course]
+    section[Section]
+    subsection[Section inside a section]
+    item[Learning item]
+    standalone[Standalone learning item]
+    course --> section
+    section --> subsection
+    course -- placement --> item
+    section -- placement --> item
+    learner -- enrollment --> course
+    learner -- enrollment --> standalone
+  end
 ```
 
 ### Tenant
 
-A tenant is one customer's own space in CMDX. Its courses, learning items and settings are kept apart from every other tenant. A person can be a member of more than one tenant.
+A tenant is one customer's own space in CMDX. Its members, courses, learning items, enrollments and settings are kept apart from every other tenant. Each member has a role in the tenant, such as learner or instructor. A person can be a member of more than one tenant, with a different role in each.
 
 ### Course and section
 
