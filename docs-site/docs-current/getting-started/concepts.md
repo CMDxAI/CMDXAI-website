@@ -10,77 +10,84 @@ ai_drafted: true
 tags: [getting-started]
 ---
 
-CMDX keeps learning content separate from the courses that use it. You create a learning item once, then place it in as many courses as you need. This page explains how tenants, courses, sections, learning items, placements and enrollments fit together. For short definitions, see the [glossary](./glossary.md).
+CMDX is built on four ideas:
 
-## Context
+- a **tenant** holds everything;
+- **courses** give learning a structure;
+- **learning items** hold the content;
+- **enrollments** give learners access.
 
-In many learning systems, content lives inside one course. Using it in a second course means copying it, and every copy then has to be updated separately.
+One idea sets CMDX apart: content isn't copied into courses. You create a learning item once, then place it in every course that needs it.
 
-CMDX treats a learning item as content in its own right. A course doesn't own its items. It points to them, and it decides how each one is used there.
-
-## The design
+## Everything lives in a tenant
 
 ```mermaid
-flowchart TB
-  accTitle: How CMDX content fits together
-  accDescr: Everything sits inside one tenant. The tenant has learners, courses and learning items. A course contains sections, and sections can contain more sections. Placements put a learning item into a course or a section, and one learning item can have many placements. A learner is enrolled in a course, or in a standalone learning item that is in no course.
+flowchart LR
+  accTitle: What a tenant contains
+  accDescr: A tenant contains people, courses and learning items. Learners enroll in courses. Learning items are placed in courses.
 
   subgraph tenant[Tenant]
-    learner[Learner]
-    course[Course]
-    section[Section]
-    subsection[Section inside a section]
-    item[Learning item]
-    standalone[Standalone learning item]
-    course --> section
-    section --> subsection
-    course -- placement --> item
-    section -- placement --> item
-    learner -- enrollment --> course
-    learner -- enrollment --> standalone
+    direction LR
+    people["People<br/>learners, instructors, administrators"]
+    courses["Courses<br/>in categories, divided into sections"]
+    items["Learning items<br/>videos, quizzes, SCORM packages, files"]
+    people -- learners enroll in --> courses
+    items -- placed in --> courses
   end
 ```
 
-### Tenant
+A tenant is your own space in CMDX, set up for one company, school or team. Everything in the picture belongs to one tenant, and nothing is shared between tenants.
 
-A tenant is one customer's own space in CMDX. Its members, courses, learning items, enrollments and settings are kept apart from every other tenant. Each member has a role in the tenant, such as learner or instructor. A person can be a member of more than one tenant, with a different role in each.
+- **People.** People join a tenant as members, and each member has a role there, such as learner, instructor or administrator. A person can belong to more than one tenant, with a different role in each.
+- **Courses.** Categories group courses, and sections divide a course into parts. A section can contain other sections, up to three levels deep.
+- **Learning items.** Videos, quizzes, SCORM packages, files and assignments. They belong to the tenant, not to a course.
 
-### Course and section
+## Content is placed, not copied
 
-A course is what learners enroll in. Inside a course, sections group the content, and a section can contain further sections.
+Say you build a fire safety quiz. New starters must take it in order as part of their induction. In the annual refresher it's optional. You don't make two quizzes. You place the same quiz in both courses, with different settings:
 
-### Learning item
+```mermaid
+flowchart LR
+  accTitle: One learning item in two courses
+  accDescr: A fire safety quiz is placed in two courses. In the new starter induction course the placement makes it required and taken in order. In the annual refresher course the placement makes it optional and available in any order.
 
-A learning item is a single piece of learning content, such as a SCORM package, a video, a file, a quiz or an assignment. Each item is drafted, then published, and can later be archived.
+  quiz["Fire safety quiz<br/>one learning item"]
+  subgraph induction[Course: New starter induction]
+    p1["Placement<br/>required, in order"]
+  end
+  subgraph refresher[Course: Annual refresher]
+    p2["Placement<br/>optional, any order"]
+  end
+  quiz --> p1
+  quiz --> p2
+```
 
-### Placement
+A **placement** puts one learning item into one course or section. The item keeps the content. The placement keeps the settings that belong to that course:
 
-A placement puts a learning item into a course or a section. The same item can have placements in many courses, but only one in any one course or section.
-
-The placement holds the settings that belong to that course rather than to the item:
-
-- where the item appears in the order;
+- where the item appears in the course;
 - whether learners must complete it;
-- whether learners can take items in any order or must follow the sequence. Unless the placement sets this, it follows the section, then the course.
+- whether learners must take it in order, or can take it at any time. If the placement doesn't say, it follows the section, then the course;
+- how much it counts toward the course grade;
+- optionally, its own completion rule, such as a higher pass mark for this course.
 
-### Standalone learning item
+An item can be placed in many courses, but only once in the same course or section.
 
-A learning item doesn't have to be in a course. A standalone item has no placement, and learners are enrolled in the item itself. If you later place a standalone item in a course, the progress learners already made on it carries over into that course.
+## Enrollment gives access
 
-### Enrollment
+Learners enroll in a course, and that gives them access to the items placed in it.
 
-An enrollment records that a learner belongs to a course, or to a standalone learning item. It's what gives the learner access.
+A learning item doesn't have to be in a course. A **standalone** item has no placement, and learners enroll in the item itself. If you later place it in a course, the progress learners already made carries over.
 
-### Completion and progress
+## Progress is kept per course
 
-Each learning item has completion rules, such as viewing it, scoring at least a set mark, or watching most of a video. A placement can change those rules for one course. CMDX tracks each learner's progress separately for every placement, so the same quiz can be complete in one course and not yet started in another.
+CMDX tracks each learner's progress separately for every placement. A new starter who passes the fire safety quiz in the induction course hasn't completed it in the refresher yet.
 
-### Mastery
+There's one exception. For videos and other media, CMDX also records how much of the item each learner has watched. That record is called **mastery**. It belongs to the item, so it counts in every course the item is in.
 
-For video and other media, CMDX also records how much of the item each learner has watched. That record, called mastery, belongs to the learning item, not to a course, so it carries across every course the item appears in.
+## What this means in practice
 
-## Trade-offs
+- **Edit once, change everywhere.** A change to a learning item shows in every course that uses it. To change it for one course only, create a separate item.
+- **Check the placement first.** When an item behaves differently in two courses, the difference is in the placement settings.
+- **Removing isn't deleting.** Removing an item from a course deletes the placement only. The item and its other placements stay.
 
-- **One edit, everywhere.** Changing a learning item changes it in every course that places it. That keeps content consistent, but an edit can't be limited to one course; for a course-specific variant, create a separate item.
-- **Settings live in two places.** The item holds what the content is; the placement holds how one course uses it. When something behaves differently in two courses, check the placement settings first.
-- **Removing is not deleting.** Removing an item from a course deletes the placement only. The learning item, and its placements in other courses, stay.
+For short definitions of these terms, see the [glossary](./glossary.md).
