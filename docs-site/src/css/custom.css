@@ -51,6 +51,7 @@
   --ifm-navbar-item-padding-horizontal: var(--s-12);
   --ifm-navbar-padding-horizontal: var(--s-30);
   --ifm-footer-background-color: var(--surface-subtle);
+  --ifm-footer-padding-vertical: var(--s-30);
   --ifm-footer-link-color: var(--text-primary);
   --ifm-footer-link-hover-color: var(--text-accent);
   --ifm-footer-title-color: var(--text-primary);
@@ -108,26 +109,22 @@ div[class*='codeBlockContainer'] {
   --admonition-icon: var(--status-danger);
 }
 
-/* Footer links to cmdx.ai are same-site, so no external-link icon. The navbar keeps it on
-   'cmdx.ai', which leaves the docs. */
-.footer [class*='iconExternalLink'] {
-  display: none;
-}
-
 /* Navbar */
 .navbar__logo {
   height: 26px;
 }
+/* Regular weight, 500 for the current section, as on cmdx.ai. */
 .navbar__link {
-  font-size: var(--text-md);
+  font-weight: 400;
 }
 .navbar__link--active {
   font-weight: 500;
 }
 
 /* Footer, cmdx.ai footer pattern. */
-.footer {
-  padding: var(--s-30) var(--s-30) var(--s-24);
+/* The brand column has no title; MultiColumn still renders an empty one. */
+.footer__title:empty {
+  display: none;
 }
 .footer__title {
   font-size: var(--text-sm);
