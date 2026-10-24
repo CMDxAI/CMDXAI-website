@@ -53,6 +53,9 @@
   --ifm-navbar-link-hover-color: var(--text-accent);
   --ifm-navbar-item-padding-horizontal: var(--s-12);
   --ifm-navbar-padding-horizontal: var(--s-30);
+  /* Gap: search placeholder and ⌘K hint use Infima's default grey (about 1.6:1). No secondary grey
+     token passes AA on this background, so they use --text-primary. */
+  --ifm-navbar-search-input-placeholder-color: var(--text-primary);
   --ifm-footer-background-color: var(--surface-subtle);
   --ifm-footer-padding-vertical: var(--s-30);
   --ifm-footer-link-color: var(--text-primary);

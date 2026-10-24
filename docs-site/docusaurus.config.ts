@@ -57,6 +57,20 @@ const config: Config = {
   // Unversioned instances: these audiences always track the current release. Each needs its own
   // routeBasePath; a second instance at '/' is shadowed by the versioned one and builds as 404.
   // No sidebarPath: Docusaurus autogenerates 'defaultSidebar' from the folder.
+  // Local search until Algolia DocSearch is approved (Phase 1 search item). One entry per docs
+  // instance: the versioned one at '/' and the two unversioned ones.
+  themes: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        docsRouteBasePath: ['/', 'getting-started', 'users'],
+        docsDir: ['docs', 'docs-current/getting-started', 'docs-current/users'],
+        indexBlog: false,
+      },
+    ],
+  ],
+
   plugins: [
     [
       '@docusaurus/plugin-content-docs',
