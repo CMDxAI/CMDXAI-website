@@ -174,3 +174,23 @@ div[class*='codeBlockContainer'] {
   --ifm-link-decoration: none;
   --ifm-link-hover-decoration: none;
 }
+
+/* Tables fit the content width and wrap instead of scrolling sideways. Infima makes them
+   scrollable blocks, which keyboard users cannot focus (WCAG 2.1.1) and which break reflow
+   (1.4.10). Words break only at spaces; code and links may break anywhere so a long key or URL
+   cannot force the table wider than the screen. */
+.markdown table {
+  display: table;
+  width: 100%;
+  overflow-wrap: break-word;
+}
+.markdown table code,
+.markdown table a {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 996px) {
+  .markdown table {
+    --ifm-table-cell-padding: var(--s-8);
+    hyphens: auto;
+  }
+}

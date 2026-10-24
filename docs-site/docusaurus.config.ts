@@ -20,6 +20,12 @@ const config: Config = {
     v4: true,
   },
 
+  // v4 turns off HTML comments in Markdown. Pages use <!-- TODO: verify --> and Vale's
+  // <!-- vale off --> switches, so keep them.
+  markdown: {
+    mdx1Compat: { comments: true },
+  },
+
   url: 'https://cmdx.ai',
   baseUrl,
   trailingSlash: false,
