@@ -7,15 +7,15 @@ doc_type: reference
 audience: all
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-24
-tags: [glossary, terminology]
+tags: [getting-started]
 ---
 
 The terms used across CMDX and its documentation. If you are coming from another learning management system, the last column lists the names it may have used.
 
 ## Terms
 
-<!-- vale off -->
+<!-- vale CMDX.Terminology = NO -->
+<!-- vale CMDX.TerminologyAmbiguous = NO -->
 
 | Term | Meaning | Elsewhere called |
 | --- | --- | --- |
@@ -30,10 +30,11 @@ The terms used across CMDX and its documentation. If you are coming from another
 | learning item | A reusable unit of learning content, such as a SCORM package, a video, a file or a quiz. You create it once and can place it in more than one course. | activity, module, resource, content item |
 | mastery | A learner's record of how much of a learning item they have completed, kept per item rather than per course. Today, media items track it by how much has been watched. | completion score, progress |
 | placement | A learning item placed in a course or a course section, with its position and whether learners must complete it. | instance, link, occurrence |
-| plugin | Code that extends CMDX through its plugin system. A plugin is packaged and installed separately from CMDX. | extension, add-on, module |
-| tenant | One isolated customer space in a CMDX deployment, with its own members, courses and settings. A person can be a member of more than one tenant. | organization, site, instance, client |
+| plugin | Code that extends CMDX through its plugin system. A plugin is packaged and installed separately from CMDX. | extension, add-on |
+| tenant | One isolated customer space in a CMDX install, with its own members, courses and settings. A person can be a member of more than one tenant. | organization, site, client |
 
-<!-- vale on -->
+<!-- vale CMDX.Terminology = YES -->
+<!-- vale CMDX.TerminologyAmbiguous = YES -->
 
 ## Related
 
