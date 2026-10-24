@@ -43,8 +43,16 @@
   --ifm-badge-border-radius: var(--r-pill);
   --ifm-global-shadow-lw: var(--elevation-card);
   --ifm-global-shadow-md: var(--elevation-glass);
-  --ifm-navbar-shadow: var(--elevation-header);
-  --ifm-navbar-background-color: var(--surface-page);
+  /* Header and footer match cmdx.ai: subtle surface, no shadow. */
+  --ifm-navbar-shadow: none;
+  --ifm-navbar-background-color: var(--surface-subtle);
+  --ifm-navbar-link-color: var(--text-primary);
+  --ifm-navbar-link-hover-color: var(--text-accent);
+  --ifm-navbar-item-padding-horizontal: var(--s-12);
+  --ifm-footer-background-color: var(--surface-subtle);
+  --ifm-footer-link-color: var(--text-primary);
+  --ifm-footer-link-hover-color: var(--text-accent);
+  --ifm-footer-title-color: var(--text-primary);
   --ifm-menu-color-background-active: var(--surface-accent-soft);
   --ifm-spacing-horizontal: var(--s-20);
   --ifm-spacing-vertical: var(--s-24);
@@ -98,3 +106,104 @@ div[class*='codeBlockContainer'] {
   --admonition-ring: var(--status-danger);
   --admonition-icon: var(--status-danger);
 }
+
+/* Links to cmdx.ai are same-site, so no external-link icon. */
+.navbar [class*='iconExternalLink'],
+.footer [class*='iconExternalLink'] {
+  display: none;
+}
+
+/* Navbar, cmdx.ai header pattern. */
+.navbar__link {
+  font-size: var(--text-md);
+}
+.navbar__link--active {
+  font-weight: 500;
+}
+.navbar-docs-home {
+  font-weight: 600;
+}
+.navbar__logo {
+  height: 26px;
+}
+.navbar-cta {
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--s-20);
+  border-radius: var(--r-pill);
+  background: var(--text-accent);
+  color: var(--text-on-dark);
+  font-weight: 500;
+}
+.navbar-cta:hover {
+  background: var(--purple-450);
+  color: var(--text-on-dark);
+}
+
+/* Desktop: wrap the docs links onto a second row under the site links. */
+@media (min-width: 997px) {
+  :root {
+    --ifm-navbar-height: 7rem;
+  }
+  .navbar {
+    padding: var(--s-12) var(--s-30);
+  }
+  .navbar__inner {
+    align-items: flex-start;
+  }
+  .navbar__items:not(.navbar__items--right) {
+    flex-wrap: wrap;
+    row-gap: var(--s-8);
+  }
+  .navbar-cta {
+    display: inline-flex;
+  }
+  .navbar-row-break {
+    flex-basis: 100%;
+    height: 0;
+    padding: 0;
+  }
+}
+@media (max-width: 996px) {
+  .navbar-row-break {
+    display: none;
+  }
+}
+
+/* Footer, cmdx.ai footer pattern. */
+.footer {
+  padding: var(--s-30) var(--s-30) var(--s-24);
+}
+.footer__title {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.footer__link-item {
+  font-size: var(--text-base);
+}
+.footer-brand {
+  display: inline-flex;
+}
+.footer-tagline {
+  margin: var(--s-12) 0 var(--s-8);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.25;
+}
+.footer-hl {
+  color: var(--text-accent);
+}
+.footer-sub {
+  margin: 0;
+  font-size: var(--text-base);
+}
+.footer__bottom {
+  margin-top: var(--s-24);
+  padding-top: var(--s-20);
+  box-shadow: inset 0 1px 0 var(--border-hairline);
+  text-align: left;
+  font-size: var(--text-base);
+}
+
