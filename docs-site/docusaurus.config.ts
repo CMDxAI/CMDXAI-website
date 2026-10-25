@@ -24,6 +24,7 @@ const config: Config = {
   // <!-- vale off --> switches, so keep them.
   markdown: {
     mdx1Compat: { comments: true },
+    mermaid: true,
   },
 
   url: 'https://cmdx.ai',
@@ -66,6 +67,7 @@ const config: Config = {
   // Local search until Algolia DocSearch is approved (Phase 1 search item). One entry per docs
   // instance: the versioned one at '/' and the two unversioned ones.
   themes: [
+    '@docusaurus/theme-mermaid',
     [
       '@easyops-cn/docusaurus-search-local',
       {
@@ -99,6 +101,11 @@ const config: Config = {
   ],
 
   themeConfig: {
+    // Light only, like colorMode below. 'neutral' keeps diagrams grey; site text font.
+    mermaid: {
+      theme: { light: 'neutral', dark: 'neutral' },
+      options: { fontFamily: 'var(--font-text)' },
+    },
     // Design system has no dark-mode tokens yet.
     colorMode: {
       defaultMode: 'light',
