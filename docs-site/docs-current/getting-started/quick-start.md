@@ -1,6 +1,6 @@
 ---
 id: quick-start
-title: Run CMDX locally
+title: Install CMDX and create a course
 sidebar_label: Quick start
 sidebar_position: 1
 doc_type: tutorial
@@ -13,7 +13,7 @@ tags: [getting-started, install]
 
 ## What you will build
 
-A CMDX installation on your own machine, with one tenant and a Super Administrator account you sign in with. The backend runs in Docker and the web app runs from source. The first image build takes several minutes.
+A CMDX installation on your own machine, with one tenant, a Super Administrator account and a first course. The backend runs in Docker and the web app runs from source. The first image build takes several minutes.
 
 ## Before you start
 
@@ -47,11 +47,8 @@ Open `.env` and change these keys. Add `INSTALL_MODE`, which is not in the examp
 | Key | Value | Why |
 | --- | --- | --- |
 | `SECRET_KEY` | the output of `python3 -c "import secrets; print(secrets.token_urlsafe(48))"` | Signs tokens and session cookies. |
-| `INSTALL_MODE` | `true` | Starts the backend with only the install wizard available. |
-| `RUN_MIGRATIONS` | `false` | Leaves the database empty so the wizard can create the schema. |
-| `RUN_SEED` | `false` | Stops the start-up script from creating a default administrator. The wizard creates yours. |
-| `WORKERS` | `1` | Runs one API process while the wizard runs. Two processes fail when they create the installer tables at the same time. |
-| `CORS_ORIGINS` | `["http://localhost:8081"]` | Lets the web app on port 8081 call the API. |
+| `INSTALL_MODE` | `true` | Starts the backend with only the install wizard available. The wizard creates the schema and your administrator. |
+| `RUN_SEED` | `false` | Stops the backend from creating a default administrator account when it starts after the install. |
 
 Keep the values of `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`. You need them in step 5.
 
@@ -60,10 +57,8 @@ Keep the values of `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`. You n
 Build the images and start the services:
 
 ```bash
-BUILDX_BAKE_ENTITLEMENTS_FS=0 docker compose -f docker-compose-build.yml up -d --build
+docker compose -f docker-compose-build.yml up -d --build
 ```
-
-`BUILDX_BAKE_ENTITLEMENTS_FS=0` lets the build read the backend Dockerfile, which is outside the build folder. Without it, Docker Compose 5 stops with `additional privileges requested`.
 
 The command returns when the API is healthy. The first run takes several minutes. Check that the API answers:
 
@@ -93,7 +88,7 @@ Wait until the terminal shows `Waiting on http://localhost:8081`. The first page
 
 ## Step 5: Run the install wizard
 
-Open `http://localhost:8081/install`. Use `localhost`, not `127.0.0.1`: the API accepts browser requests only from the address in `CORS_ORIGINS`.
+Open `http://localhost:8081/install`. Use `localhost`, not `127.0.0.1`: the API accepts browser requests only from the addresses listed in `CORS_ORIGINS` in `.env`.
 
 The wizard has six steps. Each one shows its status in the left-hand list.
 
@@ -124,19 +119,17 @@ docker compose -f docker-compose-build.yml down -v
 rm backend/install/.lock backend/.env
 ```
 
-Set `INSTALL_MODE=true` and `RUN_MIGRATIONS=false` in `.env` again before step 3.
+Set `INSTALL_MODE=true` in `.env` again before step 3.
 :::
 
-The tasks run in order and take under a minute. The result is **Installed successfully**. One warning is expected on **Create administrator**: CMDX cannot require multi-factor authentication yet, so the account signs in with a password only.
+The tasks run in order and take under a minute. The result is **Installed successfully**, with two expected warnings:
+
+- **Create administrator**: CMDX cannot require multi-factor authentication yet, so the account signs in with a password only.
+- **Verify install**: the wizard cannot turn install mode off, because Docker Compose sets it. You do that in step 6.
 
 ## Step 6: Turn install mode off
 
-Open `.env` again and change two keys:
-
-| Key | Value |
-| --- | --- |
-| `INSTALL_MODE` | `false` |
-| `RUN_MIGRATIONS` | `true` |
+Open `.env` again and set `INSTALL_MODE` to `false`. Keep `RUN_SEED=false`.
 
 Recreate the containers so they read the new values:
 
@@ -156,11 +149,26 @@ The output is `false`.
 
 ## Step 7: Sign in
 
-Open `http://localhost:8081/login` and sign in with the Super Administrator email and password from step 5. CMDX opens **Home**, with your tenant's name at the top right.
+Open `http://localhost:8081/login` and sign in with the Super Administrator email and password from step 5. CMDX opens the administrator **Dashboard**, with your tenant's name at the top right.
 
-:::note
-The Super Administrator account created by the install wizard opens the learner **Home**, not the administrator pages, so you cannot create a course from it yet. This is a known issue. This tutorial will add the course steps when it is fixed. Until then, see [Create a course](/users/instructors/create-a-course).
-:::
+## Step 8: Create a category
+
+Every course belongs to a category, and a new installation has none.
+
+1. In the sidebar, select **Categories**, then **New category**.
+2. Enter a **Name**, for example `General`. CMDX fills in the **Slug** from the name.
+3. Select **Create category**.
+
+CMDX opens the category page, which shows `Nothing is mapped to General yet`.
+
+## Step 9: Create a course
+
+1. In the sidebar, select **Course Management**, then **New course**.
+2. Enter a **Course name**, for example `Getting started with CMDX`. CMDX fills in the **Short name**.
+3. In **Category**, select the category from step 8. Keep the **Language**.
+4. Select **Create course**.
+
+**Course Management** lists your course with the status **Draft**. A new course starts as a draft with no learners enrolled.
 
 ## What you built
 
@@ -169,10 +177,11 @@ A local CMDX with:
 - the backend, database, cache, message broker and workers running in Docker
 - the web app running from source on `http://localhost:8081`
 - one tenant and one Super Administrator account
+- one category and one draft course
 
 To stop CMDX and keep your data, run `docker compose -f docker-compose-build.yml down`. To delete everything and install again, follow the warning in step 5.
 
 ## Next
 
 - [Glossary](./glossary.md): the terms CMDX uses, such as tenant and learning item
-- [Create a course](/users/instructors/create-a-course)
+- [Create a course](/users/instructors/create-a-course): add content to a course and publish it
