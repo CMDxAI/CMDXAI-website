@@ -17,19 +17,23 @@ CMDX is a multi-tenant learning management system. A Python backend serves a RES
 
 ## The parts
 
-A request from the app reaches the backend's routes, then its services and repositories, and ends in the database. Work that should not hold up a request goes through RabbitMQ to the Celery workers.
+A request from the app reaches the backend's routes, then its services and repositories, and ends in the database. Work that should not hold up a request goes through RabbitMQ to the Celery workers. Plugins run inside the backend: they add their own routes and handle hooks that the services call. The backend sends request traces to Jaeger.
 
 ```mermaid
 flowchart TB
   app["App: web, iOS, Android"] -->|"REST, /api/v1"| routes
   subgraph backend["Backend (FastAPI)"]
     routes["Routes"] --> services["Services"] --> repos["Repositories"]
+    plugins["Plugins"]
   end
+  plugins -.->|"add routes"| routes
+  services -.->|hooks| plugins
   services --> redis[("Redis cache")]
   services -->|tasks| mq["RabbitMQ"]
   repos --> db[("Database")]
   mq --> workers["Celery worker and beat"]
   workers --> db
+  backend -->|traces| jaeger["Jaeger (OpenTelemetry)"]
 ```
 
 Each part, and what it is built with:
@@ -37,7 +41,7 @@ Each part, and what it is built with:
 | Part | Built with | What it does |
 | --- | --- | --- |
 | Backend | Python 3.12, FastAPI, async SQLAlchemy, Pydantic v2 | Serves the REST API under `/api/v1`, enforces permissions and tenant isolation, and owns the schema. |
-| Database | PostgreSQL by default; MySQL or MariaDB, SQL Server and Oracle are also offered; SQLite for evaluation only | Stores every tenant's data in one schema. |
+| Database | PostgreSQL 13 or later by default; MySQL 8 or later, or MariaDB; SQL Server; Oracle; SQLite 3.35 or later for evaluation only. CMDX sets no minimum version for MariaDB, SQL Server or Oracle. | Stores every tenant's data in one schema. |
 | Cache | Redis | Caches data for the API. |
 | Background work | Celery workers and a Celery beat scheduler, with RabbitMQ as the broker | Runs queued and scheduled jobs, such as notification delivery, audit export and enrollment expiry. |
 | Tracing | OpenTelemetry, exported to Jaeger in the Docker setup | Records request traces. |
