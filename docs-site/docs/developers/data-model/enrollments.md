@@ -1,7 +1,7 @@
 ---
-id: enrolments
-title: Enrolments
-sidebar_label: Enrolments
+id: enrollments
+title: Enrollments
+sidebar_label: Enrollments
 sidebar_position: 3
 doc_type: reference
 audience: developers
@@ -10,7 +10,7 @@ ai_drafted: true
 tags: [data-model]
 ---
 
-The enrolment data model.
+The enrollment data model.
 
 :::note
 This page is being written.

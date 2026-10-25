@@ -10,7 +10,7 @@ ai_drafted: true
 tags: [learners]
 ---
 
-Enrol in a course and work through it.
+Enroll in a course and work through it.
 
 :::note
 This page is being written.

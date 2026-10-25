@@ -1,7 +1,7 @@
 ---
-id: enrol-learners
-title: Enrol learners
-sidebar_label: Enrol learners
+id: enroll-learners
+title: Enroll learners
+sidebar_label: Enroll learners
 sidebar_position: 2
 doc_type: how-to
 audience: users
