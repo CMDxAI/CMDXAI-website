@@ -36,7 +36,11 @@ def register_hooks(hook_manager: HookManager) -> None:
 - Handlers can be `async` or plain functions. Plain functions run in a worker thread so they don't block the server.
 - The `@hook` decorator and `register_decorated_hooks` in `core.plugin_api.hooks` do the same with a decorator.
 
-Hooks notify; they don't control. A handler cannot cancel or change the operation that fired it. If a handler raises an exception, CMDX logs it and the remaining handlers still run.
+By default a handler can't stop the operation that fired it. If it raises an exception, CMDX logs it and the remaining handlers still run.
+
+To veto an operation, register the handler with `failure_mode="abort"`. Its exception then skips the remaining handlers and is raised again. It fails the operation only for a hook delivered during it, because only then is the caller waiting.
+
+A handler can also set `ctx.aborted = True`, with an optional `ctx.abort_reason`. CMDX skips the remaining handlers, but the operation itself carries on.
 
 ## When handlers run
 
