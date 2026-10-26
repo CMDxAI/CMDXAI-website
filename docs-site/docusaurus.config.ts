@@ -101,11 +101,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Light only, like colorMode below. 'neutral' keeps diagrams grey; site text font.
-    mermaid: {
-      theme: { light: 'neutral', dark: 'neutral' },
-      options: { fontFamily: 'var(--font-text)' },
-    },
     // Design system has no dark-mode tokens yet.
     colorMode: {
       defaultMode: 'light',
@@ -182,6 +177,11 @@ const config: Config = {
         },
       ],
       copyright: `© ${new Date().getFullYear()} CMDX. All rights reserved.`,
+    },
+    // Mermaid needs colour values, not CSS variables; 'neutral' is grey and adds no off-token colours.
+    mermaid: {
+      theme: { light: 'neutral', dark: 'neutral' },
+      options: { fontFamily: 'var(--font-text)' },
     },
     prism: {
       theme: prismThemes.github,
