@@ -19,7 +19,7 @@ A capability is a named permission that a role can grant, such as `calendar:crea
 | --- | --- | --- |
 | `register_capability()` | `modules.capability_catalog.permissions` | Adds one capability to the in-memory registry. |
 | `register_all_capabilities()` | `modules.capability_catalog.bootstrap` | Calls each module's registration function. |
-| Reconciliation | `CapabilityReconciliationService` | Copies the registry into the `permissions` and `rbac_capabilities` tables at start-up. |
+| Reconciliation | `CapabilityReconciliationService` | Copies the registry into the `permissions` and `rbac_capabilities` tables at start-up and after a plugin changes state. |
 | Catalog API | `GET /api/v1/capabilities` | Lists the capabilities in the database. |
 
 ## Capability fields
@@ -78,13 +78,26 @@ def register_calendar_capabilities() -> None:
 
 Plugins declare their capabilities in their manifest instead. See [plugin system](./plugin-system.md).
 
-:::note
-How plugin capabilities join the catalog is being settled.
-:::
+## Register a plugin's capabilities
+
+`sync_plugin_capabilities()` in `modules.plugins.capability_sync` registers the manifest keys of every plugin that is installed or enabled. Each key gets these fields:
+
+| Field | Value |
+| --- | --- |
+| `key` | The manifest key, for example `gamification.view`. |
+| `display_name` | The key. |
+| `description` | `Declared by the <plugin> plugin`. |
+| `risk_level` | `medium`. |
+| `applicable_contexts` | `global` and `organization`. |
+| `module` | `plugin:<plugin>`, for example `plugin:gamification`. |
+
+A key that doesn't start with `<plugin>.` is skipped with a warning. So is a key that another module already registered.
+
+Installing, upgrading, enabling, disabling or uninstalling a plugin runs the sync again. Reconciliation then runs with `module_prefix="plugin:"`, so it touches only plugin rows. The capabilities of a disabled or uninstalled plugin are marked stale.
 
 ## Start-up reconciliation
 
-When the backend starts, it registers every module's capabilities and then reconciles the registry with the database. While `INSTALL_MODE` is on, start-up skips this step. The install wizard runs it instead, when it installs the roles module.
+When the backend starts, it registers every module's capabilities, then the capabilities of each installed or enabled plugin, and then reconciles the registry with the database. While `INSTALL_MODE` is on, start-up skips this step. The install wizard runs it instead, when it installs the roles module.
 
 For each registered capability, reconciliation:
 
@@ -99,6 +112,7 @@ Reconciliation writes these log events, each with a `capability_key` field where
 
 | Event | When |
 | --- | --- |
+| `capability_reconcile_started` | Reconciliation began. |
 | `capability_created` | A new capability row was added. |
 | `capability_updated` | An existing row was refreshed. |
 | `capability_stale` | A row was marked stale. |
