@@ -33,13 +33,14 @@ A key is a dotted name: `<namespace>.<name>`, for example `developer.log_level`.
 - Every key starts with its namespace and a dot.
 - A key belongs to exactly one namespace. Registering the same key under a second namespace raises `DuplicateKeyError`.
 
-Namespaces registered today:
+Namespaces declared today:
 
-| Namespace | Registered by | Keys listed on |
+| Namespace | Registered by | Keys |
 | --- | --- | --- |
-| `developer` | Developer settings module, at start-up | [Logging](./logging.md) and [developer settings](../../administrators/configuration/developer-settings.md) |
-| `features` | Developer settings module, at start-up | [Feature flags](./feature-flags.md) |
-| `<plugin settings namespace>` | The plugin loader, when it loads a plugin | The plugin's own documentation |
+| `developer` | Developer settings module, at start-up | Listed on [Logging](./logging.md) and [developer settings](../../administrators/configuration/developer-settings.md) |
+| `features` | Developer settings module, at start-up | `features.new_course_editor`, `features.ai_assistant_v2`, `features.enhanced_analytics`, `features.maintenance_mode_banner`, `features.siem_audit_export`. No backend code turns anything on or off with them yet. |
+| `calendar` | Calendar module. It declares the key but doesn't register the namespace at start-up; it passes the definition to `resolve_setting()` directly. | `calendar.calendar_enabled`, listed on [Feature flags](./feature-flags.md) |
+| `<plugin settings namespace>` | The plugin loader, when it loads a plugin | Listed in the plugin's own documentation |
 
 ## Key definition fields
 
@@ -97,7 +98,7 @@ After the type check, the value must match `validation_regex` if one is set. It 
 
 When code reads a key, the first source that has a value wins:
 
-1. A stored entry at the most specific scope the key allows and the request has: component, then tenant, then global. Only active entries count.
+1. A stored entry: the tenant's, when the request has a tenant and the key allows the tenant scope, then the global one. Only active entries count.
 2. The environment variable in `env_var_mapping`.
 3. The file in `file_path_mapping`.
 4. The code default.
@@ -105,12 +106,12 @@ When code reads a key, the first source that has a value wins:
 If no source has a value, the key resolves to `None`.
 
 :::note
-A shared resolver for every namespace is being settled. Until then, each module resolves its own keys in the order above. A module's page lists any exception.
+`resolve_setting()` in `core.config.resolve` reads keys in this order for every module. It doesn't read component entries.
 :::
 
 ## Stored entries
 
-Each row in `config_entries` holds one value. The key, scope and scope ID together are unique.
+Each row in `config_entries` holds one value. The key, scope and scope ID together are unique for tenant and component entries. Global entries have no scope ID, and PostgreSQL doesn't enforce uniqueness on an empty value, so a key can have more than one global row. `resolve_setting()` reads the newest active one.
 
 | Column | Description |
 | --- | --- |
@@ -140,7 +141,7 @@ Every create, update and delete through `core.config.service` adds a row to `con
 
 | Function | Does |
 | --- | --- |
-| `get_config(dml, key, scope, scope_id)` | Returns one entry, or `None`. |
+| `get_config(dml, key, scope, scope_id)` | Returns one entry, or `None`. Raises if a key has more than one global row; `resolve_setting()` doesn't. |
 | `get_configs_by_namespace(dml, namespace, scope=, scope_id=, active_only=True)` | Returns a namespace's entries, ordered by key. |
 | `upsert_config(dml, data, changed_by=)` | Creates the entry, or updates it if one exists for the key, scope and scope ID. |
 | `delete_config(dml, key, scope, scope_id, changed_by=, change_reason=)` | Marks the entry inactive. Returns `False` if there was none. |
@@ -205,6 +206,6 @@ Both failures raise `ConfigValidationError`.
 ## Related
 
 - [Plugin system](./plugin-system.md): where a plugin's settings are registered
-- [Feature flags](./feature-flags.md): the `features` namespace
+- [Feature flags](./feature-flags.md): the `calendar.calendar_enabled` flag
 - [Logging](./logging.md): the logging keys in the `developer` namespace
 - [Multi-tenancy](./multi-tenancy.md): how the tenant for a request is found
