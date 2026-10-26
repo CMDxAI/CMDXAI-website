@@ -82,11 +82,11 @@ Plugins load in dependency order, so a plugin loads after the plugins it depends
 
 ### Per-tenant plugins
 
-A `per_tenant` plugin's routes answer only in tenants where the plugin is enabled. In any other tenant, the request is refused.
+A `per_tenant` plugin runs only in tenants where it is enabled. Its routes refuse requests from any other tenant, and its hook handlers skip events from any other tenant.
 
-:::note
-How per-tenant enablement applies to a plugin's hook handlers is being settled. Until this page is updated, don't rely on a disabled tenant being skipped by your hook handlers.
-:::
+An event's tenant is the `tenant_id` or `organization_id` in its payload, or else the tenant of the request that raised it. An event with no tenant, such as `user.registered` from self-registration, never reaches a `per_tenant` plugin. If your plugin must see those events, give it the `global` scope.
+
+If CMDX can't check whether the plugin is enabled, a handler with `failure_mode="continue"` is skipped. A handler with `failure_mode="abort"` fails the operation instead, so an unchecked veto never lets the operation through.
 
 ## How plugins are kept apart
 
