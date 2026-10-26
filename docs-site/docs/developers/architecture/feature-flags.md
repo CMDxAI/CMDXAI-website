@@ -5,13 +5,36 @@ sidebar_label: Feature flags
 sidebar_position: 6
 doc_type: reference
 audience: developers
-source_prd: none
+source_prd: "216694785"
 ai_drafted: true
-tags: [architecture]
+last_verified: 2026-10-26
+tags: [architecture, configuration]
 ---
 
-The feature flags CMDX defines and what each one does.
+A feature flag turns part of CMDX on or off without a new deploy. This page lists the flags the backend enforces today. Each flag is a boolean config key, so it follows the scope rules on the [configuration](./config-service.md) page.
 
 :::note
-This page is being written.
+Two things are still being decided: which other flags CMDX enforces, and which API code should use to read a flag. Until then, this page lists only the flags the backend enforces today.
 :::
+
+## Summary
+
+| Key | Type | Default | Scopes | Turns on or off |
+| --- | --- | --- | --- | --- |
+| `calendar.calendar_enabled` | boolean | `true` | `global`, `tenant` | The calendar |
+
+## Details
+
+### `calendar.calendar_enabled`
+
+Turns the calendar on or off for the whole installation or for one tenant.
+
+- **Resolution:** the calendar checks the tenant's stored entry first, then the global entry. If neither exists, the calendar is on.
+- **Values:** `true`, `1`, `yes` and `on` mean on, in any case. Any other stored value means off.
+- **When off:** calendar requests return HTTP 403 with the error code `CALENDAR_PERMISSION_DENIED`.
+- **Exception:** platform super administrators can use the calendar even when the flag is off.
+
+## Related
+
+- [Configuration](./config-service.md): keys, scopes and stored entries
+- [Feature flags for administrators](../../administrators/configuration/feature-flags.md)
