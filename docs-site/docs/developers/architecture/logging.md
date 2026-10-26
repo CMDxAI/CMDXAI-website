@@ -20,17 +20,19 @@ CMDX reads these environment variables at start-up. A change takes effect after 
 | Environment variable | Developer settings key | Default | Description |
 | --- | --- | --- | --- |
 | `LOG_LEVEL` | `developer.log_level` | `INFO` | Lowest level written: `CRITICAL`, `ERROR`, `WARNING`, `INFO` or `DEBUG`. |
-| `LOG_JSON` | `developer.log_json` | `true` | Write JSON records. `false` writes plain text. |
-| `LOG_FORMAT` | `developer.log_format` | `%(asctime)s %(levelname)s %(name)s %(message)s` | Python format string, used only when `LOG_JSON` is `false`. |
-| `BODY_LOGGING_ENABLED` | `developer.body_logging_enabled` | `false` | Log JSON request and response bodies. |
-| `BODY_LOGGING_MAX_BYTES` | `developer.body_logging_max_bytes` | `8192` | Largest body logged, in bytes. |
+| `LOG_JSON` | `developer.log_json` (read-only) | `true` | Write JSON records. `false` writes plain text. |
+| `LOG_FORMAT` | `developer.log_format` (read-only) | `%(asctime)s %(levelname)s %(name)s %(message)s` | Python format string, used only when `LOG_JSON` is `false`. |
+| `BODY_LOGGING_ENABLED` | `developer.body_logging_enabled` (read-only) | `false` | Log JSON request and response bodies. |
+| `BODY_LOGGING_MAX_BYTES` | `developer.body_logging_max_bytes` (read-only) | `8192` | Largest body logged, in bytes. |
 | `SENTRY_DSN` | none | not set | Sentry project DSN. Sentry is off when this is not set. |
-| `SENTRY_ENVIRONMENT` | `developer.sentry_environment` | `development` | Environment name sent to Sentry. |
-| `SENTRY_SAMPLE_RATE` | `developer.sentry_sample_rate` | `0.1` | Fraction of errors sent to Sentry, from `0.0` to `1.0`. |
-| `SENTRY_TRACES_SAMPLE_RATE` | `developer.sentry_traces_sample_rate` | `0.1` | Fraction of requests traced by Sentry, from `0.0` to `1.0`. |
+| `SENTRY_ENVIRONMENT` | `developer.sentry_environment` (read-only) | `development` | Environment name sent to Sentry. |
+| `SENTRY_SAMPLE_RATE` | `developer.sentry_sample_rate` (read-only) | `0.1` | Fraction of errors sent to Sentry, from `0.0` to `1.0`. |
+| `SENTRY_TRACES_SAMPLE_RATE` | `developer.sentry_traces_sample_rate` (read-only) | `0.1` | Fraction of requests traced by Sentry, from `0.0` to `1.0`. |
 
 :::note
-Changing these settings from developer settings while CMDX runs is being settled. Until then, set them as environment variables.
+`developer.log_level` is the only key in this table you can save from developer settings. A saved level applies at once in the worker that handles the request. At start-up, every uvicorn worker applies it in place of `LOG_LEVEL`. An active diagnostic override of the log level takes precedence over the saved level. Celery workers always use `LOG_LEVEL`.
+
+A read-only key shows its environment value. Saving it, or creating a diagnostic override for it, returns `409 Conflict`. Set these keys as environment variables.
 :::
 
 ## Record format
