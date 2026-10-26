@@ -14,7 +14,7 @@ tags: [architecture, configuration]
 A feature flag turns part of CMDX on or off without a new deploy. This page lists the flags the backend enforces today. Each flag is a boolean config key, so it follows the scope rules on the [configuration](./config-service.md) page.
 
 :::note
-Two things are still being decided: which other flags CMDX enforces, and which API code should use to read a flag. Until then, this page lists only the flags the backend enforces today.
+Which other flags CMDX enforces is still being decided. Until then, this page lists only the flags the backend enforces today. Code reads a flag with `resolve_setting` from `core.config.resolve`.
 :::
 
 ## Summary
@@ -29,9 +29,9 @@ Two things are still being decided: which other flags CMDX enforces, and which A
 
 Turns the calendar on or off for the whole installation or for one tenant.
 
-- **Resolution:** the calendar checks the tenant's stored entry first, then the global entry. If neither exists, the calendar is on.
-- **Values:** `true`, `1`, `yes` and `on` mean on, in any case. Any other stored value means off.
-- **When off:** calendar requests return HTTP 403 with the error code `CALENDAR_PERMISSION_DENIED`.
+- **Resolution:** the first match wins, in this order: the tenant's stored entry, the global stored entry, the `CALENDAR_ENABLED` environment variable, then the default. The default is on. At each scope, an entry stored under the older key `calendar_enabled` also counts.
+- **Values:** `true`, `1`, `yes` and `on` mean on, in any case. Any other stored value means off. In `CALENDAR_ENABLED`, `false`, `0`, `no` and `off` mean off, and any other value is ignored.
+- **When off:** calendar requests return HTTP 403 with the error code `CALENDAR_PERMISSION_DENIED`. Revoking a calendar feed token with `DELETE /api/v1/calendar/feed/token/<token-id>` still works when the flag is off.
 - **Exception:** platform super administrators can use the calendar even when the flag is off.
 
 ## Related
