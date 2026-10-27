@@ -7,7 +7,7 @@ doc_type: explanation
 audience: developers
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-25
+last_verified: 2026-10-27
 tags: [architecture, plugins]
 ---
 
@@ -42,7 +42,8 @@ Each plugin has a `manifest.py` that says what it is:
 - **type**: a category such as `auth`, `report`, `integration` or `local`
 - **version** and **db_version**: the code version, and the schema version its upgrade steps reach
 - **dependencies**: other parts it needs, written as `core.<name>`, `module:<name>` or `plugin:<name>`, each with a version range
-- **capabilities**: the permissions it adds, named `<plugin-name>.<action>`
+- **personal_data**: each of its tables that holds rows about a user, with the column that names the user (default `user_id`). A user's data export includes these rows and erasure deletes them. An entry can keep rows through erasure, giving the reason in `keep`, or leave them out of the export with `export=False`, for example for a per-user token.
+- **capabilities**: the permissions it adds, named `<plugin-name>.<action>`. While the plugin is installed, they join the capability catalog.
 - **settings namespace**: where its settings live
 - **scope**: `global` (on or off for the whole installation) or `per_tenant` (on or off for each tenant). The default is `per_tenant`.
 
@@ -54,7 +55,7 @@ A plugin moves through four states, which the registry records:
 | --- | --- | --- |
 | Discovered | The code is present and the manifest is valid. | Found at start-up. |
 | Installed | The plugin's tables exist. | An administrator installs it, which runs its install steps. Later upgrades run its upgrade steps up to `db_version`. |
-| Enabled | The plugin is active. | An administrator enables it: once for a `global` plugin, or for each tenant for a `per_tenant` plugin. |
+| Enabled | The plugin is active. | An administrator enables it: once for a `global` plugin, or for each tenant for a `per_tenant` plugin. Only an installed plugin can be enabled; enabling never installs it. |
 | Disabled | The plugin is inactive. | An administrator disables it. A plugin that another enabled plugin depends on cannot be disabled. |
 
 Enabling changes the state in the database. The running backend loads the plugin the next time it starts, or straight away when an administrator calls the plugin's reload endpoint.
@@ -64,8 +65,8 @@ Managing plugins needs these capabilities:
 | Capability | Allows |
 | --- | --- |
 | `plugin:read` | Listing plugins and reading their settings |
-| `plugin:tenant_toggle` | Enabling and disabling a plugin for the caller's own tenant |
-| `plugin:manage` | Installing, upgrading, uninstalling and reloading plugins, changing their settings, and enabling them for another tenant |
+| `plugin:tenant_toggle` | Enabling and disabling a `per_tenant` plugin for the caller's own tenant |
+| `plugin:manage` | Installing, upgrading, uninstalling and reloading plugins, changing their settings, enabling or disabling a `global` plugin, and enabling a `per_tenant` plugin for another tenant |
 
 On a development machine, the `python -m scripts.plugin` command does the same from the backend folder: `list`, `validate`, `install`, `enable`, `disable`, `uninstall` and `reload`.
 
@@ -86,7 +87,7 @@ A `per_tenant` plugin runs only in tenants where it is enabled. Its routes refus
 
 An event's tenant is the `tenant_id` or `organization_id` in its payload, or else the tenant of the request that raised it. An event with no tenant, such as `user.registered` from self-registration, never reaches a `per_tenant` plugin. If your plugin must see those events, give it the `global` scope.
 
-If CMDX can't check whether the plugin is enabled, a handler with `failure_mode="continue"` is skipped. A handler with `failure_mode="abort"` fails the operation instead, so an unchecked veto never lets the operation through.
+If CMDX can't check whether the plugin is enabled, a handler with `failure_mode="continue"` is skipped. A handler with `failure_mode="abort"` raises an error instead, as the handler itself would have.
 
 ## How plugins are kept apart
 
@@ -94,7 +95,7 @@ If CMDX can't check whether the plugin is enabled, a handler with `failure_mode=
 - **Own tables.** A plugin's tables carry its name as a prefix and are created and upgraded by its own steps, so they never collide with CMDX tables or another plugin's.
 - **Own capabilities.** A plugin's capabilities are named after the plugin, so they never collide with another plugin's.
 - **Failures stay contained.** A plugin that fails to load is logged and skipped, and the backend and the other plugins keep running.
-- **Checked before install.** `python -m scripts.plugin validate` checks that the folder name matches the manifest, that `db_version` matches the highest upgrade step, that capabilities and settings use the plugin's name, and that dependencies are well formed.
+- **Checked before install.** `python -m scripts.plugin validate` checks that the folder name matches the manifest, that `db_version` matches the highest upgrade step, that capabilities and settings use the plugin's name, that dependencies are well formed, and that every table with a user column is declared in `personal_data` and exists with that column.
 
 This keeps plugins apart by contract, not by sandbox. A plugin runs inside the backend process with the same database connection as CMDX, so install only plugins you trust.
 
