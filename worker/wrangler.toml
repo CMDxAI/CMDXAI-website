@@ -9,7 +9,10 @@ compatibility_flags = ["nodejs_compat"]
 # Comma-separated; localhost:3000 is the Vite dev server (npm run dev).
 ALLOWED_ORIGINS = "https://cmdx.ai,http://localhost:3000"
 MAIL_FROM = "hello@cmdx.ai"
-NOTIFY_TO = "hello@cmdx.ai"
+# Reply-To on the confirmations visitors get.
+REPLY_TO = "hello@cmdx.ai"
+# Who gets new-subscriber notices and Get started messages; comma-separated.
+TEAM_TO = "jagan@cmdx.ai,naveen.m@cmdx.ai"
 
 # Each subscribe sends two emails, so cap it per IP.
 [[ratelimits]]
