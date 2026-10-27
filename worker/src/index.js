@@ -1,6 +1,6 @@
 // Mail endpoint for cmdx.ai's static pages, over SMTP. SMTP details live in Worker secrets, never in this repo.
-//   POST /         footer "Subscribe": confirms to the subscriber and tells NOTIFY_TO.
-//   POST /contact  "Get started" dialog: confirms to the sender and sends the message to CONTACT_TO.
+//   POST /         footer "Subscribe": confirms to the subscriber and tells TEAM_TO.
+//   POST /contact  "Get started" dialog: confirms to the sender and sends the message to TEAM_TO.
 // ponytail: the team inbox is the subscriber list; add D1 storage once newsletters go out from here.
 import { WorkerMailer } from 'worker-mailer';
 
@@ -52,7 +52,7 @@ export default {
         {
           from: { name: 'CMDX', email: env.MAIL_FROM },
           to: email,
-          reply: env.NOTIFY_TO,
+          reply: env.REPLY_TO,
           subject: 'Thanks for contacting CMDX',
           text: [
             "Thanks for getting in touch. We've received your message and will reply within two working days.",
@@ -61,7 +61,7 @@ export default {
         },
         {
           from: { name: 'CMDX website', email: env.MAIL_FROM },
-          to: env.CONTACT_TO.split(','),
+          to: env.TEAM_TO.split(','),
           reply: email,
           subject: `Get started: ${name}${organization ? ` (${organization})` : ''}`,
           text: `Name: ${name}\nEmail: ${email}\nOrganization: ${organization || '-'}\n\n${message || '(no message)'}`,
@@ -72,7 +72,7 @@ export default {
         {
           from: { name: 'CMDX', email: env.MAIL_FROM },
           to: email,
-          reply: env.NOTIFY_TO,
+          reply: env.REPLY_TO,
           subject: "You're subscribed to CMDX updates",
           text: [
             'Thanks for subscribing. We will email you product news and releases from CMDX, the open source LMS.',
@@ -83,7 +83,7 @@ export default {
         },
         {
           from: { name: 'CMDX website', email: env.MAIL_FROM },
-          to: env.NOTIFY_TO,
+          to: env.TEAM_TO.split(','),
           reply: email,
           subject: `New subscriber: ${email}`,
           text: `${email} subscribed to CMDX updates from ${request.headers.get('Referer') ?? 'cmdx.ai'}.`,
