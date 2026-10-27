@@ -1,8 +1,8 @@
 // "Get started" contact dialog, opened by any [data-contact] link (its mailto href is the no-JS fallback).
-// ponytail: no backend on GitHub Pages, so Send hands the message to the visitor's mail app;
-// swap the submit handler for a fetch() to a form service if messages must arrive without it.
+// Send posts to the Worker's /contact route (worker/), which emails the team and confirms to the sender.
+import { ENDPOINT } from './subscribe.js';
+
 const TO = 'hello@cmdx.ai';
-const MAX_MAILTO = 2000;
 let dlg;
 
 function build() {
@@ -24,7 +24,9 @@ function build() {
           <label><span>Work email</span><input name="email" type="email" required autocomplete="email"></label>
         </div>
         <label><span>Organization</span><input name="organization" type="text" autocomplete="organization"></label>
-        <label><span>How can we help?</span><textarea name="message" rows="4"></textarea></label>
+        <label><span>How can we help?</span><textarea name="message" rows="4" maxlength="5000"></textarea></label>
+        <input name="hp" class="subscribe-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="contact-err" role="alert"></p>
         <div class="contact-foot">
           <span>We reply within two working days.</span>
           <button type="submit" class="btn btn-primary" style="padding:0 24px;font-size:16px">Send</button>
@@ -32,8 +34,8 @@ function build() {
       </form>
       <div class="contact-done">
         <div class="contact-tick"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" style="display:block"><path d="M9.55 17.65 4.6 12.7l1.4-1.4 3.55 3.55 8.45-8.45 1.4 1.4Z" fill="currentColor"/></svg></div>
-        <p>Thanks. Your email app should open with your message ready to send. Once it's sent, we'll be in touch within two working days.</p>
-        <p class="muted" style="font-size:15px">Nothing opened? Email us at <a href="mailto:${TO}">${TO}</a>.</p>
+        <p>Thanks. We've got your message and will be in touch within two working days.</p>
+        <p class="muted" style="font-size:15px">We've sent a confirmation to your inbox.</p>
         <div><button type="button" class="btn btn-soft" data-close style="padding:0 24px;font-size:16px">Close</button></div>
       </div>
     </div>`;
@@ -47,22 +49,28 @@ function build() {
     if ((e.target === dlg && pressedBackdrop) || e.target.closest('[data-close]')) dlg.close();
   });
   const form = dlg.querySelector('form');
-  const msg = form.elements.message;
-  msg.addEventListener('input', () => msg.setCustomValidity(''));
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = new FormData(form);
-    const body = `Name: ${f.get('name')}\nEmail: ${f.get('email')}\nOrganization: ${f.get('organization')}\n\n${f.get('message')}`;
-    const url = `mailto:${TO}?subject=${encodeURIComponent('Getting started with CMDX')}&body=${encodeURIComponent(body)}`;
-    // ponytail: ~2000 chars is the smallest common mailto limit (Outlook on Windows); past it the
-    // mail app may not open, so ask for a shorter message instead of showing "sent".
-    if (url.length > MAX_MAILTO) {
-      msg.setCustomValidity(`This message is too long to pass to your email app. Shorten it, or email ${TO} directly.`);
-      msg.reportValidity();
-      return;
+    const err = form.querySelector('.contact-err');
+    const button = form.querySelector('[type="submit"]');
+    button.disabled = true;
+    err.textContent = '';
+    let msg = `We couldn't send that just now. Try again, or email us at ${TO}.`;
+    try {
+      // URLSearchParams keeps this a "simple" CORS request, so there is no preflight.
+      const res = await fetch(`${ENDPOINT}/contact`, { method: 'POST', body: new URLSearchParams(new FormData(form)) });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        dlg.classList.add('sent');
+        return;
+      }
+      if (data.error) msg = data.error;
+    } catch {
+      // Network error: keep the generic message.
+    } finally {
+      button.disabled = false;
     }
-    location.href = url;
-    dlg.classList.add('sent');
+    err.textContent = msg;
   });
 }
 
@@ -72,6 +80,6 @@ document.addEventListener('click', (e) => {
   if (!dlg) build();
   dlg.classList.remove('sent');
   dlg.querySelector('form').reset();
-  dlg.querySelector('textarea').setCustomValidity('');
+  dlg.querySelector('.contact-err').textContent = '';
   dlg.showModal();
 });

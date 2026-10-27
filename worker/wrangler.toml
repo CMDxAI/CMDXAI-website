@@ -10,6 +10,8 @@ compatibility_flags = ["nodejs_compat"]
 ALLOWED_ORIGINS = "https://cmdx.ai,http://localhost:3000"
 MAIL_FROM = "hello@cmdx.ai"
 NOTIFY_TO = "hello@cmdx.ai"
+# Get started messages; comma-separated.
+CONTACT_TO = "jagan@cmdx.ai,naveen.m@cmdx.ai"
 
 # Each subscribe sends two emails, so cap it per IP.
 [[ratelimits]]
