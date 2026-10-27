@@ -7,7 +7,7 @@ doc_type: explanation
 audience: developers
 source_prd: 113344513
 ai_drafted: true
-last_verified: 2026-10-25
+last_verified: 2026-10-27
 tags: [architecture, tenants]
 ---
 
@@ -46,13 +46,14 @@ The rules are strict, so a request can't be steered into another tenant by accid
 - If two sources name different tenants, the request is rejected with `400`.
 - An id that names no organization, or a deleted one, is rejected with `400`.
 
-Knowing the tenant is not enough: the caller must also belong to it. The membership-bound tenant dependency (below) refuses the request with `403` unless the caller has an active, unexpired membership in that tenant. Only a platform super administrator can act in a tenant without being a member.
+Knowing the tenant is not enough: the caller must also belong to it. The membership-bound tenant dependency (below) refuses the request with `403` unless the caller has an active, unexpired membership in that tenant. Only a role granted platform-wide lets a caller act in a tenant they don't belong to. The same role granted inside one organization counts in that organization only.
 
 ## Writing tenant-aware code
 
 New routes take the tenant from a dependency, never from the request body:
 
-- Use the membership-bound tenant dependency from `core.auth.dependencies` (`MembershipBoundTenantDep`, built on `resolve_membership_bound_tenant` in `core.tenancy.dependencies`). It resolves the tenant by the rules above and checks the caller's membership.
+- Use the membership-bound tenant dependency from `core.auth.dependencies` (`MembershipBoundTenantDep`, built on `resolve_membership_bound_tenant` in `core.tenancy.dependencies`). It resolves the tenant by the rules above and checks the caller's membership. Only a platform super administrator is exempt.
+- Most modules also expose their own tenant dependency, `TenantContextDep`, in the module's `dependencies.py`. It resolves the tenant by the same rules and checks membership with `require_tenant_membership` from `core.tenancy.dependencies`, which also lets platform administrators and auditors through. A module that writes its own resolver must make the same call.
 - Pass the tenant down to the service and the repository.
 - Don't accept a tenant field in request schemas.
 
