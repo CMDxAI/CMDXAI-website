@@ -7,7 +7,7 @@ doc_type: reference
 audience: developers
 source_prd: "216694785"
 ai_drafted: true
-last_verified: 2026-10-26
+last_verified: 2026-10-27
 tags: [architecture, configuration]
 ---
 
@@ -77,7 +77,7 @@ The model checks itself when it is created. A key that doesn't start with its na
 | `boolean` | `true`, `1`, `yes`, `on` or `false`, `0`, `no`, `off`, in any case. |
 | `json` | A JSON object or array, or a string that parses as one. |
 | `secret` | Any text. The key is marked sensitive. |
-| `enum` | One of the key's `enum_choices`. |
+| `enum` | One of the key's `enum_choices`, in any case. It is stored as the listed choice, so `info` becomes `INFO`. |
 | `url` | Text that starts with `http://` or `https://`. |
 | `email` | Text with an `@` and a dot in the domain. |
 | `duration` | A number and a unit: `30s`, `15m`, `24h` or `7d`. |
@@ -103,7 +103,7 @@ When code reads a key, the first source that has a value wins:
 3. The file in `file_path_mapping`.
 4. The code default.
 
-If no source has a value, the key resolves to `None`.
+If no source has a value, the key resolves to `None`. A value that fails the key's type check is logged and skipped, and the next source is tried. Sensitive values are never logged.
 
 :::note
 `resolve_setting()` in `core.config.resolve` reads keys in this order for every module. It doesn't read component entries.
