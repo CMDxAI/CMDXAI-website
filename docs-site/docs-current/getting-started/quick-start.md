@@ -7,7 +7,7 @@ doc_type: tutorial
 audience: all
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-25
+last_verified: 2026-10-27
 tags: [getting-started, install]
 ---
 
@@ -48,7 +48,7 @@ Open `.env` and change these keys. Add `INSTALL_MODE`, which is not in the examp
 | --- | --- | --- |
 | `SECRET_KEY` | the output of `python3 -c "import secrets; print(secrets.token_urlsafe(48))"` | Signs tokens and session cookies. |
 | `INSTALL_MODE` | `true` | Starts the backend with only the install wizard available. The wizard creates the schema and your administrator. |
-| `RUN_SEED` | `false` | Stops the backend from creating a default administrator account when it starts after the install. |
+| `RUN_SEED` | `false` | The install wizard sets up the roles and your administrator, so the backend has nothing to seed when it starts. |
 
 Keep the values of `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`. You need them in step 5.
 
