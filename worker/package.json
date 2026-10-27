@@ -1,0 +1,15 @@
+{
+  "name": "cmdx-subscribe",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "worker-mailer": "^1.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.153.0"
+  }
+}

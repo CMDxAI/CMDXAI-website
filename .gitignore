@@ -41,3 +41,7 @@ Thumbs.db
 
 # Claude Code (per-developer)
 .claude/
+
+# Cloudflare Worker local secrets and state
+.dev.vars
+.wrangler
