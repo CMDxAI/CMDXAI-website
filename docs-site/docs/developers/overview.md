@@ -7,7 +7,7 @@ doc_type: explanation
 audience: developers
 source_prd: 113344513
 ai_drafted: true
-last_verified: 2026-10-25
+last_verified: 2026-10-27
 tags: [overview, architecture]
 ---
 
@@ -17,7 +17,7 @@ CMDX is a multi-tenant learning management system. A Python backend serves a RES
 
 ## The parts
 
-A request from the app reaches the backend's routes, then its services and repositories, and ends in the database. Work that should not hold up a request goes through RabbitMQ to the Celery workers. Plugins run inside the backend: they add their own routes and handle hooks that the services call. The backend sends request traces to Jaeger.
+A request from the app reaches the backend's routes, then its services and repositories, and ends in the database. Work that should not hold up a request goes through RabbitMQ to the Celery workers. Plugins run inside the backend and the Celery workers: they add their own routes and handle hooks raised by the services, in a request or in a background job. The backend sends request traces to Jaeger.
 
 ```mermaid
 flowchart TB
@@ -33,6 +33,7 @@ flowchart TB
   repos --> db[("Database")]
   mq --> workers["Celery worker and beat"]
   workers --> db
+  workers -.->|hooks| plugins
   backend -->|traces| jaeger["Jaeger (OpenTelemetry)"]
 ```
 
@@ -55,7 +56,7 @@ The backend code sits in four top-level folders.
 
 - **`core/`** is the framework every feature builds on: authentication, the database layer, tenancy, caching, hooks, events, the plugin loader, background tasks, storage, logging, translations and security helpers.
 - **`modules/`** holds the features: users, courses, enrollments, grades, notifications, reports and the rest. Each learning item type, such as quiz, SCORM, file or media, is its own module.
-- **`plugins/`** holds plugins that ship with CMDX, such as announcements and gamification. A plugin is loaded at start-up and is switched on or off per tenant, without changing the code in `core/` or `modules/`.
+- **`plugins/`** holds plugins that ship with CMDX, such as announcements and gamification. A plugin is loaded at start-up and is switched on or off per tenant, or for every tenant at once if it is declared global, without changing the code in `core/` or `modules/`.
 - **`api/`** mounts every module's routes under `/api/v1`.
 
 ### Inside a module
@@ -80,7 +81,7 @@ All tenants share one database and one schema. Tenant-owned rows record their te
 
 ### Extending CMDX
 
-Plugins extend CMDX without changing its code. A plugin declares itself in a manifest and is discovered when the backend starts. An administrator installs it once, then enables it for each tenant that needs it. Plugins react to what happens in CMDX through hooks and events.
+Plugins extend CMDX without changing its code. A plugin declares itself in a manifest and is discovered when the backend starts. An administrator installs it once, then enables it for each tenant that needs it, or once for every tenant if it is global. Plugins react to what happens in CMDX through hooks and events.
 
 - [Plugin system](./architecture/plugin-system.md)
 - [Hooks and events](./architecture/hooks-and-events.md)
