@@ -22,9 +22,9 @@ The terms used across CMDX and its documentation. If you are coming from another
 | administrator | A person who manages a tenant or a whole CMDX install: its users, roles and settings. | admin, superuser |
 | course | The container learners enroll in. A course holds learning items, which can be grouped into sections. | class, program |
 | enroll, enrollment | To enroll is to add a learner to a course. An enrollment is the record that the learner belongs to that course. | register |
-| event | A notice that something happened in CMDX, such as a learner being enrolled in a course, that other parts of CMDX can react to. <!-- TODO: verify: how events differ from hooks; Phase 0 says hooks are synchronous and events asynchronous, the backend hooks doc calls hooks the in-process event bus --> | signal |
+| event | A notice that something happened in CMDX, such as a learner being enrolled in a course. Plugins subscribe to events the same way as to hooks, but an event reaches its handlers in the background, after it happened, so they can't stop it. | signal |
 | feature flag | A setting that turns a CMDX feature on or off. Administrators change them on the **Feature flags** settings screen. | toggle, switch |
-| hook | A named point in CMDX where plugin code can run, for example after a user registers. Every handler registered for a hook runs, in priority order. | trigger, listener |
+| hook | A named point in CMDX where plugin code can run, for example after a user registers. The handlers registered for a hook run in priority order. | trigger, listener |
 | instructor | Anyone who builds or runs a course. | teacher, trainer, facilitator |
 | learner | Anyone taking a course. | student, trainee |
 | learning item | A reusable unit of learning content, such as a SCORM package, a video, a file or a quiz. You create it once and can place it in more than one course. | activity, module, resource, content item |
