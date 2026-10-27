@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '09:00'
+      time: "09:00"
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
@@ -18,7 +18,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '09:00'
+      time: "09:00"
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
@@ -31,7 +31,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '09:00'
+      time: "09:00"
     groups:
       actions:
         update-types:
