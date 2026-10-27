@@ -7,7 +7,7 @@ doc_type: reference
 audience: developers
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-26
+last_verified: 2026-10-27
 tags: [architecture, permissions]
 ---
 
@@ -93,7 +93,7 @@ Plugins declare their capabilities in their manifest instead. See [plugin system
 
 A key that doesn't start with `<plugin>.` is skipped with a warning. So is a key that another module already registered.
 
-Installing, upgrading, enabling, disabling or uninstalling a plugin runs the sync again. Reconciliation then runs with `module_prefix="plugin:"`, so it touches only plugin rows. The capabilities of a disabled or uninstalled plugin are marked stale.
+Installing, upgrading, enabling, disabling or uninstalling a plugin runs the sync again, and so does each refresh of the plugin registry, including the one at start-up. Reconciliation then runs with `module_prefix="plugin:"`, so it touches only plugin rows. The capabilities of an uninstalled plugin, or of a `global` plugin that is disabled, are marked stale. Disabling a `per_tenant` plugin for one tenant leaves them in place.
 
 ## Start-up reconciliation
 
