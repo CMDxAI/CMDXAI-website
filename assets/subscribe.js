@@ -1,5 +1,5 @@
 // Footer "Subscribe" form ([data-subscribe]); posts to the cmdx-subscribe Cloudflare Worker (worker/).
-const ENDPOINT = 'https://cmdx-subscribe.cmdxai.workers.dev';
+export const ENDPOINT = 'https://cmdx-subscribe.cmdxai.workers.dev';
 
 document.addEventListener('submit', async (e) => {
   const form = e.target.closest('[data-subscribe]');

@@ -124,3 +124,5 @@ button{font-family:inherit}
 .subscribe-hp{position:absolute;left:-9999px}
 .subscribe-status{margin:0;font-size:14px;color:#7a7a7a}
 .subscribe-status:empty{display:none}
+.contact-err{margin:0;font-size:14px;color:#b3261e}
+.contact-err:empty{display:none}
