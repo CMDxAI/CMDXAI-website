@@ -149,6 +149,35 @@ Every create, update and delete through `core.config.service` adds a row to `con
 
 These functions don't check the registry. Validate a value with `registry.validate_value()` and its scope with `registry.validate_scope()` before you write it.
 
+## Config endpoints
+
+The `/api/v1/config` endpoints read and write stored entries over HTTP. Every endpoint needs the `admin` or `platform_superadmin` role, granted platform-wide.
+
+| Endpoint | Does |
+| --- | --- |
+| `GET /config` | Lists entries, a page at a time. Filters: `namespace`, `scope`, `is_active`. |
+| `GET /config/count` | Counts entries. Takes the same filters. |
+| `GET /config/namespace/{namespace}` | Returns a namespace's entries. Filters: `scope`, `scope_id`. |
+| `GET /config/{key}` | Returns one entry. `scope` (default `global`) and `scope_id` pick the row. |
+| `POST /config` | Creates an entry. Returns `409` if one exists for the key, scope and scope ID. |
+| `PUT /config/{key}` | Updates an entry. |
+| `DELETE /config/{key}` | Marks the entry inactive. Takes an optional `change_reason`. |
+| `POST /config/bulk` | Creates or updates several entries. |
+| `GET /config/audit-log` | Returns audit rows. Filters: `key`, `actor`, `action`, `tenant_id`, `from`, `to`. `format=csv` or `format=json` exports them. |
+
+Writes are checked against the registry. A write that fails the check returns `422`:
+
+- The key must be registered. A `namespace`, if sent, must be the key's namespace.
+- The scope must be one the key allows, with a `scope_id` for every scope except `global`.
+- The value must pass the key's type check.
+- Sensitive keys can't be written here. Set them in the environment.
+
+A bulk write checks every entry before it writes any. An update that sends no new value, such as one that only changes `is_active`, isn't checked, so an entry can always be deactivated.
+
+Values of sensitive keys appear as `********` in every response, including the old and new values in the audit log. Filtering the audit log by `tenant_id` needs a platform super administrator.
+
+For keys that have their own settings API, such as `developer.*` and `features.*`, use that API. These endpoints write the stored entry only, without the side effects of the module's own API.
+
 ## Examples
 
 ### Declare settings in a plugin
