@@ -7,11 +7,166 @@ doc_type: reference
 audience: developers
 source_prd: none
 ai_drafted: true
-tags: [api]
+last_verified: 2026-10-27
+tags: [api, errors]
 ---
 
-Error response format and status codes.
+How the CMDX API reports errors: the status codes it uses, the shapes of error bodies, and the headers that come with them.
 
 :::note
-This page is being written.
+CMDX is settling on one error body format for every endpoint. Until then, the body depends on the endpoint, as described below. Rely on the status code first.
 :::
+
+## Summary
+
+| Status | Meaning in CMDX |
+| --- | --- |
+| `400` | The request breaks a rule: a bad header, a value the operation doesn't allow, or a missing tenant. |
+| `401` | No valid access token. See [Authenticate API requests](./authentication.md). |
+| `403` | Signed in, but not allowed: a missing permission, no membership in the tenant, or an expired password. |
+| `404` | No such route, or no such record in your tenant. A record in another tenant also returns `404`, so the response doesn't confirm it exists. |
+| `405` | The route doesn't accept this HTTP method. |
+| `409` | The request conflicts with existing data, such as a duplicate value, or the resource isn't ready yet. |
+| `410` | The resource is gone, such as an expired signed file link. |
+| `413` | An uploaded file is larger than the limit. The default is 10 MB. |
+| `422` | The request body, query or path doesn't match the schema, or a value fails a check. |
+| `429` | Too many requests, or too many failed sign-ins. |
+| `500` | An unexpected error on the server. |
+| `502` | A service CMDX depends on, such as an AI provider, returned an error. |
+| `503` | CMDX is in maintenance, or a service it needs is unavailable. |
+
+## Details
+
+### Message only
+
+Most errors have a `detail` string:
+
+```json
+{
+  "detail": "Category with slug 'docs' already exists under parent."
+}
+```
+
+### Message with a code
+
+Some errors put an object in `detail`, with a code that doesn't change between languages. Branch on the code, not on the message. For example, when multi-factor authentication is required:
+
+```json
+{
+  "detail": {
+    "error": "unauthorized",
+    "message": "Multi-factor authentication is required",
+    "code": "ERR_MFA_REQUIRED"
+  }
+}
+```
+
+| `code` | Status | Meaning |
+| --- | --- | --- |
+| `ERR_MFA_REQUIRED` | `401` | The security policy requires multi-factor authentication. Verify a code first. |
+| `ERR_IP_NOT_ALLOWED` | `403` | The security policy doesn't allow requests from your IP address. |
+| `ERR_PASSWORD_EXPIRED` | `403` | The account's password has expired and must be changed before signing in. |
+
+Some endpoints name the code `error_code` instead, with a dotted value such as `enrollment.window_closed`. Those codes are listed on the pages for their endpoints.
+
+### Validation errors
+
+When the request doesn't match the endpoint's schema, the status is `422` and the body lists each problem:
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "errors": [
+    {
+      "code": "missing",
+      "message": "Field is required",
+      "field": "body.slug"
+    }
+  ]
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `success` | Always `false`. |
+| `message` | A summary, `Validation error`. |
+| `errors[].field` | Where the problem is: `body`, `query` or `path`, then the field's path, joined with dots. For example, `body.email` or `body.items.0.name`. |
+| `errors[].code` | The type of problem, such as `missing`, `string_too_short`, `uuid_parsing` or `value_error`. It doesn't change between languages. |
+| `errors[].message` | A description of the problem. |
+
+## Headers
+
+| Header | When | Description |
+| --- | --- | --- |
+| `X-Request-ID` | Most responses | An id for the request. If you send an `X-Request-ID` of up to 128 letters, digits and hyphens, CMDX uses yours. Quote it when you report a problem. |
+| `Retry-After` | `429` from the rate limit, and `503` in maintenance | The number of seconds to wait before trying again. |
+| `WWW-Authenticate` | `401` | `Bearer`. |
+| `Content-Language` | Most responses | The language of the messages in the response. |
+
+## Language of messages
+
+Messages are translated into English, Spanish, French or German. CMDX picks the language from, in order:
+
+1. the `lang` query parameter, such as `?lang=fr`;
+2. the language saved on the account, carried in the access token;
+3. the `Accept-Language` header;
+4. English.
+
+Codes, field paths and the `error` key are never translated, so use them, and the status, in your code. Some messages are always in English.
+
+## Maintenance mode
+
+When an administrator puts CMDX into maintenance, every request returns `503` with a `Retry-After` header, including requests from administrators:
+
+```json
+{
+  "detail": "The service is temporarily unavailable for maintenance. Please try again later.",
+  "retry_after": 3600
+}
+```
+
+In read-only maintenance, `GET`, `HEAD` and `OPTIONS` requests still work. Other requests return `503` with `"mode": "read_only"` and no `Retry-After`.
+
+`/health`, the API documentation pages and the endpoint that turns maintenance off stay available.
+
+## Rate limits
+
+When you send too many requests, the status is `429`:
+
+```json
+{
+  "detail": "Rate limit exceeded. Retry after 60 seconds."
+}
+```
+
+Wait for the number of seconds in the `Retry-After` header. Limits are counted per account for signed-in requests, and per IP address otherwise. Each endpoint sets its own limit; sign-in, for example, allows 5 requests a minute.
+
+## Examples
+
+Send a request with a missing field and read the status, the request id and the body. `ACCESS_TOKEN` and `TENANT_ID` are set as in [Authenticate API requests](./authentication.md):
+
+```bash
+curl -s -i -X POST "http://localhost:8000/api/v1/courses/categories?lang=fr" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "X-Tenant-ID: $TENANT_ID" \
+  -H "X-Request-ID: docs-example-1" \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Docs"}' 
+```
+
+The category has no `slug`, so the status is `422`. Your request id comes back, and the messages are in French because of `?lang=fr`, while the codes and field paths stay the same:
+
+```text
+HTTP/1.1 422 Unprocessable Entity
+x-request-id: docs-example-1
+...
+
+{"success":false,"message":"Erreur de validation","errors":[{"code":"missing","message":"Le champ est obligatoire","field":"body.slug"}]}
+```
+
+## Related
+
+- [Authenticate API requests](./authentication.md): the `401` and `403` errors from signing in
+- [Pagination and filtering](./pagination-and-filtering.md)
+- [Multi-tenancy](../architecture/multi-tenancy.md): why records in other tenants return `404`
