@@ -7,7 +7,7 @@ doc_type: reference
 audience: developers
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-25
+last_verified: 2026-10-27
 tags: [architecture, plugins, hooks]
 ---
 
@@ -32,7 +32,7 @@ def register_hooks(hook_manager: HookManager) -> None:
 
 - The first argument is the hook or event name from the tables below.
 - Handlers for the same name run one after another, lowest `priority` first. The default is `50`.
-- A handler receives a `HookContext`. `ctx.hook_point` is the name and `ctx.data` is the payload, a dictionary.
+- A handler receives a `HookContext`. `ctx.hook_point` is the name, `ctx.data` is the payload, a dictionary, and `ctx.tenant_id` is the tenant the event happened in.
 - Handlers can be `async` or plain functions. Plain functions run in a worker thread so they don't block the server.
 - The `@hook` decorator and `register_decorated_hooks` in `core.plugin_api.hooks` do the same with a decorator.
 
@@ -48,19 +48,21 @@ Each name is delivered in one of three ways. The **Delivery** column in the tabl
 
 | Delivery | When the handler runs | Does the caller wait? | Can it see a change that is later rolled back? |
 | --- | --- | --- | --- |
-| During | Inside the operation, before the request's changes are saved | Yes | Yes |
+| During | Inside the operation, before its changes are saved | Yes | Yes |
 | After save | Once the request's database changes are saved | No | No |
-| Background | Soon after the event is emitted, in a background task | No | Yes |
+| Background | Soon after the event is emitted, in a background task. For an event emitted by a worker, once the worker's task has succeeded | No | Yes for an event emitted during a request; no for one emitted by a worker task |
 
 For handlers that run after save or in the background, the request's database session is already closed. A handler that needs the database opens its own session. Keep handlers short, and hand slow work to a background task.
 
-Ids and times in payloads are usually strings. Keys in square brackets are sent only in some cases. Not every payload carries a tenant id, so check for `tenant_id` before relying on it.
+Ids and times in payloads are usually strings. Keys in square brackets are sent only in some cases. Not every payload carries a tenant id. A `tenant_id` or `organization_id` key with no tenant is `None`.
+
+`ctx.tenant_id` is a UUID: the payload's `tenant_id` or `organization_id`, otherwise the tenant of the request that emitted the event, otherwise `None`. A plugin whose manifest sets `multitenant="per_tenant"`, the default, receives an event only when `ctx.tenant_id` is a tenant that has the plugin enabled. An event with no tenant reaches only plugins with `multitenant="global"`.
 
 :::note
 Some hook points are defined in `core/hooks/points.py` but nothing fires them yet, and they are left out of this page. This includes the `model.*` points: whether they are kept as reserved or removed is still being decided.
-
-Events emitted by Celery workers and scheduled jobs don't reach plugin hooks. Only events emitted while the API handles a request do.
 :::
+
+Events emitted by Celery workers and scheduled jobs reach plugin hooks too. A worker sets up the same hooks as the API, including those of enabled plugins, when it runs its first task. It holds the events a task emits and delivers them once the task has succeeded, so a task that fails delivers none. A worker loads plugins once per process, so restart the Celery workers after you enable, disable or reload a plugin.
 
 ## Hook points
 
@@ -84,6 +86,8 @@ These names are members of `HookPoint` in `core.hooks.points`.
 | `password_reset_requested` | A password reset is requested | After save | `user_id`, `email`, `action_url`, `subject`, `expires_in` |
 | `password_changed` | A password is changed | After save | `user_id`, `subject`, [`set_by_admin`] |
 | `email_verification_requested` | An email verification link is sent | After save | `user_id`, `email`, `action_url`, `subject`, `expires_in` |
+| `email_verified` | A user verifies their email address | After save | `user_id` |
+| `account_suspended` | An administrator suspends an account | After save | `user_id`, `subject` |
 | `role_assignment_created` | A role is assigned to a user | After save | `user_id`, `user_name`, `role_name` |
 | `role_assignment_revoked` | A role is taken away from a user | After save | `user_id`, `user_name`, `role_name` |
 
@@ -92,11 +96,11 @@ These names are members of `HookPoint` in `core.hooks.points`.
 | Name | Fired when | Delivery | Payload keys |
 | --- | --- | --- | --- |
 | `course.created` | A course is created or cloned | Background | `course_id`, `created_by`, `tenant_id`, [`cloned_from`] |
-| `course.enrolled` | A learner is enrolled in a course | During or background | `user_id`, `course_id`, `course_name`, [`tenant_id`, `student_id`, `context_type`, `context_id`, `user_name`, `student_name`, `locale`, `instructor_id`] |
+| `course.enrolled` | A learner is enrolled in a course | During or background | `user_id`, `student_id`, `course_id`, `learning_module_id`, `course_name`, `context_type`, `context_id`, `tenant_id`, [`user_name`, `student_name`, `locale`, `instructor_id`] |
 | `course.completed` | A learner completes a course | Background | `user_id`, `course_id`, `tenant_id` |
 | `user.enrolled` | An enrollment is created or revoked | During | `enrollment_id`, `user_id`, `learning_module_id`, `tenant_id`, `method`, `status`, `event` (`enrollment.created` or `enrollment.revoked`) |
 
-`course.enrolled` comes from two places, and the keys depend on which: one sends the `student_id` and context keys, the other sends `tenant_id`. Read every key with `ctx.data.get()`.
+In `course.enrolled`, `course_id` is the course's own id and `learning_module_id` is the learning module the learner was enrolled in.
 
 ### Groups
 
@@ -182,8 +186,9 @@ These names are emitted on the event dispatcher in `core.events` and delivered t
 | `enrollment.created` | An enrollment is created | `enrollment_id`, `user_id`, `learning_module_id`, `method`, `status`, `actor_id`, `tenant_id` |
 | `enrollment.revoked` | An enrollment is revoked | `enrollment_id`, `user_id`, `learning_module_id`, `method`, `status`, `revoke_reason`, `actor_id`, `tenant_id`, [`course_name`, `user_name`, `locale`] |
 | `enrollment.completed` | An enrollment is completed | `enrollment_id`, `user_id`, `learning_module_id`, `method`, `status`, `actor_id`, `tenant_id` |
-| `enrollment.expired` | An enrollment expires during a request | `enrollment_id`, `user_id`, `learning_module_id`, `status`, `actor_id`, `tenant_id`, [`course_name`, `user_name`, `locale`] |
+| `enrollment.expired` | An enrollment expires | `enrollment_id`, `user_id`, `learning_module_id`, `status`, `actor_id`, `tenant_id`, [`course_name`, `user_name`, `locale`] |
 | `enrollment.reminder` | An enrollment reminder is due | Same as `enrollment.expired` |
+| `enrollment.dropped` | A course is force-deleted and its active or pending enrollments are dropped | `enrollment_id`, `user_id`, `learning_module_id`, `method`, `status`, `reason`, `course_id`, `actor_id`, `tenant_id` |
 | `enrollment.progress_updated` | A learner's progress in an enrollment changes | `tenant_id`, `user_id`, `learning_item_id`, `status` |
 
 ### Enrollment keys and rules
@@ -275,6 +280,12 @@ These events use a flat payload:
 | `user.preferences.created` | A user's preferences are first saved | `user_id`, [`fields`] |
 | `user.preferences.updated` | A user's preferences are changed | `user_id`, [`fields`] |
 | `user.preferences.reset` | A user's preferences are reset | `user_id` |
+
+### Notifications
+
+| Name | Fired when | Payload keys |
+| --- | --- | --- |
+| `notification.delivery_failed` | A notification can't be delivered on a channel after its retries run out | `delivery_id`, `notification_id`, `channel`, `user_id`, `error_message`, `retry_count` |
 
 ## Next
 
