@@ -55,11 +55,40 @@ ACCESS_TOKEN=<access_token>
 REFRESH_TOKEN=<refresh_token>
 ```
 
-Don't send an `X-Tenant-ID` header with this request. Signing in isn't tied to a tenant.
+The tenant you sign in to decides which security policy applies: token lifetimes, whether you need multi-factor authentication, which addresses may sign in, and when your password expires. To choose it, add `-H 'X-Tenant-ID: <tenant-id>'` to the request. Without the header, CMDX uses your only active tenant, or the global policy if you belong to several tenants or none. A header that isn't a UUID fails with `400`, and a tenant you aren't an active member of fails with `403`.
 
-This endpoint accepts 5 requests a minute. After 5 failed attempts for the same email from the same address, sign-in is blocked for 15 minutes, even with the right password. An administrator can change both numbers in the security policy.
+This endpoint accepts 5 requests a minute, a fixed limit. After 5 failed attempts for the same email from the same address, sign-in is blocked for 15 minutes, even with the right password. An administrator can change the number of attempts and the length of the block in the security policy.
 
-### 2. Check the token
+If the response to your next request is `401` with `ERR_MFA_REQUIRED`, complete step 2 first. Otherwise, go to step 3.
+
+### 2. Complete multi-factor authentication, if required
+
+When the security policy requires multi-factor authentication, the token from step 1 works only for the `/api/v1/tokens` and `/api/v1/auth/` endpoints. Other requests return `401`:
+
+```json
+{
+  "detail": {
+    "error": "unauthorized",
+    "message": "Multi-factor authentication is required",
+    "code": "ERR_MFA_REQUIRED"
+  }
+}
+```
+
+Send a code from the account's authenticator app to `POST /api/v1/auth/mfa/verify`:
+
+```bash
+curl -s -X POST http://localhost:8000/api/v1/auth/mfa/verify \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"code": "<six-digit-code>"}' | jq
+```
+
+If you sent `X-Tenant-ID` in step 1, send it here too, so the same security policy applies. If the account has no authenticator app, send `{"password": "<password>"}` instead of the code. To set up an app, send the password to `POST /api/v1/auth/mfa/enroll`, add the returned `provisioning_uri` to the app, then send its first code to `POST /api/v1/auth/mfa/enroll/confirm`.
+
+The response has a new access token and refresh token, in the same shape as step 1. Replace both shell variables with them and use them from then on. The new refresh token has the standard lifetime, even if you signed in with `remember_me=true`.
+
+### 3. Check the token
 
 Send the access token in the `Authorization` header. `GET /api/v1/users/me` returns the account it belongs to:
 
@@ -77,7 +106,7 @@ curl -s http://localhost:8000/api/v1/users/me \
 
 The full response also lists the account's profile and its `capabilities`.
 
-### 3. Choose a tenant
+### 4. Choose a tenant
 
 A token isn't tied to a tenant. Each request that works on a tenant's data names the tenant in the `X-Tenant-ID` header. List the tenants you belong to:
 
@@ -88,9 +117,9 @@ curl -s http://localhost:8000/api/v1/organizations/mine \
 
 ```json
 {
-  "id": "0905adfd-5fea-4616-92f6-bfa19d9237f0",
-  "slug": "docs-test",
-  "name": "Docs Test"
+  "id": "<tenant-id>",
+  "slug": "<tenant-slug>",
+  "name": "<tenant-name>"
 }
 ```
 
@@ -100,7 +129,7 @@ Keep the `id` of the tenant you want to work in:
 TENANT_ID=<tenant-id>
 ```
 
-### 4. Call the API
+### 5. Call the API
 
 Send both headers. For example, list the tenant's courses:
 
@@ -119,9 +148,9 @@ curl -s http://localhost:8000/api/v1/courses \
 }
 ```
 
-The tenant must be one you're a member of. Without the header, some routes return `400`, and others return only data that belongs to no tenant, so always send it for tenant data. For how CMDX finds and checks the tenant, see [Multi-tenancy](../architecture/multi-tenancy.md).
+The tenant must be one you're a member of. Without the header, routes behave differently: some return `400`, some such as `/api/v1/courses` use your only active tenant, and others return only data that belongs to no tenant. Always send the header for tenant data. For how CMDX finds and checks the tenant, see [Multi-tenancy](../architecture/multi-tenancy.md).
 
-### 5. Refresh the access token
+### 6. Refresh the access token
 
 Before the access token expires, get a new one with the refresh token. This endpoint takes JSON:
 
@@ -147,7 +176,7 @@ curl -s -X POST http://localhost:8000/api/v1/tokens/refresh \
 
 The response has a new access token only. Keep using the same refresh token until it expires. This endpoint accepts 10 requests a minute.
 
-### 6. Sign out
+### 7. Sign out
 
 Revoke the refresh token when you're done:
 
@@ -170,36 +199,11 @@ Changing the account's password, or an administrator suspending it, also ends ev
 
 ## How long tokens last
 
-An administrator sets token lifetimes in the security policy. By default, both tokens last 8 hours, the length of the session timeout. If you sign in with `remember_me=true` in the form, the refresh token lasts 30 days instead, unless the administrator has turned that option off or changed the number of days.
-
-## If multi-factor authentication is required
-
-When the security policy requires multi-factor authentication, the token from step 1 works only for the `/api/v1/tokens` and `/api/v1/auth/` endpoints. Other requests return `401`:
-
-```json
-{
-  "detail": {
-    "error": "unauthorized",
-    "message": "Multi-factor authentication is required",
-    "code": "ERR_MFA_REQUIRED"
-  }
-}
-```
-
-Send a code from the account's authenticator app to `POST /api/v1/auth/mfa/verify`:
-
-```bash
-curl -s -X POST http://localhost:8000/api/v1/auth/mfa/verify \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  -H 'Content-Type: application/json' \
-  -d '{"code": "<six-digit-code>"}' | jq
-```
-
-The response has a new access token and refresh token, in the same shape as step 1. Use them from then on. The account must have an authenticator app set up first.
+An administrator sets token lifetimes in the security policy. By default, both tokens last 8 hours, the length of the session timeout. If you sign in with `remember_me=true` in the form, the refresh token lasts 30 days instead, unless the administrator has turned that option off or changed the number of days. The tokens from multi-factor verification (step 2) always have the standard lifetime. The policy that applies is the one for the tenant you signed in to (step 1).
 
 ## Other ways to sign in
 
-- **LDAP:** if your installation uses LDAP, send `{"username": "<username>", "password": "<password>"}` as JSON to `POST /api/v1/auth/sso/ldap/login`. The response has the same tokens as step 1.
+- **LDAP:** if your installation uses LDAP, send `{"username": "<username>", "password": "<password>"}` as JSON to `POST /api/v1/auth/sso/ldap/login`. If LDAP is set up for your tenant rather than the whole installation, also send `X-Tenant-ID: <tenant-id>`. Without it, CMDX uses the installation's LDAP settings, or returns `403` if LDAP isn't turned on there. The response has the same tokens as step 1.
 - **Single sign-on, Google and GitHub:** these flows run in a browser. They end with a one-time code, which the app exchanges for tokens at `POST /api/v1/auth/oauth/exchange`.
 
 CMDX has no API keys or service accounts. An integration signs in as a user account.
@@ -214,17 +218,17 @@ Error responses have a `detail` field. Its text is translated into the caller's 
 
 | Status and detail | Cause | Fix |
 | --- | --- | --- |
-| `401` `Invalid email or password` | The email or password is wrong, or the account is inactive. | Check the credentials. An administrator can check the account's status. |
+| `401` `Invalid email or password` | The email or password is wrong, the account is inactive, or the security policy doesn't allow sign-in from your IP address. | Check the credentials. An administrator can check the account's status and the allowed addresses. |
+| `403` with `detail.code` `ERR_PASSWORD_EXPIRED` | The password is older than the security policy allows. | Reset the password with the forgot-password link on the sign-in page, or ask an administrator to send a reset email. Then sign in again. |
+| `403` with `detail.code` `ERR_IP_NOT_ALLOWED` | The security policy doesn't allow requests from your IP address. | Send requests from an allowed address, or ask an administrator to add yours. |
 | `429` `Too many failed login attempts` | Too many failed sign-ins for this email from your address. | Wait 15 minutes, or the time the security policy sets. |
 | `429` `Rate limit exceeded` | Too many requests in a minute. | Wait the number of seconds in the `Retry-After` header. |
 | `401` `Not authenticated` | The `Authorization` header is missing or doesn't start with `Bearer`. | Send `Authorization: Bearer <access-token>`. |
-| `401` `Invalid or expired token` | The access token has expired or isn't valid. | Refresh it (step 5), or sign in again. |
+| `401` `Invalid or expired token` | The access token has expired or isn't valid. | Refresh it (step 6), or sign in again. |
 | `401` `Invalid token type` | You sent the refresh token as the access token. | Send the access token. |
 | `401` `Token has been revoked` | Every session was ended: sign-out everywhere, a password change or a suspension. | Sign in again. |
 | `401` `Invalid refresh token` | The refresh token has expired or was revoked. | Sign in again. |
-| `401` with `detail.code` `ERR_MFA_REQUIRED` | The security policy requires multi-factor authentication. | Verify a code (see above). |
+| `401` with `detail.code` `ERR_MFA_REQUIRED` | The security policy requires multi-factor authentication. | Complete step 2. |
 | `400` `X-Tenant-ID must be a valid UUID.` | The tenant header isn't a UUID. | Use an `id` from `/api/v1/organizations/mine`. |
 | `403` `Active organization membership is required.` | You aren't an active member of that tenant. | Use a tenant you belong to. |
 | `400` `Unknown tenant.` | No tenant has that id. Administrators get this instead of `403`. | Use an `id` from `/api/v1/organizations/mine`. |
-
-For the error format used across the API, see [Errors](./errors.md).
