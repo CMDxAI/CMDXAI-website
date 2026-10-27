@@ -47,7 +47,7 @@ flowchart TB
 One CMDX install hosts many tenants. A tenant is the space for one company, school or team. Everything a person does in CMDX happens inside one tenant, and one tenant never sees another tenant's data.
 
 - **Departments** form a tree inside the tenant. A parent department covers the departments beneath it. In learning, departments do one job: they limit where a category applies.
-- **Members** are the people in the tenant. Each member has a role, such as learner, instructor, course author or administrator, and can sit in a department. A person can belong to more than one tenant, with a different role in each. Roles can also be given on one course or one category.
+- **Members** are the people in the tenant. Each member has a role, such as learner, instructor, content author or administrator, and can sit in a department. A person can belong to more than one tenant, with a different role in each. Roles can also be given on one course or one category.
 - **Learning content** is everything else: categories, learning items, courses, trainings, enrollments, groups and gradebooks. All of it belongs to the tenant.
 
 ## 2. The catalog
@@ -122,12 +122,12 @@ config:
 ---
 flowchart TB
   accTitle: A learner's path through an item
-  accDescr: A learner is enrolled by hand, in bulk, by enrolling themselves, with an enrollment key, or by a rule. The enrollment moves from pending to active. CMDX tracks progress on each item and rolls it up to the section and the enrollment. When all the completion rules are met, the item is completed. Scores also go to the gradebook. A completion rule can then enroll the learner in the next item.
+  accDescr: A learner is enrolled by hand, in bulk, by enrolling themselves, with an enrollment key, or by a rule. The enrollment moves from pending to active. CMDX tracks progress on each item and rolls it up to the section and the enrollment. When the completion rules are met, the item is completed. Scores also go to the gradebook. A completion rule can then enroll the learner in the next item.
 
   ways["How learners get in: by hand, in bulk, self-enrollment, an enrollment key, or a rule"]
   enrollment["Enrollment: pending, then active"]
   progress["Progress: tracked per item, rolled up to the section and the enrollment"]
-  rules["Completion rules: are they all met?"]
+  rules["Completion rules: are they met?"]
   done["Completed"]
   gradebook["Gradebook"]
   ways --> enrollment --> progress --> rules -- yes --> done
@@ -142,7 +142,7 @@ flowchart TB
 2. **The enrollment becomes active.** It moves from pending to active. It can also expire, be dropped or be revoked.
 3. **Progress is tracked.** CMDX records each learner's status, score, time spent and attempts on every item, and rolls them up to the section and the enrollment. Progress is kept separately for every placement, so a learner who passes the fire safety quiz in the induction course hasn't completed it in the refresher yet. Order and prerequisites decide when the next item unlocks.
 4. **The completion rules are checked.** Rules include viewing or downloading the item, marking it complete, reaching a score, spending a set time, watching enough of a video, a SCORM status, or a submission being graded or passed. Rules can be combined with AND and OR.
-5. **The item is completed.** When all the rules are met, CMDX records the completion and its date. Scores also go to the gradebook.
+5. **The item is completed.** When the completion rules are met, CMDX records the completion and its date. A quiz is completed only when the learner passes it. Scores also go to the gradebook.
 
 For videos and other media, CMDX also records how much of the item each learner has watched. That record is called **mastery**. It belongs to the item, not to a placement, so it counts in every course the item is in.
 
