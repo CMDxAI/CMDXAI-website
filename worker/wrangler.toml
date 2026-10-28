@@ -1,0 +1,31 @@
+name = "cmdx-subscribe"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets, set once with `npx wrangler secret put <NAME>` (local dev: worker/.dev.vars):
+# SMTP_HOST, SMTP_PORT (587 or 465), SMTP_USER, SMTP_PASS
+[vars]
+# Comma-separated; localhost:3000 is the Vite dev server (npm run dev).
+ALLOWED_ORIGINS = "https://cmdx.ai,http://localhost:3000"
+MAIL_FROM = "hello@cmdx.ai"
+# Reply-To on the confirmations visitors get.
+REPLY_TO = "hello@cmdx.ai"
+# Who gets new-subscriber notices and Get started messages; comma-separated.
+TEAM_TO = "jagan@cmdx.ai,naveen.m@cmdx.ai"
+
+# Each subscribe sends two emails, so cap it per IP.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }
+
+# Keep request logs and console.error output in the dashboard (Workers > cmdx-subscribe > Logs).
+[observability]
+enabled = true
+
+# One confirmation per address per minute, whatever IP asks.
+[[ratelimits]]
+name = "RECIPIENT_LIMITER"
+namespace_id = "1002"
+simple = { limit = 1, period = 60 }
