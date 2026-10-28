@@ -188,6 +188,13 @@ div[class*='codeBlockContainer'] {
 .markdown table a {
   overflow-wrap: anywhere;
 }
+/* From 1100px, the content column is wide enough for code in a table's first column (a name such
+   as `course.created`) to stay whole; below that it breaks like other code. */
+@media (min-width: 1100px) {
+  .markdown table td:first-child code {
+    overflow-wrap: normal;
+  }
+}
 @media (max-width: 996px) {
   .markdown table {
     --ifm-table-cell-padding: var(--s-8);
