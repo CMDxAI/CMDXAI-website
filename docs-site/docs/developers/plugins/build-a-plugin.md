@@ -7,7 +7,7 @@ doc_type: tutorial
 audience: developers
 source_prd: none
 ai_drafted: true
-last_verified: 2026-10-27
+last_verified: 2026-10-28
 tags: [plugins, hooks]
 ---
 
@@ -23,7 +23,7 @@ A plugin called `greetings` that adds an API route to CMDX and writes a log line
 
 Run every command from the `cmdx-LMS` folder. The Docker Compose commands use the same file as the quick-start, `docker-compose-build.yml`. That file mounts the `backend` folder into the containers, so a plugin you add on your machine is visible to the backend without rebuilding the image.
 
-This tutorial was tested on 2026-10-27 with Docker 29.5.2 and Docker Compose 5.3.1 on macOS.
+This tutorial was tested on 2026-10-28 with Docker 29.5.2 and Docker Compose 5.3.1 on macOS.
 
 ## Step 1: Generate the plugin
 
@@ -59,7 +59,7 @@ manifest = PluginManifest(
     name="greetings",
     type=PluginType.LOCAL,
     version="0.1.0",
-    db_version=2026102700,
+    db_version=2026102800,
     display_name="Greetings",
     description="TODO: describe your plugin",
     author="<your-name>",
@@ -71,9 +71,15 @@ manifest = PluginManifest(
     capabilities=["greetings.view"],
     settings_namespace="greetings",
     multitenant="per_tenant",
+    # Add every table with a user-keyed column, e.g.
+    # PersonalDataTable(table="plg_greetings_visits") (import it from
+    # core.plugin_api), so the GDPR export includes its rows and
+    # erasure deletes them.
     personal_data=[],
 )
 ```
+
+Your `db_version` is the date you ran the generator, followed by `00`.
 
 | Field | What it does here |
 | --- | --- |
@@ -93,11 +99,13 @@ router = APIRouter(tags=["greetings"])
 @router.get("/items", response_model=BaseResponse[list[ItemOut]])
 async def list_items(
     dml: Annotated[DB, Depends(get_dml)],
-    _user: Annotated[User, Depends(get_current_active_user)],
+    _user: Annotated[User, Depends(require_capability("greetings.view", admin_bypass=True))],
 ):
     rows = await svc.list_items(dml)
     return success_response([ItemOut(id=str(r["id"]), label=r["label"]) for r in rows])
 ```
+
+The route needs the plugin's `greetings.view` capability. `admin_bypass=True` lets administrators through without it, so your Super Administrator can call the route before you grant the capability to any role.
 
 ## Step 3: Validate and install
 
@@ -115,7 +123,7 @@ Install it. Installing creates the plugin's table and adds its capability to the
 docker compose -f docker-compose-build.yml exec backend python -m scripts.plugin install greetings
 ```
 
-The output is `installed greetings (1 migration(s) applied)`. <!-- TODO: verify: install output, once the backend fix lands -->
+The output is `installed greetings (1 migration(s) applied)`.
 
 ## Step 4: Enable it for your tenant
 
@@ -191,25 +199,19 @@ Without the header, the route answers `404` with `Plugin 'greetings' not enabled
 
 ## Step 7: Handle a hook
 
-A hook handler runs when something happens in CMDX. Open `backend/plugins/greetings/hooks.py` and replace its contents with the following. It imports from `core.plugin_api`, the only package a plugin should import from.
+A hook handler runs when something happens in CMDX. The generator already wrote one in `backend/plugins/greetings/hooks.py`, `on_course_created()`, but left it switched off. It imports from `core.plugin_api`, the only package a plugin should import from:
 
 ```python
-"""Hook subscriptions for greetings."""
-
-from __future__ import annotations
-
-import logging
-
-from core.plugin_api import HookContext, HookManager
-
-logger = logging.getLogger(__name__)
-
-
 async def on_course_created(ctx: HookContext) -> None:
     logger.info("greetings: course created: %s", ctx.data.get("course_id"))
+```
 
+Switch it on. At the end of the file, in `register_hooks()`, remove the `#` before `hook_manager.register(...)` and delete the `pass` line. The function now reads:
 
+```python
 def register_hooks(hook_manager: HookManager) -> None:
+    # Example: react to a published hook point. A per_tenant plugin's
+    # handlers only run for events that carry a tenant which enabled it.
     hook_manager.register("course.created", on_course_created)
 ```
 
@@ -242,7 +244,7 @@ The `greetings` row shows `enabled`, with the scope `per_tenant`:
 ```text
 NAME                     VERSION    STATUS       SCOPE        SOURCE
 announcements            0.1.0      discovered   global       filesystem
-gamification             1.1.0      discovered   per_tenant   filesystem
+gamification             1.1.1      discovered   per_tenant   filesystem
 greetings                0.1.0      enabled      per_tenant   filesystem
 hello_plugin             1.0.0      discovered   per_tenant   filesystem
 ```
