@@ -135,7 +135,9 @@ TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/tokens \
   --data-urlencode 'password=<admin-password>' | jq -r .data.access_token)
 ```
 
-Use the Super Administrator you created in the install wizard. List the tenants you belong to:
+Use the Super Administrator you created in the install wizard. The token lasts 30 minutes, the default for `ACCESS_TOKEN_EXPIRE_MINUTES`. If you take longer, run this command again to get a new one.
+
+List the tenants you belong to:
 
 ```bash
 curl -s http://localhost:8000/api/v1/organizations/mine \
@@ -223,13 +225,37 @@ Restart the backend so it registers the handler:
 docker compose -f docker-compose-build.yml restart backend
 ```
 
-In the web app, create a course in your tenant. Then look for the handler's log line:
+Create a course in your tenant to fire the hook. A course needs a category, so list your tenant's categories first:
+
+```bash
+curl -s http://localhost:8000/api/v1/courses/categories \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "X-Tenant-ID: $TENANT_ID" | jq '.data[] | {id, slug}'
+```
+
+Keep the `id` of the category you created in the quick-start:
+
+```bash
+CATEGORY_ID=<category-id>
+```
+
+Create the course. The command prints the new course's id:
+
+```bash
+curl -s -X POST http://localhost:8000/api/v1/courses \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "X-Tenant-ID: $TENANT_ID" \
+  -H 'Content-Type: application/json' \
+  -d "{\"full_name\": \"Plugin hook test\", \"category_id\": \"$CATEGORY_ID\"}" | jq -r .data.id
+```
+
+Look for the handler's log line:
 
 ```bash
 docker compose -f docker-compose-build.yml logs backend | grep "greetings: course created"
 ```
 
-The line contains `"logger": "plugins.greetings.hooks"` and `"message": "greetings: course created: <course-id>"`.
+The line contains `"logger": "plugins.greetings.hooks"` and `"message": "greetings: course created: <course-id>"`, with the id the previous command printed.
 
 ## What you built
 
