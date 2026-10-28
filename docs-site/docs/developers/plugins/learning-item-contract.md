@@ -46,7 +46,7 @@ Every learning item type, such as file, quiz or SCORM, connects to CMDX through 
 | Attribute | Type | Meaning |
 | --- | --- | --- |
 | `kind` | `str` | The type name stored on each learning item. 1 to 32 characters, unique across providers. |
-| `valid_completion_criteria` | `set[str]` | Criterion types an instructor can add to an item of this kind. `POST /api/v1/learning-items/{id}/criteria` rejects any other type with 422. |
+| `valid_completion_criteria` | `set[str]` | Criterion types an instructor can add to an item of this kind. `POST /api/v1/learning-items-api/learning-items/{id}/criteria` rejects any other type with 422. |
 
 ## Methods
 
@@ -54,11 +54,11 @@ Every method is `async`. Each one except `supports_self_serve_player` takes the 
 
 | Method | Returns | When the host calls it |
 | --- | --- | --- |
-| `create(dml, learning_item_id, payload)` | `dict \| None` | On `POST /api/v1/learning-items`, after the shared record is written. If it raises, the service removes the new learning item and the request fails. |
-| `get(dml, learning_item_id)` | `dict \| None` | Whenever the API returns an item with its content, for example `GET /api/v1/learning-items/{id}`. The result becomes the item's `content` field. |
-| `update(dml, learning_item_id, payload)` | `dict` | On `PUT` or `PATCH /api/v1/learning-items/{id}` when the body has a `content` object. `payload` is that object. |
+| `create(dml, learning_item_id, payload)` | `dict \| None` | On `POST /api/v1/learning-items-api/learning-items`, after the shared record is written. If it raises, the service removes the new learning item and the request fails. |
+| `get(dml, learning_item_id)` | `dict \| None` | Whenever the API returns an item with its content, for example `GET /api/v1/learning-items-api/learning-items/{id}`. The result becomes the item's `content` field. |
+| `update(dml, learning_item_id, payload)` | `dict` | On `PUT` or `PATCH /api/v1/learning-items-api/learning-items/{id}` when the body has a `content` object. `payload` is that object. |
 | `delete(dml, learning_item_id)` | `None` | Not called today. Deleting a learning item is a soft delete that keeps the type's record. |
-| `clone(dml, source_id, target_id)` | `None` | On `POST /api/v1/learning-items/{id}/clone`, after the new shared record exists. Copy the type's record from `source_id` to `target_id`. |
+| `clone(dml, source_id, target_id)` | `None` | On `POST /api/v1/learning-items-api/learning-items/{id}/clone`, after the new shared record exists. Copy the type's record from `source_id` to `target_id`. |
 | `get_progress_signals(dml, user_id, learning_item_id)` | `ProgressSignals` | Each time completion is evaluated for a learner. |
 | `supports_self_serve_player()` | `bool` | Not called today. Returns whether learners can launch the item directly in the client. |
 
