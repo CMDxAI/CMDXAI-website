@@ -55,11 +55,11 @@ Every method is `async`. Each one except `supports_self_serve_player` takes the 
 | Method | Returns | When the host calls it |
 | --- | --- | --- |
 | `create(dml, learning_item_id, payload)` | `dict \| None` | On `POST /api/v1/learning-items-api/learning-items`, after the shared record is written. If it raises, the service removes the new learning item and the request fails. |
-| `get(dml, learning_item_id)` | `dict \| None` | Whenever the API returns an item with its content, for example `GET /api/v1/learning-items-api/learning-items/{id}`. The result becomes the item's `content` field. |
-| `update(dml, learning_item_id, payload)` | `dict` | On `PUT` or `PATCH /api/v1/learning-items-api/learning-items/{id}` when the body has a `content` object. `payload` is that object. |
+| `get(dml, learning_item_id)` | `dict \| None` | Whenever the API returns an item with its content, for example `GET /api/v1/learning-items-api/learning-items/{id}`. List endpoints, such as `GET /api/v1/learning-items-api/learning-items` and the placement lists, call it once per item, so keep it fast. The result becomes the item's `content` field. |
+| `update(dml, learning_item_id, payload)` | `dict` | On `PUT` or `PATCH /api/v1/learning-items-api/learning-items/{id}` when the body has a `content` field. `payload` is its value, which is `None` when the body sends `"content": null`. |
 | `delete(dml, learning_item_id)` | `None` | Not called today. Deleting a learning item is a soft delete that keeps the type's record. |
 | `clone(dml, source_id, target_id)` | `None` | On `POST /api/v1/learning-items-api/learning-items/{id}/clone`, after the new shared record exists. Copy the type's record from `source_id` to `target_id`. |
-| `get_progress_signals(dml, user_id, learning_item_id)` | `ProgressSignals` | Each time completion is evaluated for a learner. |
+| `get_progress_signals(dml, user_id, learning_item_id)` | `ProgressSignals` | Each time completion is evaluated for a learner. See [Evaluate progress](#evaluate-progress). |
 | `supports_self_serve_player()` | `bool` | Not called today. Returns whether learners can launch the item directly in the client. |
 
 The `create` payload is the request's `payload` object. The service adds `tenant_id`, `learning_item_id` and `title`, plus `created_by` when it knows the author.
@@ -72,7 +72,7 @@ The host looks for these on the provider's class, so define them as methods. An 
 
 | Method | Returns | When the host calls it |
 | --- | --- | --- |
-| `get_default_pass_threshold(dml, learning_item_id)` | `float \| None` | When an item has no criteria of its own. Default criteria that take a threshold use the item's `pass_mark_pct`, then this value, then 80. |
+| `get_default_pass_threshold(dml, learning_item_id)` | `float \| None` | When an item has no criteria of its own. Default criteria that take a threshold use the item's `pass_mark_pct`, then this value, then 80. A `pass_mark_pct` of 0 counts as unset. |
 | `assert_publishable(dml, learning_item_id)` | `None` | When an item moves from draft to published, before the new status is saved. Raise to block publishing. |
 
 ## Progress signals
@@ -81,7 +81,7 @@ The host looks for these on the provider's class, so define them as methods. An 
 
 | Field | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `status` | `str` | required | A `ProgressStatus` value: `not_started`, `in_progress`, `completed` or `failed`. |
+| `status` | `str` | required | Usually a `ProgressStatus` value: `not_started`, `in_progress`, `completed` or `failed`. SCORM passes the attempt's own status, such as `incomplete`, `passed` or `browsed`, which `scorm_status_in` matches. |
 | `score` | `float \| None` | `None` | The learner's score. |
 | `time_spent_seconds` | `int` | `0` | Total time on the item, in seconds. |
 | `attempts_count` | `int` | `0` | Number of attempts. |
@@ -97,9 +97,9 @@ The host looks for these on the provider's class, so define them as methods. An 
 | --- | --- |
 | `view` | `viewed` is true, or `status` is `in_progress` or `completed` |
 | `download` | `downloaded` is true |
-| `mark_complete` | `status` is `completed` |
+| `mark_complete` | `status` is `completed`. `POST /api/v1/learning-items-api/progress/{learning_item_id}/mark-complete` writes `completed` to the learner's progress record without asking the provider, so `get_progress_signals` must read that record back. Otherwise the next evaluation undoes the completion. |
 | `score_gte` | `score` is at least `threshold` |
-| `attempts_max` | `attempts_count` is at most `threshold` |
+| `attempts_max` | `attempts_count` is at most `threshold`. A `threshold` of 0 or none means no limit, so the criterion is always met. |
 | `time_spent_gte` | `time_spent_seconds` is at least `threshold` |
 | `scorm_status_in` | `status` is one of the comma-separated values in `value_text`, ignoring case |
 | `media_pct_gte`, `video_pct_gte` | `completion_pct` is at least `threshold` |
@@ -110,7 +110,8 @@ The host looks for these on the provider's class, so define them as methods. An 
 ### How criteria combine
 
 - Criteria with the same `group_no` form a group.
-- Within a group, criteria are read in order. Each one after the first joins the result so far with its own `logical_operator`, `AND` (the default) or `OR`.
+- Within a group, each criterion after the first joins the result so far with its own `logical_operator`, `AND` (the default) or `OR`. The criteria are read in the order the database returns them, which isn't fixed.
+- Mixing `AND` and `OR` in one group can give a different result each time. Use one operator per group, and separate groups for alternatives.
 - The item is complete when any group is true.
 - A quiz also needs `status` to be `completed`, so an `OR` shortcut can't complete it without a pass.
 
@@ -129,11 +130,20 @@ When an item has no criteria, the evaluator uses a default for its kind.
 
 ### Result
 
-When the criteria are met, the learner's progress becomes `completed`. Otherwise it takes `status` from the signals, or `in_progress` if that is empty. The evaluator also copies `score`, `time_spent_seconds` and `attempts_count` into the progress record.
+When the criteria are met, the learner's progress becomes `completed`. Otherwise it takes `status` from the signals, or `in_progress` if that is empty. A provider that returns `completed` completes the item even when its criteria aren't met, so return `completed` only when the item is done. The evaluator also copies `score`, `time_spent_seconds` and `attempts_count` into the progress record.
 
 ## Evaluate progress
 
-The host doesn't poll providers. When a learner does something that can change their progress, the type's backend module asks for an evaluation:
+The host doesn't evaluate progress on a schedule. It calls `get_progress_signals` when something asks for an evaluation:
+
+- The type's backend module, after a learner does something that can change their progress.
+- `POST /api/v1/learning-items-api/progress/{learning_item_id}/recompute`.
+- The deprecated `POST /api/v1/learning-items-api/learning-items/{id}/progress/evaluate`.
+- The Celery task `progress_user_recompute_runner`, which has no request.
+
+Read everything `get_progress_signals` needs through `dml`, not from a request.
+
+To ask for an evaluation from the type's module:
 
 ```python
 from modules.learning_items.repositories.learning_item_repository import LearningItemRepository
@@ -145,6 +155,8 @@ new_status = await CompletionEvaluator(LearningItemRepository(dml)).evaluate_and
 ```
 
 `placement_id` is optional. Without it, the evaluator updates every progress record the learner has for the item, or creates one for each placement.
+
+`evaluate_and_update_progress` doesn't commit. In a request, the session commits when the request ends. In a Celery task, call `await session.commit()` afterwards, or the result is lost.
 
 ## Register a provider
 
@@ -158,7 +170,8 @@ A new built-in type needs:
 
 1. A provider class in the type's backend module that implements every method above.
 2. An entry in `register_builtin_content_providers()` and in `BUILTIN_CONTENT_PROVIDER_KINDS`.
-3. A frontend change, because the course builder's type picker lists types by name.
+3. A branch in `get_default_criteria()` in `modules.learning_items.services.completion_evaluator`, unless `mark_complete` is the right default.
+4. A frontend change, because the course builder's type picker lists types by name.
 
 ```python
 from typing import Any
