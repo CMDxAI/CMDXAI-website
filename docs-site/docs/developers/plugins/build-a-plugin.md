@@ -127,10 +127,16 @@ The output is `installed greetings (1 migration(s) applied)`.
 
 ## Step 4: Enable it for your tenant
 
-A per-tenant plugin is enabled for one tenant at a time, so you need your tenant's id. Sign in to the API and keep the token:
+A per-tenant plugin is enabled for one tenant at a time, so you need your tenant's id. First set the backend's base URL. With the quick-start stack it is `http://localhost:8000`:
 
 ```bash
-TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/tokens \
+BASE_URL=<backend-base-url>
+```
+
+Sign in to the API and keep the token:
+
+```bash
+TOKEN=$(curl -s -X POST $BASE_URL/api/v1/tokens \
   --data-urlencode 'username=<admin-email>' \
   --data-urlencode 'password=<admin-password>' | jq -r .data.access_token)
 ```
@@ -140,7 +146,7 @@ Use the Super Administrator you created in the install wizard. The token lasts 3
 List the tenants you belong to:
 
 ```bash
-curl -s http://localhost:8000/api/v1/organizations/mine \
+curl -s $BASE_URL/api/v1/organizations/mine \
   -H "Authorization: Bearer $TOKEN" | jq '.data[] | {id, slug}'
 ```
 
@@ -169,7 +175,7 @@ docker compose -f docker-compose-build.yml restart backend celery_worker
 The restart returns before the backend is ready. Wait until it answers on `/health`:
 
 ```bash
-until curl -fsS http://localhost:8000/health >/dev/null; do sleep 5; done
+until curl -fsS $BASE_URL/health >/dev/null; do sleep 5; done
 ```
 
 Check that the plugin loaded:
@@ -185,7 +191,7 @@ The backend logs in JSON. It runs two uvicorn workers by default (`WORKERS=2`), 
 Call the route with your token. Send the tenant id in the `X-Tenant-ID` header, because a per-tenant plugin answers only in a tenant that has it enabled:
 
 ```bash
-curl -s http://localhost:8000/api/v1/plugins/greetings/items \
+curl -s $BASE_URL/api/v1/plugins/greetings/items \
   -H "Authorization: Bearer $TOKEN" \
   -H "X-Tenant-ID: $TENANT_ID" | jq
 ```
@@ -229,13 +235,13 @@ Restart the backend and the Celery worker so they register the handler, then wai
 
 ```bash
 docker compose -f docker-compose-build.yml restart backend celery_worker
-until curl -fsS http://localhost:8000/health >/dev/null; do sleep 5; done
+until curl -fsS $BASE_URL/health >/dev/null; do sleep 5; done
 ```
 
 Create a course in your tenant to fire the hook. A course needs a category, so list your tenant's categories first:
 
 ```bash
-curl -s http://localhost:8000/api/v1/courses/categories \
+curl -s $BASE_URL/api/v1/courses/categories \
   -H "Authorization: Bearer $TOKEN" \
   -H "X-Tenant-ID: $TENANT_ID" | jq '.data[] | {id, slug}'
 ```
@@ -251,7 +257,7 @@ CATEGORY_ID=<category-id>
 Create the course. The command prints the new course's id:
 
 ```bash
-curl -s -X POST http://localhost:8000/api/v1/courses \
+curl -s -X POST $BASE_URL/api/v1/courses \
   -H "Authorization: Bearer $TOKEN" \
   -H "X-Tenant-ID: $TENANT_ID" \
   -H 'Content-Type: application/json' \
