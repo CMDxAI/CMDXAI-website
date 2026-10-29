@@ -127,7 +127,7 @@ The output is `installed greetings (1 migration(s) applied)`.
 
 ## Step 4: Enable it for your tenant
 
-A per-tenant plugin is enabled for one tenant at a time, so you need your tenant's id. First set the backend's base URL. With the quick-start stack it is `http://localhost:8000`:
+A per-tenant plugin is enabled for one tenant at a time, so you need your tenant's id. First set the backend's base URL:
 
 ```bash
 BASE_URL=<backend-base-url>
