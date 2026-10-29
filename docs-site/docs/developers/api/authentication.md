@@ -15,9 +15,15 @@ Sign in to the CMDX API with an email and password, send the token with each req
 
 ## Prerequisites
 
-- A running CMDX. The examples use the API at `http://localhost:8000`, as set up in [Install CMDX and create a course](/getting-started/quick-start). Replace it with your own address.
+- A running CMDX, for example from [Install CMDX and create a course](/getting-started/quick-start). The examples read the backend's base URL from `BASE_URL`.
 - An account that signs in with an email and password.
 - `curl` and `jq`.
+
+Set the base URL before you start:
+
+```bash
+BASE_URL=<backend-base-url>
+```
 
 ## Steps
 
@@ -26,7 +32,7 @@ Sign in to the CMDX API with an email and password, send the token with each req
 Send your email and password as a form to `POST /api/v1/tokens`:
 
 ```bash
-curl -s -X POST http://localhost:8000/api/v1/tokens \
+curl -s -X POST $BASE_URL/api/v1/tokens \
   --data-urlencode 'username=<email>' \
   --data-urlencode 'password=<password>' | jq
 ```
@@ -78,7 +84,7 @@ When the security policy requires multi-factor authentication, the token from st
 Send a code from the account's authenticator app to `POST /api/v1/auth/mfa/verify`:
 
 ```bash
-curl -s -X POST http://localhost:8000/api/v1/auth/mfa/verify \
+curl -s -X POST $BASE_URL/api/v1/auth/mfa/verify \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"code": "<six-digit-code>"}' | jq
@@ -93,7 +99,7 @@ The response has a new access token and refresh token, in the same shape as step
 Send the access token in the `Authorization` header. `GET /api/v1/users/me` returns the account it belongs to:
 
 ```bash
-curl -s http://localhost:8000/api/v1/users/me \
+curl -s $BASE_URL/api/v1/users/me \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.data | {email, role: .role.name}'
 ```
 
@@ -111,7 +117,7 @@ The full response also lists the account's profile and its `capabilities`.
 A token isn't tied to a tenant. Each request that works on a tenant's data names the tenant in the `X-Tenant-ID` header. List the tenants you belong to:
 
 ```bash
-curl -s http://localhost:8000/api/v1/organizations/mine \
+curl -s $BASE_URL/api/v1/organizations/mine \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.data[] | {id, slug, name}'
 ```
 
@@ -134,7 +140,7 @@ TENANT_ID=<tenant-id>
 Send both headers. For example, list the tenant's courses:
 
 ```bash
-curl -s http://localhost:8000/api/v1/courses \
+curl -s $BASE_URL/api/v1/courses \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-Tenant-ID: $TENANT_ID" | jq '.pagination'
 ```
@@ -155,7 +161,7 @@ The tenant must be one you're a member of. Without the header, routes behave dif
 Before the access token expires, get a new one with the refresh token. This endpoint takes JSON:
 
 ```bash
-curl -s -X POST http://localhost:8000/api/v1/tokens/refresh \
+curl -s -X POST $BASE_URL/api/v1/tokens/refresh \
   -H 'Content-Type: application/json' \
   -d "{\"refresh_token\": \"$REFRESH_TOKEN\"}" | jq
 ```
@@ -181,7 +187,7 @@ The response has a new access token only. Keep using the same refresh token unti
 Revoke the refresh token when you're done:
 
 ```bash
-curl -s -X DELETE http://localhost:8000/api/v1/tokens \
+curl -s -X DELETE $BASE_URL/api/v1/tokens \
   -H 'Content-Type: application/json' \
   -d "{\"refresh_token\": \"$REFRESH_TOKEN\"}" | jq
 ```
@@ -191,7 +197,7 @@ The response is `{"success": true, "data": {"message": "Logged out"}, ...}`.
 The refresh token stops working. An access token you already have stays valid until it expires. To end every session for the account at once, including all access tokens, send `DELETE /api/v1/tokens/all` with the access token:
 
 ```bash
-curl -s -X DELETE http://localhost:8000/api/v1/tokens/all \
+curl -s -X DELETE $BASE_URL/api/v1/tokens/all \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq
 ```
 
