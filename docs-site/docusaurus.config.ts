@@ -236,6 +236,12 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
     },
+    // API reference request samples: curl first instead of the plugin's C# default.
+    languageTabs: [
+      { language: 'curl', highlight: 'bash', logoClass: 'curl' },
+      { language: 'python', highlight: 'python', logoClass: 'python' },
+      { language: 'nodejs', highlight: 'javascript', logoClass: 'nodejs' },
+    ],
   } satisfies Preset.ThemeConfig,
 };
 
