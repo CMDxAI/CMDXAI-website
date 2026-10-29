@@ -43,10 +43,10 @@ Scaffolding 'greetings' (local) in <path-to>/cmdx-LMS/backend/plugins/greetings
   + <path-to>/cmdx-LMS/backend/plugins/greetings/README.md
 
 Done.  Try:
-  pytest <path-to>/cmdx-LMS/backend/plugins/greetings/tests
+  cd <path-to>/cmdx-LMS/backend && python -m pytest -c pytest.ini <path-to>/cmdx-LMS/backend/plugins/greetings/tests
 ```
 
-A plugin name is lowercase letters, digits and underscores, starting with a letter. It must not match a folder that already exists in `backend/plugins/`.
+A plugin name is lowercase letters, digits and underscores, starting with a letter. It must not match any plugin CMDX already discovers. The generator checks only the folders in `backend/plugins/`, not the examples in `backend/plugins/examples/`. If you name a plugin `hello_plugin`, the loader keeps the example and skips yours as a duplicate.
 
 ## Step 2: Read what you generated
 
@@ -156,14 +156,20 @@ Enable the plugin for that tenant:
 docker compose -f docker-compose-build.yml exec backend python -m scripts.plugin enable greetings --tenant-id "$TENANT_ID"
 ```
 
-The output is `enabled greetings (status=enabled)`.
+The output is `enabled greetings for tenant <tenant-id>`.
 
-## Step 5: Restart the backend
+## Step 5: Restart the backend and the Celery worker
 
-The backend mounts plugin routes and hook handlers when it starts, and only for enabled plugins. Restart it:
+The backend mounts plugin routes and hook handlers when it starts, and only for enabled plugins. The Celery worker loads enabled plugins once per process, so events from background jobs reach the plugin only after it restarts. Restart both:
 
 ```bash
-docker compose -f docker-compose-build.yml restart backend
+docker compose -f docker-compose-build.yml restart backend celery_worker
+```
+
+The restart returns before the backend is ready. Wait until it answers on `/health`:
+
+```bash
+until curl -fsS http://localhost:8000/health >/dev/null; do sleep 5; done
 ```
 
 Check that the plugin loaded:
@@ -172,7 +178,7 @@ Check that the plugin loaded:
 docker compose -f docker-compose-build.yml logs backend | grep '"Plugin loaded"' | grep greetings
 ```
 
-The backend logs in JSON. The line contains `"message": "Plugin loaded"` and `"plugin.name": "greetings"`.
+The backend logs in JSON. It runs two uvicorn workers by default (`WORKERS=2`), and each one loads plugins, so you see one line per worker. Each line contains `"message": "Plugin loaded"` and `"plugin.name": "greetings"`.
 
 ## Step 6: Call the plugin's route
 
@@ -219,10 +225,11 @@ def register_hooks(hook_manager: HookManager) -> None:
 
 `register_hooks()` is called when the backend loads the plugin. It subscribes `on_course_created` to the `course.created` hook point. The handler receives a `HookContext`: `ctx.data` is the payload and `ctx.tenant_id` is the tenant the course was created in. Because the plugin is per-tenant, the handler runs only for courses created in a tenant that has the plugin enabled.
 
-Restart the backend so it registers the handler:
+Restart the backend and the Celery worker so they register the handler, then wait for the backend:
 
 ```bash
-docker compose -f docker-compose-build.yml restart backend
+docker compose -f docker-compose-build.yml restart backend celery_worker
+until curl -fsS http://localhost:8000/health >/dev/null; do sleep 5; done
 ```
 
 Create a course in your tenant to fire the hook. A course needs a category, so list your tenant's categories first:
@@ -232,6 +239,8 @@ curl -s http://localhost:8000/api/v1/courses/categories \
   -H "Authorization: Bearer $TOKEN" \
   -H "X-Tenant-ID: $TENANT_ID" | jq '.data[] | {id, slug}'
 ```
+
+This lists top-level categories only. The quick-start category is top-level, so it is in the list. To list the categories under a parent, add `?parent_id=<category-id>` to the URL.
 
 Keep the `id` of the category you created in the quick-start:
 
@@ -275,7 +284,7 @@ greetings                0.1.0      enabled      per_tenant   filesystem
 hello_plugin             1.0.0      discovered   per_tenant   filesystem
 ```
 
-Each time you change a plugin's Python code, restart the backend. If a handler runs in a background job, restart `celery_worker` too.
+Each time you change a plugin's Python code, restart the backend and `celery_worker`.
 
 ## Next
 
