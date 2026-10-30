@@ -188,11 +188,26 @@ div[class*='codeBlockContainer'] {
 .markdown table a {
   overflow-wrap: anywhere;
 }
-/* From 1100px, the content column is wide enough for code in a table's first column (a name such
-   as `course.created`) to stay whole; below that it breaks like other code. */
+/* Code in a table keeps its monospace font but drops the chip, which crowds dense cells. */
+.markdown table code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+/* Headers line up with their left-aligned cells. */
+.markdown table th {
+  text-align: left;
+}
+/* From 1100px, the content column is wide enough for code in a table (a name such as
+   `AssignmentItemProvider`) to stay whole; below that it breaks like other code. */
 @media (min-width: 1100px) {
-  .markdown table td:first-child code {
+  .markdown table td code {
     overflow-wrap: normal;
+  }
+  /* The second column usually holds a type or return value, such as `float | None`; keep it on
+     one line. */
+  .markdown table td:nth-child(2) code {
+    white-space: nowrap;
   }
 }
 @media (max-width: 996px) {
