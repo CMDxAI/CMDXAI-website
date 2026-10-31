@@ -13,7 +13,7 @@ tags: [architecture, configuration]
 
 CMDX settings that administrators can change at run time are declared in code as config keys and stored in the database by scope. This page lists the parts: the schema registry in `core.config.lib.registry`, the stored entries in the `config_entries` table, and the audit trail in `config_audit_log`.
 
-Settings read only from the environment at start-up, such as database URLs, are covered on the environment variables page for administrators.
+Settings read only from the environment at start-up, such as database URLs, are covered on the [environment variables](../../administrators/configuration/environment-variables.md) page for administrators.
 
 ## Summary
 
@@ -38,8 +38,8 @@ Namespaces declared today:
 | Namespace | Registered by | Keys |
 | --- | --- | --- |
 | `developer` | Developer settings module, at start-up | Listed on [Logging](./logging.md) and [developer settings](../../administrators/configuration/developer-settings.md) |
-| `features` | Developer settings module, at start-up | `features.new_course_editor`, `features.ai_assistant_v2`, `features.enhanced_analytics`, `features.maintenance_mode_banner`, `features.siem_audit_export`. No backend code turns anything on or off with them yet. |
-| `calendar` | Calendar module. It declares the key but doesn't register the namespace at start-up; it passes the definition to `resolve_setting()` directly. | `calendar.calendar_enabled`, listed on [Feature flags](./feature-flags.md) |
+| `features` | Developer settings module, at start-up | `features.new_course_editor`, `features.ai_assistant_v2`, `features.enhanced_analytics`, `features.maintenance_mode_banner`, `features.siem_audit_export`. The backend reads only `features.siem_audit_export`, to send settings changes to the SIEM webhook. |
+| `calendar` | Calendar module, at start-up | `calendar.calendar_enabled`, listed on [Feature flags](./feature-flags.md) |
 | `<plugin settings namespace>` | The plugin loader, when it loads a plugin | Listed in the plugin's own documentation |
 
 ## Key definition fields
