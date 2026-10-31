@@ -35,7 +35,7 @@ curl -s https://lms.example.com/health
 To check the containers:
 
 ```bash
-docker compose ps
+docker compose -f docker-compose.yml ps
 docker inspect cmdx_backend --format 'restarts={{.RestartCount}} health={{.State.Health.Status}}'
 ```
 
@@ -46,9 +46,9 @@ A rising restart count means a container is failing. See [troubleshooting](./tro
 The app writes JSON logs to standard output:
 
 ```bash
-docker compose logs -f backend
-docker compose logs -f celery_worker
-docker compose logs -f celery_beat
+docker compose -f docker-compose.yml logs -f backend
+docker compose -f docker-compose.yml logs -f celery_worker
+docker compose -f docker-compose.yml logs -f celery_beat
 ```
 
 To change how much is logged, see [set the log level](../configuration/developer-settings.md#set-the-log-level).
@@ -70,7 +70,7 @@ docker exec cmdx_postgres psql -U cmdx -d cmdx -c \
   "select client_addr, count(*) from pg_stat_activity where usename='cmdx' group by 1 order by 2 desc;"
 ```
 
-If one container holds most of them, see [size the connection budget](../install/production.md#step-1-size-the-connection-budget).
+If one container holds most of them, see [size the connection budget](../install/production.md#size-the-connection-budget).
 
 ## Check background work
 
@@ -96,10 +96,10 @@ The Compose stack sends a trace for each request to Jaeger. To open it, use an S
 Jaeger keeps traces in memory, so they are lost when it restarts, and old traces drop off. It keeps 1000 traces by default. To change that, set `JAEGER_MAX_TRACES`, `JAEGER_MEM_LIMIT` and `JAEGER_GOMEMLIMIT` together: 1000 traces use about 450 MB, while 2000 didn't fit in 1 GB. Then apply the change to that service alone:
 
 ```bash
-docker compose up -d --no-deps jaeger
+docker compose -f docker-compose.yml up -d --no-deps jaeger
 ```
 
-To send traces to your own collector, or to turn tracing off, change `OTEL_EXPORTER_OTLP_ENDPOINT` or `OTEL_ENABLED` in an override file. Compose fixes both, so `.env` has no effect. See [values Compose sets for you](../configuration/environment-variables.md#values-compose-sets-for-you).
+To send traces to your own collector, or to turn tracing off, change `OTEL_EXPORTER_OTLP_ENDPOINT` or `OTEL_ENABLED` in your production Compose file. Compose fixes both, so `.env` has no effect. See [values Compose sets for you](../install/production.md#values-compose-sets-for-you).
 
 ## Collect metrics with Prometheus
 
@@ -118,11 +118,11 @@ The web app's proxy doesn't forward `/metrics`, so scrape the backend's port 800
 
 ## Report errors to Sentry
 
-Set `SENTRY_DSN` and `SENTRY_ENVIRONMENT` in `.env`, then recreate the app containers. See [monitoring keys](../configuration/environment-variables.md#monitoring).
+Set `SENTRY_DSN` and `SENTRY_ENVIRONMENT` in `.env`, then recreate the app containers.
 
 ## Use the logs in the app
 
-Administrators can use **Logs** in the app:
+Administrators can use **Logs** in the app. See [review audit logs](./audit-logs.md):
 
 | Screen | Shows |
 | --- | --- |
@@ -135,6 +135,7 @@ CMDX also watches for bursts of errors. By default, 50 errors within 5 minutes a
 
 ## Related
 
+- [Review audit logs](./audit-logs.md)
 - [Manage scheduled tasks](./scheduled-tasks.md)
 - [Troubleshoot an install](./troubleshooting.md)
 - [Logging for developers](../../developers/architecture/logging.md)

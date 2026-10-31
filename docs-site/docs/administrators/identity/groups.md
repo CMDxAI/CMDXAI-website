@@ -32,7 +32,7 @@ You need the capabilities `group:create` and `membership:add`. Super Administrat
    | **Owner** | Yes | The person or team responsible |
    | **Description** | | |
    | **Visible in reports** | | Shows the group as a filter on the reports screen |
-   | **Notify on enrollment** | | Tells members when they are enrolled through the group |
+   | **Notify on enrollment** | | Sends a notification on enrollment through the group |
 
 4. Select **Create group**.
 
@@ -53,7 +53,8 @@ Removing someone marks their membership as left. CMDX keeps the history.
 A dynamic group gets its members from rules on profile attributes, rather than by hand. For example, a rule can match people whose `profile_completion_pct` is greater than 50.
 
 - CMDX adds people who match and removes people who stop matching. Members have the source `dynamic`.
-- A sync runs on a schedule, and you can start one with `POST /api/v1/groups/<group-id>/sync`, which needs `dynamic_group:sync`.
+- A sync runs when you create or change the group. To start one yourself, use `POST /api/v1/groups/<group-id>/sync`, which needs `dynamic_group:sync`.
+- Nothing syncs on a schedule yet, so a person who newly matches the rules joins at the next sync.
 - You can't edit the members of a dynamic group by hand. Adding, importing or removing someone returns HTTP 409.
 
 ## Visibility and joining
@@ -77,8 +78,8 @@ A group can have a capacity limit and a parent group. Member roles are `member`,
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Adding a member returns 409 | The group is dynamic. | Change the rules instead. |
-| A dynamic group's members are out of date | The sync hasn't run. | Start a sync. Check that the scheduled tasks are running. See [scheduled tasks](../operations/scheduled-tasks.md). |
-| A person isn't enrolled after you added them | Group enrollment depends on the group sync. | Wait for `enrollments.group_sync_reconciliation`, which runs every hour. |
+| A dynamic group's members are out of date | The sync hasn't run. | Start a sync. See [scheduled tasks](../operations/scheduled-tasks.md). |
+| A person isn't enrolled after you added them | The group's enrollment hasn't caught up. | `enrollments.group_sync_reconciliation` runs every hour. |
 
 ## Related
 

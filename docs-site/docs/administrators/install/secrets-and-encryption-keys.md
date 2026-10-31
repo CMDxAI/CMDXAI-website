@@ -34,7 +34,7 @@ CMDX reads the settings key from the first of these that is set:
 ## Prerequisites
 
 - Shell access to the host.
-- A current backup. See [Upgrade CMDX](./upgrade.md).
+- A current backup. See [back up and restore CMDX](./backup-and-restore.md).
 
 ## Steps
 
@@ -120,4 +120,4 @@ Keep copies of your keys somewhere safe, apart from your backups. A database bac
 ## Related
 
 - [Install for production](./production.md)
-- [Upgrade CMDX](./upgrade.md)
+- [Back up and restore CMDX](./backup-and-restore.md)

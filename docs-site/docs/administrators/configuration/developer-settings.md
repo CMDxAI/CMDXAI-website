@@ -5,7 +5,7 @@ sidebar_label: Developer settings
 sidebar_position: 2
 doc_type: reference
 audience: administrators
-source_prd: none
+source_prd: "216694785"
 ai_drafted: true
 last_verified: 2026-10-31
 tags: [configuration]
@@ -96,5 +96,4 @@ A setting can have only one active override. An active override of the log level
 ## Related
 
 - [Monitor CMDX](../operations/monitoring.md)
-- [Environment variables](./environment-variables.md)
 - [Logging for developers](../../developers/architecture/logging.md)

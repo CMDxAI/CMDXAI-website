@@ -39,37 +39,38 @@ CMDX uses one version for the web app, mobile apps and backend, with semantic ve
 | Minor | New features, and migrations that run on start. |
 | Patch | Fixes only. |
 
-## Step 1: Read the changelog
+## Steps
+
+### Read the changelog
 
 Read `CHANGELOG.md` in the `cmdx-LMS` repository for every version between yours and the target. Manual steps are listed there.
 
 Check that `.env` has no `APP_VERSION` line. Older example files set one, and it pins `/health` and the plugin version checks to that value across every upgrade. Delete it.
 
-## Step 2: Back up
+### Back up
 
-Take the backup every time, even for a small update. Rolling back the image doesn't undo migrations, so the backup is your only way back.
+Take the backup every time, even for a small update. Rolling back the image doesn't undo migrations, so the backup is your only way back. For the full procedure, see [back up and restore CMDX](./backup-and-restore.md).
 
 ```bash
-cd /opt/cmdx
 TS=$(date +%Y%m%d-%H%M%S)
 cp .env ".env.bak.$TS"
 cp docker-compose.yml "docker-compose.yml.bak.$TS"
 docker exec cmdx_postgres pg_dump -U cmdx -d cmdx --format=custom > "cmdx-db-$TS.dump"
-docker run --rm -v cmdx_cmdx_storage:/data:ro -v "$PWD":/backup alpine:3.22 \
+docker run --rm -v cmdx-lms_cmdx_storage:/data:ro -v "$PWD":/backup alpine:3.22 \
   tar czf "/backup/cmdx-storage-$TS.tar.gz" -C /data .
 ```
 
-Replace `cmdx` in `pg_dump` if you changed `POSTGRES_USER` or `POSTGRES_DB`. The volume name starts with the Compose project name, which is the folder name by default. Run `docker volume ls | grep storage` to find yours.
+Replace `cmdx` in `pg_dump` if you changed `POSTGRES_USER` or `POSTGRES_DB`. The volume name starts with the Compose project name, which is the lowercase folder name by default. Run `docker volume ls | grep storage` to find yours.
 
-## Step 3: Update the Compose file if needed
+### Update the Compose file if needed
 
 If the changelog mentions a Compose change, copy the new `docker-compose.yml` to the host. Edit `.env` first, then validate:
 
 ```bash
-docker compose config > /tmp/resolved.yml && echo OK
+docker compose -f docker-compose.yml config > /tmp/resolved.yml && echo OK
 ```
 
-## Step 4: Upgrade
+### Upgrade
 
 Set the new tag in `.env`:
 
@@ -80,8 +81,8 @@ CMDX_IMAGE_TAG=1.2.0
 Pull the images and recreate the containers:
 
 ```bash
-docker compose pull
-docker compose up -d
+docker compose -f docker-compose.yml pull
+docker compose -f docker-compose.yml up -d
 ```
 
 The backend runs its migrations before it answers requests. A migration lock stops two processes from running them at once. The Celery services and the web app wait until the backend is healthy, so they never run older code than the API. Large migrations can take a while: the health check allows up to about 15 minutes.
@@ -89,10 +90,10 @@ The backend runs its migrations before it answers requests. A migration lock sto
 Follow the progress:
 
 ```bash
-docker compose logs -f backend
+docker compose -f docker-compose.yml logs -f backend
 ```
 
-## Step 5: Check the upgrade
+## Verify
 
 ```bash
 curl -s http://127.0.0.1:8000/health
@@ -114,7 +115,7 @@ The `watchtower` service checks the registry every 3 hours. When your tag points
 To see what it did:
 
 ```bash
-docker compose logs -f watchtower
+docker compose -f docker-compose.yml logs -f watchtower
 ```
 
 ## Roll back
@@ -124,21 +125,23 @@ Rolling back the image doesn't undo migrations. If the release added any, the ol
 If the release added no migrations, set `CMDX_IMAGE_TAG` back to the previous value and run:
 
 ```bash
-docker compose pull
-docker compose up -d
+docker compose -f docker-compose.yml pull
+docker compose -f docker-compose.yml up -d
 ```
 
 If it did add migrations, restore the database backup as well. Stop the app, restore, then start the old version:
 
 ```bash
-docker compose stop backend celery_worker celery_beat frontend
+docker compose -f docker-compose.yml stop backend celery_worker celery_beat frontend
 docker exec -i cmdx_postgres pg_restore -U cmdx -d cmdx --clean --if-exists < cmdx-db-<TS>.dump
-docker compose up -d
+docker compose -f docker-compose.yml up -d
 ```
 
 Any changes people made after the backup are lost.
 
-## If a migration fails
+## Troubleshooting
+
+### A migration fails
 
 A backend that keeps restarting with `DuplicateTable`, `UndefinedTable` or `relation already exists` has a database that doesn't match its recorded revision. Don't keep restarting it. Diagnose it first. This command is read-only and safe on a failing host:
 
@@ -151,4 +154,5 @@ It compares the latest revision, the revision in `alembic_version` and what the 
 ## Related
 
 - [Install for production](./production.md)
+- [Back up and restore CMDX](./backup-and-restore.md)
 - [Troubleshoot an install](../operations/troubleshooting.md)

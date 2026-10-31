@@ -30,7 +30,7 @@ Turn a channel on in `.env`, then recreate the backend and Celery containers. A 
 | WhatsApp | `NOTIFICATION_WHATSAPP_ENABLED` | Off | `WHATSAPP_PROVIDER`, and the Twilio or Meta keys |
 | Webhook | `NOTIFICATION_WEBHOOK_ENABLED` | Off | None |
 
-The in-app inbox is always available.
+The in-app inbox needs no provider.
 
 The webhook channel blocks internal addresses. To post to an internal host on purpose, list it in `NOTIFICATION_WEBHOOK_ALLOWED_HOSTS`.
 

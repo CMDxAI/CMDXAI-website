@@ -15,7 +15,9 @@ Deploy CMDX for production use. This page starts from a working [Docker Compose 
 
 Change `.env` on the host, then recreate the containers. A plain `docker compose restart` doesn't read `.env` again. To apply a change safely, follow [apply a change to a running host](#apply-a-change-to-a-running-host).
 
-## Step 1: Size the connection budget
+## Steps
+
+### Size the connection budget
 
 Every uvicorn worker and every Celery child process opens its own database pool. Together they must fit inside PostgreSQL's connection limit:
 
@@ -38,17 +40,17 @@ The Compose file fixes the Celery pool at `5 + 5`. For a host with 4 vCPU and 7 
 
 Don't raise `WORKERS` without doing this sum. When the pools run out, requests hang for 30 seconds and then fail with `QueuePool limit ... reached`.
 
-## Step 2: Pin the image version
+### Pin the image version
 
 By default, `CMDX_IMAGE_TAG` is `main`, which follows every merge. Pin production to a release when one exists. See [choose an image tag](./upgrade.md#choose-an-image-tag).
 
-## Step 3: Turn on production mode
+### Turn on production mode
 
 `docker-compose.yml` sets `ENVIRONMENT: development` for the app containers, and that wins over `.env`. Setting `ENVIRONMENT=production` in `.env` has no effect.
 
-To change it, create `docker-compose.override.yml` next to `docker-compose.yml` on the host. Compose loads this file automatically.
+To change it, add a second Compose file. Create `docker-compose.production.yml` in the `cmdx-LMS` folder:
 
-```yaml title="/opt/cmdx/docker-compose.override.yml"
+```yaml title="docker-compose.production.yml"
 services:
   backend:
     environment:
@@ -61,7 +63,15 @@ services:
       ENVIRONMENT: production
 ```
 
-<!-- TODO: verify: run this override on a staging host. Nothing on this page was run live. -->
+From now on, name both files in every Compose command on this host:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+```
+
+The commands in this guide show only the first file. If you leave out the second, `up -d` recreates the containers in development mode.
+
+<!-- TODO: verify: run this file on a staging host. Nothing on this page was run live. -->
 
 In production mode, CMDX refuses to start with:
 
@@ -82,12 +92,12 @@ It also changes how it runs:
 
 Before you switch, set `EMAIL_DELIVERY_MODE=real` and a public `FRONTEND_BASE_URL`, or the containers won't start.
 
-## Step 4: Set your secrets
+### Set your secrets
 
 | Key | What to do |
 | --- | --- |
 | `SECRET_KEY` | Use a random value of at least 32 bytes. Don't reuse the value from `.env.example`: the check above catches only one literal value. |
-| `SITE_ADMIN_DEK` | Set this before you save any secret in the app. It encrypts SMTP passwords, storage keys and provider secrets. |
+| `SITE_ADMIN_DEK` | Set this before you save any secret in the app. It encrypts SMTP passwords, storage keys and provider secrets. See [manage secrets and encryption keys](./secrets-and-encryption-keys.md). |
 | `POSTGRES_PASSWORD` | Don't keep the default `cmdx`. |
 | `GHCR_TOKEN` | Use a token with `read:packages` only. |
 
@@ -97,11 +107,13 @@ Generate `SITE_ADMIN_DEK` with:
 python3 -c "import base64,secrets;print(base64.b64encode(secrets.token_bytes(32)).decode())"
 ```
 
-Without `SITE_ADMIN_DEK`, CMDX derives the encryption key from `SECRET_KEY`, and logs a warning. Changing `SECRET_KEY` then makes every stored secret unreadable. AWS KMS and HashiCorp Vault are also supported. See [environment variables](../configuration/environment-variables.md#secrets-at-rest).
+Without `SITE_ADMIN_DEK`, CMDX derives the encryption key from `SECRET_KEY`, and logs a warning. Changing `SECRET_KEY` then makes every stored secret unreadable. AWS KMS and HashiCorp Vault are also supported. See [keep your keys](#keep-your-keys).
 
-Keep `.env` out of version control, and readable only by the operator.
+### Keep your keys
 
-## Step 5: Turn on TLS
+Keep `.env` out of version control, and readable only by the operator. Keep a copy of your keys apart from your backups: without them, a restored database can't read its stored secrets.
+
+### Turn on TLS
 
 Use one of these. Both end with the web app and the API on one address, so you don't need CORS settings.
 
@@ -127,13 +139,13 @@ Caddy comes with the Compose file. It gets and renews a certificate by itself.
 4. Start Caddy:
 
    ```bash
-   docker compose up -d caddy
+   docker compose -f docker-compose.yml up -d caddy
    ```
 
 5. Watch it get the certificate:
 
    ```bash
-   docker compose logs -f caddy
+   docker compose -f docker-compose.yml logs -f caddy
    ```
 
 Certificates live on the `caddy_data` volume. Keep that volume, or the next start has to request a new certificate.
@@ -154,7 +166,7 @@ location / {
 
 Don't add `Access-Control-*` headers. The API sets its own, and duplicates make browsers reject the request.
 
-## Step 6: Close the ports
+### Close the ports
 
 Set these in `.env`, so that only the proxy is public:
 
@@ -173,7 +185,7 @@ ssh -L 5432:127.0.0.1:5432 <user>@<host>
 
 RabbitMQ uses the default `guest` account and Mailpit accepts any mail, so keep both on loopback. Don't use Mailpit in production. [Configure a real SMTP server](../configuration/email.md).
 
-## Step 7: Turn on antivirus
+### Turn on antivirus
 
 ClamAV is off by default. SCORM packages can't be published without it, because CMDX won't extract an unscanned package.
 
@@ -186,7 +198,7 @@ COMPOSE_PROFILES=edge,antivirus
 
 The first start downloads the full signature set, and ClamAV uses about 1 GB of memory. See [file storage](../configuration/storage.md#scan-uploads-for-viruses).
 
-## Step 8: Set the security policy
+### Set the security policy
 
 Sign in as the Super Administrator and open **Settings** > **Security**:
 
@@ -194,17 +206,17 @@ Sign in as the Super Administrator and open **Settings** > **Security**:
 - Set the password rules, the session lifetime and the lockout rules your organization needs.
 - Under **IP allowlist**, list your addresses if you want to limit where people sign in from.
 
-## Step 9: Decide on automatic updates
+### Decide on automatic updates
 
 The `watchtower` service checks the registry every 3 hours and replaces the app containers when their tag moves. It needs the Docker socket, which gives it root-level access to the host. If that isn't acceptable, turn it off:
 
 ```bash
-docker compose up -d --scale watchtower=0
+docker compose -f docker-compose.yml up -d --scale watchtower=0
 ```
 
 If you keep it, set `GHCR_USERNAME` and `GHCR_TOKEN` in `.env`, and pin a tag. See [upgrade CMDX](./upgrade.md#automatic-updates).
 
-## Step 10: Set up backups
+### Set up backups
 
 CMDX doesn't back up itself. You need copies of three things:
 
@@ -212,11 +224,11 @@ CMDX doesn't back up itself. You need copies of three things:
 | --- | --- |
 | Database | The `postgres_data` volume. Use `pg_dump`. |
 | Uploads | The `cmdx_storage` volume |
-| Configuration | `.env` and `docker-compose.override.yml` |
+| Configuration | `.env` and `docker-compose.production.yml` |
 
-The commands are on the [upgrade page](./upgrade.md#step-2-back-up). Schedule them on the host, and copy the results off the host. Try a restore before you rely on them.
+The commands are in [back up and restore CMDX](./backup-and-restore.md). Schedule them on the host, and copy the results off the host. Try a restore before you rely on them.
 
-## Step 11: Review data retention
+### Review data retention
 
 Two jobs delete personal data, and both are off until you turn them on. Review the retention windows first, because the first run deletes every row past its window.
 
@@ -227,7 +239,7 @@ Two jobs delete personal data, and both are off until you turn them on. Review t
 
 Set `TERMS_URL` and `PRIVACY_POLICY_URL` so the sign-up pages can link to your legal documents.
 
-## Check the deployment
+## Verify
 
 ```bash
 docker inspect cmdx_backend --format 'restarts={{.RestartCount}} health={{.State.Health.Status}}'
@@ -238,6 +250,43 @@ docker logs cmdx_backend --since 24h 2>&1 | grep -c 'QueuePool limit'
 
 Replace `cmdx` in the second command if you changed `POSTGRES_USER` or `POSTGRES_DB`. `/health` reports `"environment":"production"`. The last command should print `0`, and should keep doing so.
 
+## Values Compose sets for you
+
+`docker-compose.yml` sets these for the app containers. They win over `.env`, so changing them there has no effect. To change one, add it to `docker-compose.production.yml`.
+
+| Key | Value in Compose |
+| --- | --- |
+| `ENVIRONMENT` | `development` |
+| `DATABASE_URL` | Built from `POSTGRES_*`, with the host `postgres` |
+| `REDIS_URL` | `redis://redis:6379/0` |
+| `CELERY_BROKER_URL` | `amqp://guest:guest@rabbitmq:5672//` |
+| `CELERY_RESULT_BACKEND` | `redis://redis:6379/0` |
+| `EMAIL_PROVIDER` | `smtp` |
+| `UPLOAD_DIR` | `/app/storage_uploads` |
+| `OTEL_ENABLED` | `true` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://jaeger:4317` |
+| `OTEL_LOGS_EXPORT` | `false` |
+
+## Run on a FIPS host
+
+CMDX supports FIPS deployments on `linux/amd64` and `linux/arm64`. The backend image uses the system OpenSSL, whose FIPS provider is the validated module. The host supplies FIPS mode, with the kernel option `fips=1`.
+
+To check an image, force FIPS on its OpenSSL and run the probe. `OPENSSL_FORCE_FIPS_MODE` is for this probe only, so don't set it on running services:
+
+```bash
+docker compose -f docker-compose.yml run --rm --no-deps -T -e OPENSSL_FORCE_FIPS_MODE=1 \
+  --entrypoint python backend -m scripts.fips_check --with-services
+```
+
+The output must end with `0 failed`.
+
+Two settings outside CMDX matter too:
+
+- Use SCRAM-SHA-256 for PostgreSQL passwords, not `md5`.
+- Don't use NTLM for LDAP binds.
+
+CMDX sends traces to Jaeger without TLS. If you send traces across a network, consider what that means for your FIPS boundary.
+
 ## Apply a change to a running host
 
 1. Back up `.env` and `docker-compose.yml`.
@@ -245,13 +294,13 @@ Replace `cmdx` in the second command if you changed `POSTGRES_USER` or `POSTGRES
 3. Validate the result. This command resolves every variable and catches mistakes before any container changes:
 
    ```bash
-   docker compose config > /tmp/resolved.yml && echo OK
+   docker compose -f docker-compose.yml config > /tmp/resolved.yml && echo OK
    ```
 
 4. Recreate the services you changed. Include `postgres` only if `POSTGRES_MAX_CONNECTIONS` changed, which causes a short outage:
 
    ```bash
-   docker compose up -d --force-recreate backend celery_worker celery_beat
+   docker compose -f docker-compose.yml up -d --force-recreate backend celery_worker celery_beat
    ```
 
 :::warning
@@ -261,5 +310,6 @@ The app services use `pull_policy: always`, so a recreate also pulls the newest 
 ## Related
 
 - [Upgrade CMDX](./upgrade.md)
+- [Back up and restore CMDX](./backup-and-restore.md)
 - [Monitor CMDX](../operations/monitoring.md)
 - [Troubleshoot an install](../operations/troubleshooting.md)

@@ -31,13 +31,15 @@ Two things follow from this:
 
 CMDX doesn't sync users or groups from the directory. Assign roles in CMDX.
 
-## Before you start
+## Prerequisites
 
 - You need the Super Administrator role.
 - The backend container must be able to reach the directory server.
 - You need a read-only service account, and the base DN to search under.
 
-## Step 1: Save the provider
+## Steps
+
+### Save the provider
 
 Go to **Settings** > **Authentication providers** and select **Configure** on **LDAP / Active Directory**. If it isn't listed, add it with **Add provider**. Fill in these fields:
 
@@ -56,12 +58,12 @@ Save the form.
 Without **Use TLS**, passwords cross the network in clear text. Use LDAPS. CMDX doesn't support STARTTLS.
 :::
 
-## Step 2: Test and turn it on
+### Test and turn it on
 
 1. Select **Test** on the row. CMDX connects, binds as the service account and runs a search under the base DN. A test with no bind DN or base DN checks only that the host is reachable.
 2. Turn on the provider's switch.
 
-## Step 3: Try a sign-in
+### Try a sign-in
 
 ```bash
 curl -X POST https://lms.example.com/api/v1/auth/sso/ldap/login \

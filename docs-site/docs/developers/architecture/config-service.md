@@ -13,7 +13,7 @@ tags: [architecture, configuration]
 
 CMDX settings that administrators can change at run time are declared in code as config keys and stored in the database by scope. This page lists the parts: the schema registry in `core.config.lib.registry`, the stored entries in the `config_entries` table, and the audit trail in `config_audit_log`.
 
-Settings read only from the environment at start-up, such as database URLs, are covered on the [environment variables](../../administrators/configuration/environment-variables.md) page for administrators.
+Settings read only from the environment at start-up, such as database URLs, are covered on the environment variables page for administrators.
 
 ## Summary
 

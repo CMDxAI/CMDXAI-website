@@ -38,7 +38,9 @@ The S3 screen also warns that quiz, media and learning-item files stay on local 
 
 CMDX doesn't move existing files when you change the backend. Choose the backend before people upload content.
 
-## Set up S3
+## Steps
+
+### Set up S3
 
 1. Create a bucket, and credentials that can read, write and delete objects in it.
 2. Go to **Settings** > **Storage**.
@@ -57,7 +59,7 @@ CMDX doesn't move existing files when you change the backend. Choose the backend
 
 Leave `STORAGE_BACKEND` in `.env` as `local`. It is a separate setting, used for report and user exports, and only `local` works. Any other value makes those exports fail.
 
-## Set up local disk
+### Set up local disk
 
 Keep the default **Storage directory** unless you have a reason to change it. With Compose, the default is `/app/storage_uploads`, which is on the `cmdx_storage` volume.
 
@@ -67,7 +69,7 @@ A directory outside that volume is inside the container, and is deleted when the
 
 The backend, the worker and beat must all see the same files. On more than one host, use storage they all share.
 
-## Set upload limits
+### Set upload limits
 
 Two fields on the same screen apply to the whole install:
 
@@ -93,7 +95,7 @@ A tenant can have a quota, `quota_bytes`. The screen doesn't edit it, so set it 
 
 The **Usage** card shows the space in use across every tenant.
 
-## Scan uploads for viruses
+### Scan uploads for viruses
 
 CMDX can scan uploads with ClamAV. It is off by default. A background job checks new uploads every 30 seconds.
 
@@ -122,7 +124,12 @@ SCORM is stricter: a package is extracted only after a clean scan, so with ClamA
 If `CLAMAV_ENABLED` is on and ClamAV can't be reached, uploads stay `PENDING` and can't be downloaded. `.env.example` turns it on, so check this on a new install.
 :::
 
+## Verify
+
+- The **Connectivity** card on **Settings** > **Storage** shows a successful test.
+- Upload a file to a learning item, then download it.
+
 ## Related
 
 - [Install for production](../install/production.md)
-- [Upgrade CMDX](../install/upgrade.md#step-2-back-up): back up the volume
+- [Back up and restore CMDX](../install/backup-and-restore.md): back up the volume

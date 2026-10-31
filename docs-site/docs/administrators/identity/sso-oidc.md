@@ -17,15 +17,15 @@ Let people sign in with an OpenID Connect provider. CMDX supports three provider
 The web sign-in page has buttons for **Google** and **GitHub** only. You can configure and test Microsoft Entra ID, but the sign-in page offers no way to use it. To send people to it, you would need to give them a link. See [Microsoft Entra ID](#microsoft-entra-id).
 :::
 
-## Before you start
+## Prerequisites
 
 - You need the Super Administrator role.
-- CMDX must be on its public address. See [install for production](../install/production.md#step-5-turn-on-tls).
+- CMDX must be on its public address. See [install for production](../install/production.md#turn-on-tls).
 - `FRONTEND_BASE_URL` must be the public address of the app. After a successful sign-in, CMDX redirects there.
 
 ## Set up Google or GitHub
 
-### Step 1: Find the callback address
+### Find the callback address
 
 Go to **Settings** > **Authentication providers** and select **Configure** on **Google Workspace** or **GitHub**. If the provider isn't listed, add it with **Add provider**. The form shows the callback address to register. It has this form:
 
@@ -38,7 +38,7 @@ The backend builds this address from the request it receives. Behind a proxy it 
 
 <!-- TODO: verify: test Google sign-in through Caddy and the frontend nginx. Neither proxy passes on https, so the backend may build an http callback. -->
 
-### Step 2: Create the app at the provider
+### Create the app at the provider
 
 **Google:** in the Google Cloud console, create an **OAuth client ID** of type **Web application**, and add the callback address as an authorized redirect URI.
 
@@ -46,7 +46,7 @@ The backend builds this address from the request it receives. Behind a proxy it 
 
 Copy the client ID and client secret.
 
-### Step 3: Save the provider in CMDX
+### Save the provider in CMDX
 
 Back in the form, fill in these fields:
 
@@ -54,12 +54,12 @@ Back in the form, fill in these fields:
 | --- | --- |
 | **Client ID** | From the provider |
 | **Client secret** | From the provider. It is encrypted and is never shown again. To keep it, leave the field blank when you edit. |
-| **Redirect URI** | The callback address from step 1 |
+| **Redirect URI** | The callback address you found above |
 | **Priority** | A number from 1 to 100. A lower number puts the button first. |
 
 Save the form.
 
-### Step 4: Test and turn it on
+### Test and turn it on
 
 1. Select **Test** on the provider's row. This checks the configuration without signing anyone in. A successful test marks the provider as verified.
 2. Turn on the provider's switch.

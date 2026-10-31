@@ -20,7 +20,7 @@ Run exactly one `celery_beat`. A second one would start every job twice.
 The [table of tasks](#scheduled-tasks) lists the jobs. To see what is happening on a running install, check the logs:
 
 ```bash
-docker compose logs -f celery_beat
+docker compose -f docker-compose.yml logs -f celery_beat
 ```
 
 Beat writes a line each time it sends a job. To ask the worker what it's running and what it knows about:
@@ -35,7 +35,7 @@ docker exec cmdx_celery_worker celery -A core.tasks.app inspect registered
 Tasks with a key in the table can be changed in `.env`. Set the key, then recreate the three services, because beat builds its schedule at start-up:
 
 ```bash
-docker compose up -d --force-recreate backend celery_worker celery_beat
+docker compose -f docker-compose.yml up -d --force-recreate backend celery_worker celery_beat
 ```
 
 Tasks without a key always run.
@@ -74,6 +74,8 @@ Intervals are the defaults. Task names are shortened in places. Use `inspect reg
 | Recover stuck bulk jobs | `enrollments.recover_stale_bulk_jobs` | 15 minutes | `BULK_ENROLLMENT_STALE_RECOVERY_ENABLED`, `BULK_ENROLLMENT_STALE_RECOVERY_BEAT_INTERVAL_MINUTES` |
 | Backfill enrollment rules | `enrollments.rule_backfill` | 24 hours | `ENROLLMENT_RULE_BACKFILL_ENABLED`, `ENROLLMENT_RULE_BACKFILL_BEAT_INTERVAL_HOURS` |
 
+The task `groups.dynamic_membership_nightly_sync` exists but isn't on the schedule, so it doesn't run by itself. Run it by hand to sync dynamic groups.
+
 `EXPIRE_COURSE_ENROLLMENTS_ENABLED` is an older job. Leave it off: beat refuses to start if both it and `ENROLLMENT_EXPIRY_ENABLED` are on.
 
 ### Learning
@@ -110,7 +112,7 @@ Intervals are the defaults. Task names are shortened in places. Use `inspect reg
 
 ### Privacy
 
-Both are off by default. See [review data retention](../install/production.md#step-11-review-data-retention).
+Both are off by default. See [review data retention](../install/production.md#review-data-retention).
 
 | Job | Task | Interval | Key |
 | --- | --- | --- | --- |
@@ -137,7 +139,17 @@ The worker in the Compose file consumes these queues:
 | `notif.email`, `notif.sms`, `notif.whatsapp`, `notif.push`, `notif.inbox` | Notification delivery |
 | `audit.write`, `audit.export` | Audit records and exports |
 
-## When a job doesn't run
+## Verify
+
+After you change a job, check that beat sends it:
+
+```bash
+docker compose -f docker-compose.yml logs --tail=100 celery_beat
+```
+
+## Troubleshooting
+
+### A job doesn't run
 
 1. Check that `celery_beat` and `celery_worker` are up: `docker compose ps`.
 2. Look for the job in the beat logs.
@@ -150,4 +162,3 @@ Beat keeps its schedule file in `/tmp`, so it starts fresh when the container is
 ## Related
 
 - [Monitor CMDX](./monitoring.md)
-- [Environment variables](../configuration/environment-variables.md)

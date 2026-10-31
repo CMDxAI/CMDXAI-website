@@ -96,7 +96,7 @@ Go to **Users**:
 - **Add one person.** Select the option to add a user, and fill in their name, email, role and password. To let them set their own password, turn on **Send invitation email**. This needs [working email](../configuration/email.md).
 - **Add many people.** Use **Users** > **Import** with a CSV file.
 - **Export.** Use **Users** > **Export**.
-- **Group people.** Use **Groups & Batches**.
+- **Group people.** Use **Groups & Batches**. See [manage groups](./groups.md).
 - **Collect more details.** Use **Profile fields**.
 
 ### Recover an account that lost its authenticator
@@ -129,5 +129,6 @@ To grant a role, use **Assign role**, or **Bulk assign via CSV** for many people
 ## Related
 
 - [Permissions](./permissions.md): every capability
+- [Manage groups](./groups.md)
 - [Tenant settings](../tenants/tenant-settings.md)
 - [Capability catalog for developers](../../developers/architecture/capability-catalog.md)

@@ -28,7 +28,7 @@ CMDX doesn't publish a minimum size. These figures come from the sizing of a pro
 
 | Item | Figure |
 | --- | --- |
-| Production host | 4 vCPU and 7 GB of RAM, for the settings in [size the connection budget](./production.md#step-1-size-the-connection-budget) |
+| Production host | 4 vCPU and 7 GB of RAM, for the settings in [size the connection budget](./production.md#size-the-connection-budget) |
 | Jaeger | Up to 1 GB by default. Set by `JAEGER_MEM_LIMIT`. |
 | ClamAV | About 1 GB more, when you turn it on |
 
@@ -101,7 +101,7 @@ Docker writes its port rules straight into iptables, so they bypass firewalld. A
 
 ### TLS and DNS
 
-A public install needs a domain name that points at the host. Caddy, included in the Compose file, gets and renews the certificate. See [install for production](./production.md#step-5-turn-on-tls).
+A public install needs a domain name that points at the host. Caddy, included in the Compose file, gets and renews the certificate. See [install for production](./production.md#turn-on-tls).
 
 ## Browsers and mobile apps
 
@@ -115,4 +115,3 @@ Developers can run the backend from source. That needs Python 3.11 or later, and
 
 - [Install with Docker Compose](./docker-compose.md)
 - [Install for production](./production.md)
-- [Environment variables](../configuration/environment-variables.md)

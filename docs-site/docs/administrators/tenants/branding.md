@@ -15,7 +15,7 @@ Set the logo and colors learners see. Branding covers the app, the sign-in page 
 
 Branding is one set for the whole install. The app and the sign-in page load it before they know which tenant someone belongs to, so all tenants look the same. The one tenant-level image is the organization logo, under **Settings** > **Tenancy**.
 
-## Before you start
+## Prerequisites
 
 You need the Super Administrator role. Prepare your images:
 
@@ -28,7 +28,7 @@ You need the Super Administrator role. Prepare your images:
 
 Uploads can be JPEG, PNG, WebP or SVG, up to 5 MB each.
 
-## Change the branding
+## Steps
 
 Go to **Settings** > **Branding**. The screen has five tabs. Images are saved as soon as you upload them. For everything else, save the tab when you finish. The whole app picks up the new look after saving.
 
@@ -79,9 +79,11 @@ The sender's name and address are on [**Settings** > **Email**](../configuration
 
 ### Custom domain
 
-**Custom domain** is stored for your reference only. CMDX doesn't check the domain, set up DNS or issue a certificate, and links in emails always use `FRONTEND_BASE_URL`. To change the address of an install, change `CADDY_DOMAIN` and `FRONTEND_BASE_URL`. See [install for production](../install/production.md#step-5-turn-on-tls).
+**Custom domain** is stored for your reference only. CMDX doesn't check the domain, set up DNS or issue a certificate, and links in emails always use `FRONTEND_BASE_URL`. To change the address of an install, change `CADDY_DOMAIN` and `FRONTEND_BASE_URL`. See [install for production](../install/production.md#turn-on-tls).
 
-## Change the app icon and the name in the mobile apps
+## Verify
+
+Open the sign-in page in a private window. Then sign in, and check the sidebar.
 
 The store listing and home screen icon of the iOS and Android apps are set when the apps are built, not in **Settings**.
 

@@ -13,14 +13,16 @@ tags: [configuration]
 
 Connect CMDX to an SMTP server and send a test email. CMDX sends invitations, password resets and notifications through it. The Celery worker does the sending, so it must be running.
 
-## Before you start
+## Prerequisites
 
 - You need the Super Administrator role.
 - You need your mail server's host, port and credentials, and a sender address your server may send from.
 - Set `EMAIL_DELIVERY_MODE=real` in `.env`. See [delivery modes](#delivery-modes).
 - Set `FRONTEND_BASE_URL` to the public address of the app. Links in emails are built from it.
 
-## Step 1: Enter the server details
+## Steps
+
+### Enter the server details
 
 Go to **Settings** > **Email** and fill in the **SMTP server** section:
 
@@ -43,13 +45,13 @@ Then fill in **Sender identity**:
 
 Select **Save**.
 
-## Step 2: Send a test email
+### Send a test email
 
 Under **Send test email to**, enter an address. It defaults to the **From address**. Select **Send test email**.
 
 The **Status** card shows the time and the result of the last test. A failed test shows the server's error. The test connects to the server directly, so it can succeed even if the Celery worker is down.
 
-## Step 3: Send a real email
+## Verify
 
 To check the whole path, use **Forgot password** on the sign-in page. If the test worked but this email doesn't arrive, see [troubleshooting](../operations/troubleshooting.md#emails-dont-arrive).
 
@@ -78,6 +80,16 @@ Both the API and the workers read the saved settings, so you don't need to resta
 
 To read captured mail in development, open Mailpit at `http://localhost:8025`.
 
+## Set the verification link
+
+Registration emails use their own address, not `FRONTEND_BASE_URL`. Set these in `.env` if people register themselves:
+
+| Key | Default | Description |
+| --- | --- | --- |
+| `EMAIL_VERIFICATION_BASE_URL` | `http://localhost:3000/verify-email` | The page the link opens. Set it to your public address, such as `https://lms.example.com/verify-email`. |
+| `EMAIL_VERIFICATION_TOKEN_TTL_HOURS` | `24` | How long a registration link lasts, from 1 to 168 hours |
+| `EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS` | `24` | How long a link from the account email flow lasts |
+
 ## Send from a tenant's own server
 
 A tenant administrator can give a tenant its own server on the same **Settings** > **Email** screen, which then edits that tenant's override. Fields left alone keep the global value. See [tenant settings](../tenants/tenant-settings.md#what-a-tenant-can-override).
@@ -93,9 +105,9 @@ The simplest way is SMTP, which needs no other setup. For the SES SMTP interface
 | **Transport security** | STARTTLS |
 | **Username**, **Password / API key** | Your SES SMTP credentials |
 
-CMDX can also call the SES and SendGrid APIs directly. `docker-compose.yml` fixes `EMAIL_PROVIDER` at `smtp`, and that wins over `.env`, so you need an override file, as in [turn on production mode](../install/production.md#step-3-turn-on-production-mode):
+CMDX can also call the SES and SendGrid APIs directly. `docker-compose.yml` fixes `EMAIL_PROVIDER` at `smtp`, and that wins over `.env`, so add it to your production Compose file, as in [turn on production mode](../install/production.md#turn-on-production-mode):
 
-```yaml title="docker-compose.override.yml"
+```yaml title="docker-compose.production.yml"
 services:
   backend:
     environment:
@@ -109,5 +121,6 @@ For SendGrid, set `SENDGRID_API_KEY`. The allowed values are `smtp`, `sendgrid` 
 
 ## Related
 
+- [Configure notifications](./notifications.md)
 - [Troubleshoot an install](../operations/troubleshooting.md)
 - [Change the branding](../tenants/branding.md#emails): the support address and footer

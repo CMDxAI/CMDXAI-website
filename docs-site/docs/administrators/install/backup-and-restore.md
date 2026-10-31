@@ -127,3 +127,4 @@ Try a full restore on a spare host before you rely on your backups.
 
 - [Upgrade CMDX](./upgrade.md)
 - [Install for production](./production.md)
+- [Manage secrets and encryption keys](./secrets-and-encryption-keys.md)

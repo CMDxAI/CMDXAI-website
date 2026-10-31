@@ -15,7 +15,7 @@ Add a new tenant to a CMDX deployment. A tenant is an organization: it has its o
 
 All tenants share one database. Adding a tenant adds a row, not a new database or schema. See [multi-tenancy](../../developers/architecture/multi-tenancy.md).
 
-## Before you start
+## Prerequisites
 
 You need the `platform_superadmin` role. The Super Administrator from the install wizard has it. The `admin` role alone isn't enough: other administrators see **Only platform superadmins can create organizations.**
 
@@ -65,6 +65,11 @@ curl -X DELETE https://lms.example.com/api/v1/organizations/<org-id> \
 ```
 
 This is a soft delete: the row is marked as deleted and stays in the database.
+
+## Verify
+
+- The tenant appears in the list of organizations.
+- Its first administrator can sign in and sees the tenant on **Settings** > **Tenancy**.
 
 ## Related
 

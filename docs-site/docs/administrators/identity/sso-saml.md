@@ -16,7 +16,7 @@ Let people sign in with a SAML identity provider. CMDX acts as a SAML 2.0 servic
 :::warning
 SAML isn't ready for general use:
 
-- **No button.** The web sign-in page has no SAML button. People can start sign-in only from a direct link, as shown in [step 4](#step-4-sign-in).
+- **No button.** The web sign-in page has no SAML button. People can start sign-in only from a direct link, as shown in [sign in](#sign-in).
 - **One sign-in per person.** CMDX links an account to the ID of the assertion, and that ID changes each time. A person's first sign-in creates their account. Their next one doesn't match that link, so it fails with an email conflict.
 
 Test with a pilot account, and talk to your CMDX contact before you plan a rollout.
@@ -24,7 +24,7 @@ Test with a pilot account, and talk to your CMDX contact before you plan a rollo
 
 <!-- TODO: verify: both limits come from reading the code on main. Confirm the repeat sign-in failure against a real identity provider, and that the ACS check accepts https behind Caddy and the frontend nginx. -->
 
-## Before you start
+## Prerequisites
 
 - You need the Super Administrator role.
 - CMDX must be on its public HTTPS address.
@@ -32,7 +32,9 @@ Test with a pilot account, and talk to your CMDX contact before you plan a rollo
 - Your identity provider must publish a metadata URL that CMDX can reach. Uploading a metadata file isn't supported.
 - Your identity provider must sign assertions. CMDX rejects unsigned assertions and deprecated signature algorithms.
 
-## Step 1: Add CMDX to your identity provider
+## Steps
+
+### Add CMDX to your identity provider
 
 Create a SAML application with these values. CMDX doesn't publish a metadata URL of its own, so enter them by hand.
 
@@ -47,26 +49,26 @@ CMDX looks for the person's email in one of these attributes: `email`, `mail`, `
 
 Copy the identity provider's metadata URL.
 
-## Step 2: Save the provider in CMDX
+### Save the provider in CMDX
 
 Go to **Settings** > **Authentication providers** and select **Configure** on **SAML 2.0**. If it isn't listed, add it with **Add provider**. Fill in these fields:
 
 | Field | Required | Value |
 | --- | --- | --- |
 | **Metadata URL** | Yes | The identity provider's metadata URL |
-| **Entity ID** | Yes | The same value as step 1 |
-| **ACS URL** | Yes | The same value as step 1 |
+| **Entity ID** | Yes | The same value as in your identity provider |
+| **ACS URL** | Yes | The same value as in your identity provider |
 | **Certificate** | No | The identity provider's signing certificate, if you want to set it by hand instead of taking it from the metadata |
 | **Private key** | No | Stored, but CMDX doesn't sign its requests |
 
 Save the form.
 
-## Step 3: Test and turn it on
+### Test and turn it on
 
 1. Select **Test** on the row. This fetches the metadata URL and checks that it returns an `EntityDescriptor` document. It doesn't try a sign-in.
 2. Turn on the provider's switch.
 
-## Step 4: Sign in
+### Sign in
 
 Open this address in a private window:
 
@@ -83,7 +85,7 @@ CMDX doesn't read groups or roles from the assertion. Assign roles in CMDX.
 CMDX keeps the metadata in memory after the first fetch. After your identity provider rotates its signing certificate, restart the backend so it fetches the metadata again, or set the new certificate in the **Certificate** field.
 
 ```bash
-docker compose up -d --force-recreate backend
+docker compose -f docker-compose.yml up -d --force-recreate backend
 ```
 
 ## Environment variables
