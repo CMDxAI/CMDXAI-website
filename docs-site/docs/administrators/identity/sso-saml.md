@@ -14,15 +14,10 @@ tags: [identity]
 Let people sign in with a SAML identity provider. CMDX acts as a SAML 2.0 service provider, and sign-in starts from CMDX (SP-initiated).
 
 :::warning
-SAML isn't ready for general use:
-
-- **No button.** The web sign-in page has no SAML button. People can start sign-in only from a direct link, as shown in [sign in](#sign-in).
-- **One sign-in per person.** CMDX links an account to the ID of the assertion, and that ID changes each time. A person's first sign-in creates their account. Their next one doesn't match that link, so it fails with an email conflict.
-
-Test with a pilot account, and talk to your CMDX contact before you plan a rollout.
+How SAML sign-in behaves is still being settled, including how people start it from the sign-in page and how sign-in matches existing accounts. Test with a pilot account, and talk to your CMDX contact before you plan a rollout.
 :::
 
-<!-- TODO: verify: both limits come from reading the code on main. Confirm the repeat sign-in failure against a real identity provider, and that the ACS check accepts https behind Caddy and the frontend nginx. -->
+<!-- TODO: verify: the ACS check accepts https behind Caddy and the frontend nginx. -->
 
 ## Prerequisites
 
@@ -70,13 +65,13 @@ Save the form.
 
 ### Sign in
 
-Open this address in a private window:
+To test it, open this address in a private window:
 
 ```text
 https://lms.example.com/api/v1/auth/sso/saml/login
 ```
 
-CMDX redirects to the identity provider and back. If the person has no account, CMDX creates one from their email address, with the `user` role. If the email already belongs to an account, sign-in fails, including an account created by an earlier SAML sign-in.
+CMDX redirects to the identity provider and back. If the person has no account, CMDX creates one from their email address, with the `user` role.
 
 CMDX doesn't read groups or roles from the assertion. Assign roles in CMDX.
 

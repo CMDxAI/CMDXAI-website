@@ -55,7 +55,7 @@ To try CMDX on a laptop instead, follow the [quick start](/getting-started/quick
 
 CMDX is moving quickly and no version has been released yet. These limits affect how you plan an install:
 
-- **Single sign-on.** The web sign-in page has buttons for Google and GitHub only. You can configure Microsoft, SAML and LDAP, but people have no way to use them from the sign-in page. See [OIDC](./identity/sso-oidc.md), [SAML](./identity/sso-saml.md) and [LDAP](./identity/ldap.md).
+- **Sign-in.** How single sign-on and password sign-in behave is still being settled. Talk to your CMDX contact before you plan a rollout. See [OIDC](./identity/sso-oidc.md), [SAML](./identity/sso-saml.md) and [LDAP](./identity/ldap.md).
 - **API-only areas.** [Developer settings](./configuration/developer-settings.md) and [skills and taxonomies](./configuration/skills-and-taxonomies.md) have no screens yet. Use the API.
 - **Languages.** The apps are in English only. See [languages](./configuration/languages.md).
 - **Feature flags.** Almost nothing in CMDX reads them yet. See [feature flags](./configuration/feature-flags.md).

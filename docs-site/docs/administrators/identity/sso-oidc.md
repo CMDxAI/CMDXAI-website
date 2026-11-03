@@ -14,7 +14,7 @@ tags: [identity]
 Let people sign in with an OpenID Connect provider. CMDX supports three providers: Google, GitHub and Microsoft Entra ID. There is no generic OIDC option, so another provider such as Okta or Keycloak can't connect this way.
 
 :::warning
-The web sign-in page has buttons for **Google** and **GitHub** only. You can configure and test Microsoft Entra ID, but the sign-in page offers no way to use it. To send people to it, you would need to give them a link. See [Microsoft Entra ID](#microsoft-entra-id).
+How single sign-on behaves is still being settled, including which providers the sign-in page offers and how sign-in matches existing accounts. Talk to your CMDX contact before you plan a rollout.
 :::
 
 ## Prerequisites
@@ -40,7 +40,7 @@ The backend builds this address from the request it receives. Behind a proxy it 
 
 ### Create the app at the provider
 
-**Google:** in the Google Cloud console, create an **OAuth client ID** of type **Web application**, and add the callback address as an authorized redirect URI.
+**Google:** in the Google Cloud console, create an **OAuth client ID** of type **Web application**, and add the callback address as an authorized redirect URI. If only your Workspace users should sign in, set the app's user type to **Internal**.
 
 **GitHub:** in your organization's settings, create an **OAuth App**, and set the callback address as the **Authorization callback URL**.
 
@@ -73,18 +73,10 @@ CMDX asks the provider for the person's identity and email address, and then:
 
 - **First sign-in, new email.** CMDX creates an account with the `user` role, links it to the provider and adds the person to the current tenant.
 - **Later sign-ins.** CMDX finds the linked account and signs the person in.
-- **Email already in use.** If an account with that email exists and isn't linked to this provider, sign-in fails. The person is told to use their password or their earlier provider.
 - **Unverified email.** Google and GitHub must report the email as verified, or sign-in fails.
 - **Deactivated account.** Sign-in fails.
 
 CMDX doesn't read groups or roles from the provider. Assign roles in CMDX.
-
-:::warning
-Two consequences to plan for:
-
-- **Existing accounts can't be linked.** Anyone who already has a CMDX account, such as one you created or imported, can't start using the provider with that email. That includes your Super Administrator.
-- **Anyone can sign up.** CMDX doesn't limit sign-in to your domain or organization. Any Google or GitHub account can create an account, with the `user` role. To limit it, restrict who can use the OAuth app at the provider: a Google app of type **Internal** admits only your Workspace users.
-:::
 
 ## Turn a provider on for one tenant
 
@@ -101,7 +93,7 @@ A tenant administrator can configure a provider for their own tenant on the same
 2. In CMDX, configure **Microsoft Entra ID** with the **Client ID**, **Client secret** and **Redirect URI**, and set **Issuer URL** to your tenant's issuer, such as `https://login.microsoftonline.com/<tenant-id>/v2.0`.
 3. Select **Test**, then turn it on.
 
-The sign-in page has no button for it. A person can start sign-in at this address:
+To test it, start sign-in at this address in a private window:
 
 ```text
 https://lms.example.com/api/v1/auth/sso/oidc/oidc_microsoft/login
@@ -109,7 +101,7 @@ https://lms.example.com/api/v1/auth/sso/oidc/oidc_microsoft/login
 
 ## Password sign-in
 
-You can't enforce single sign-on yet. The **Local (email + password)** row has a switch, but neither the sign-in page nor `POST /api/v1/tokens` reads it, so password sign-in keeps working when it's off. CMDX refuses to turn off the last enabled provider.
+Whether you can turn off password sign-in and require single sign-on is still being settled. Talk to your CMDX contact before you rely on the **Local (email + password)** switch. CMDX refuses to turn off the last enabled provider.
 
 ## Environment variables
 
