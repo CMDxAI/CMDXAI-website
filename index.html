@@ -8,9 +8,9 @@
 <link rel="icon" href="assets/wordmark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
 <style>
-/* Hero: violet, with the header laid over it until the page scrolls (assets/home.js) */
-.site-header.over-hero{margin-bottom:-72px;background:transparent;transition:background .16s}
-.site-header.over-hero.scrolled{background:#2f1d4d}
+/* Hero: violet, with the header laid over it. Solid by default; assets/home.js clears it while it sits over the hero. */
+.site-header.over-hero{margin-bottom:-72px;transition:background .16s}
+.site-header.over-hero.clear{background:transparent}
 /* Hero fills the first screen on any viewport (svh ignores mobile browser bars); content grows it past that if needed. */
 .hero{position:relative;isolation:isolate;overflow:hidden;padding-top:72px;background:#2f1d4d;color:#fff;box-sizing:border-box;min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
 .hero-x{position:absolute;right:-180px;top:-120px;width:1040px;height:1032px;z-index:0;background:#cdbaed;opacity:.28;-webkit-mask:url(assets/x-mark.svg) no-repeat center/contain;mask:url(assets/x-mark.svg) no-repeat center/contain;pointer-events:none}
@@ -66,8 +66,8 @@
 
 @media (max-width:800px){
   /* Header wraps on narrow screens, so it sits above the hero instead of over it. */
-  .site-header.over-hero{margin-bottom:0;background:#2f1d4d}
-  .hero{padding-top:0}
+  .site-header.over-hero,.site-header.over-hero.clear{margin-bottom:0;background:#2f1d4d}
+  .hero{padding-top:0;min-height:calc(100vh - 72px);min-height:calc(100svh - 72px)}
   .hero-grid{grid-template-columns:minmax(0,1fr);padding:clamp(24px,6vw,40px) 24px 0}
   .hero-copy{justify-self:start;margin-bottom:0}
   .hero-shots{height:clamp(300px,70vw,460px);min-height:0;align-self:end;margin-bottom:0}

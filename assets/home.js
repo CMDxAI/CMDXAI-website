@@ -60,8 +60,10 @@ function select(k) {
 }
 select(0);
 
-// Header sits transparent over the violet hero, then fills once the hero scrolls away.
+// Header goes transparent while it sits over the violet hero, solid once the hero passes under it.
 const header = document.querySelector('.site-header.over-hero');
-const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 560);
+const hero = document.querySelector('.hero');
+const onScroll = () => header.classList.toggle('clear', hero.getBoundingClientRect().bottom > header.offsetHeight);
 window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
 onScroll();
