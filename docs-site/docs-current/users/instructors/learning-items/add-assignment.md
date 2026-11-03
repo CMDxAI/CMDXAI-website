@@ -38,7 +38,7 @@ Add an assignment to a course section so learners can submit text, a file or a l
    - **Points**: the maximum score. The default is 100.
    - **Due date**: optional.
    - **Count toward completion**: on by default. Turn it off if the assignment shouldn't count toward course progress.
-   - **Visible to learners**: off by default, so the assignment starts as a draft that learners can't see.
+   - **Visible to learners**: starts off when the course is a draft, and on when the course is already published. When it's off, the assignment is saved as a draft that learners can't see.
    - **Allow late submissions**: on by default. Turn it off to stop submissions after the due date.
 
    ![The New learning item screen with Assignment selected, the title, section, instructions and Text entry filled in](/img/screens/add-assignment-2.png)
