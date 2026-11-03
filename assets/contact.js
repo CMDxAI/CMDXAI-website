@@ -29,14 +29,14 @@ function build() {
         <p class="contact-err" role="alert"></p>
         <div class="contact-foot">
           <span>We reply within two working days.</span>
-          <button type="submit" class="btn btn-primary" style="padding:0 24px;font-size:16px">Send</button>
+          <button type="submit" class="btn btn-lime" style="padding:0 24px;font-size:16px">Send</button>
         </div>
       </form>
       <div class="contact-done">
         <div class="contact-tick"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" style="display:block"><path d="M9.55 17.65 4.6 12.7l1.4-1.4 3.55 3.55 8.45-8.45 1.4 1.4Z" fill="currentColor"/></svg></div>
         <p>Thanks. We've got your message and will be in touch within two working days.</p>
         <p class="muted" style="font-size:15px">We've sent a confirmation to your inbox.</p>
-        <div><button type="button" class="btn btn-soft" data-close style="padding:0 24px;font-size:16px">Close</button></div>
+        <div><button type="button" class="btn btn-light btn-ring" data-close style="padding:0 24px;font-size:16px">Close</button></div>
       </div>
     </div>`;
   document.body.append(dlg);
