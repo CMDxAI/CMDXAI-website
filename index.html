@@ -8,14 +8,29 @@
 <link rel="icon" href="assets/wordmark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
 <style>
-/* Hero */
-.hero{background:#f8f7f9;overflow:hidden;padding-bottom:clamp(40px,6vw,80px)}
-.hero-grid{padding-top:clamp(40px,6vw,80px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px 40px;align-items:center}
-.hero h1{margin:0;font-size:clamp(40px,4.6vw,72px);line-height:1.04;letter-spacing:-.03em;font-weight:500;display:flex;flex-direction:column;gap:8px}
-.hero h1 .sub{font-size:.52em;line-height:1.15;letter-spacing:-.015em;font-weight:400;white-space:nowrap}
-.points{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;max-width:560px}
-.points li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 16px;align-items:baseline;padding:14px 0;box-shadow:inset 0 1px 0 #d0cfd1;font-size:17px;line-height:1.4}
-.points li:last-child{box-shadow:inset 0 1px 0 #d0cfd1,inset 0 -1px 0 #d0cfd1}
+/* Hero: violet, with the header laid over it until the page scrolls (assets/home.js) */
+.site-header.over-hero{margin-bottom:-72px;background:transparent;transition:background .16s}
+.site-header.over-hero.scrolled{background:#2f1d4d}
+/* Hero fills the first screen on any viewport (svh ignores mobile browser bars); content grows it past that if needed. */
+.hero{position:relative;isolation:isolate;overflow:hidden;padding-top:72px;background:#2f1d4d;color:#fff;box-sizing:border-box;min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
+.hero-x{position:absolute;right:-180px;top:-120px;width:1040px;height:1032px;z-index:0;background:#cdbaed;opacity:.28;-webkit-mask:url(assets/x-mark.svg) no-repeat center/contain;mask:url(assets/x-mark.svg) no-repeat center/contain;pointer-events:none}
+.hero-grid{position:relative;z-index:1;flex:1;width:100%;box-sizing:border-box;max-width:1200px;margin:0 auto;padding:0 0 0 24px;display:grid;grid-template-columns:minmax(280px,520px) minmax(300px,1fr);gap:32px 96px;align-items:center}
+.hero-copy{display:flex;flex-direction:column;gap:32px;width:100%;max-width:480px;justify-self:center;padding:40px 0;box-sizing:border-box;margin-bottom:72px}
+/* margin-bottom matches the header height: the header is see-through, so the copy centres on the whole screen, not just the part below the header. */
+.hero h1{margin:0;font-size:clamp(40px,4.6vw,64px);line-height:.96;letter-spacing:-.035em;font-weight:500;display:flex;flex-direction:column;gap:12px}
+.hero h1 .sub{font-size:.56em;line-height:1.1;letter-spacing:-.02em;font-weight:400;text-wrap:balance}
+.hero .hl{color:#cdbaed}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.points li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 14px;align-items:baseline;padding:12px 0;box-shadow:inset 0 1px 0 rgba(205,186,237,.3);font-size:16px;line-height:1.4}
+.points li:last-child{box-shadow:inset 0 1px 0 rgba(205,186,237,.3),inset 0 -1px 0 rgba(205,186,237,.3)}
+.points .num{color:#cdbaed}
+.points .dot{color:#c9bde3}
+.points .sub{color:#e9e3f3}
+/* Screenshots centre on the whole screen like the copy; height shrinks on short screens so the group clears the header. */
+.hero-shots{position:relative;height:min(600px,calc(100svh - 176px));min-height:420px;min-width:0;align-self:center;margin-bottom:72px}
+.hero-shots .desk{position:absolute;left:40px;top:0;width:900px;border-radius:16px 0 0 16px;overflow:hidden;background:#fff;box-shadow:0 1px 4px 0 rgba(0,0,0,.15),0 32px 80px -24px rgba(26,10,52,.8)}
+.hero-shots .phone{position:absolute;left:-40px;bottom:0;width:220px;border-radius:32px;overflow:hidden;box-shadow:0 1px 4px 0 rgba(0,0,0,.2),0 28px 56px -16px rgba(0,0,0,.8)}
+.hero-shots img{display:block;width:100%;height:auto}
 
 /* Explore */
 .explore-body{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-start}
@@ -50,8 +65,14 @@
 .launch-body{position:relative;z-index:3;padding:clamp(32px,5vw,72px);display:flex;flex-direction:column;gap:28px;max-width:720px;width:min(100%,60%);box-sizing:border-box}
 
 @media (max-width:800px){
-  .hero-grid{grid-template-columns:minmax(0,1fr)}
-  .hero h1 .sub{white-space:normal}
+  /* Header wraps on narrow screens, so it sits above the hero instead of over it. */
+  .site-header.over-hero{margin-bottom:0;background:#2f1d4d}
+  .hero{padding-top:0}
+  .hero-grid{grid-template-columns:minmax(0,1fr);padding:clamp(24px,6vw,40px) 24px 0}
+  .hero-copy{justify-self:start;margin-bottom:0}
+  .hero-shots{height:clamp(300px,70vw,460px);min-height:0;align-self:end;margin-bottom:0}
+  .hero-shots .desk{width:640px;border-radius:16px 0 0 0}
+  .hero-shots .phone{left:0;width:150px;border-radius:32px 32px 0 0}
   .explore-h2{text-wrap:balance}
   .launch-3d{display:none}
   .launch-body{width:100%}
@@ -60,7 +81,7 @@
 </head>
 <body>
 
-<header class="site-header">
+<header class="site-header over-hero">
   <div class="header-bar">
     <a href="./" style="display:inline-flex"><img src="assets/wordmark.svg" alt="CMDX" width="107" height="26" style="display:block"></a>
     <nav class="site-nav" aria-label="Main">
@@ -69,46 +90,32 @@
       <a href="/features">Features</a>
       <a href="/why-cmdx">Why CMDX?</a>
     </nav>
-    <a href="mailto:hello@cmdx.ai?subject=Getting%20started%20with%20CMDX" class="btn btn-primary header-cta" data-contact>Get started</a>
+    <a href="mailto:hello@cmdx.ai?subject=Getting%20started%20with%20CMDX" class="btn btn-lime header-cta" data-contact>Get started</a>
   </div>
 </header>
 
 <main>
 <section class="hero">
-  <div class="wrap hero-grid">
-    <div class="stack" style="gap:24px">
+  <div class="hero-x" aria-hidden="true"></div>
+  <div class="hero-grid">
+    <div class="hero-copy">
       <h1>
         <span>The <span class="hl">open source</span></span>
         <span class="sub">learning platform for every <span class="hl" style="font-weight:500">organization</span></span>
       </h1>
       <ol class="points">
-        <li><span class="num">01</span><span><span style="font-weight:500">No vendor lock-in</span><span class="muted"> · </span>Open source, on your own infrastructure.</span></li>
-        <li><span class="num">02</span><span><span style="font-weight:500">AI inside</span><span class="muted"> · </span>Course generation and learner insights, built in.</span></li>
-        <li><span class="num">03</span><span><span style="font-weight:500">Exclusive features</span><span class="muted"> · </span>Blended learning, skills mapping and certifications.</span></li>
+        <li><span class="num">01</span><span><span style="font-weight:500">No vendor lock-in</span><span class="dot"> · </span><span class="sub"><span class="hl">Open source</span>, on your own infrastructure.</span></span></li>
+        <li><span class="num">02</span><span><span style="font-weight:500">AI inside</span><span class="dot"> · </span><span class="sub">Course generation and learner insights, built in.</span></span></li>
+        <li><span class="num">03</span><span><span style="font-weight:500">Exclusive features</span><span class="dot"> · </span><span class="sub">Blended learning, skills mapping and certifications.</span></span></li>
       </ol>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-primary">Download free</a>
-        <a href="https://demo.cmdx.ai" class="btn btn-light">Live demo</a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lg btn-lime">Download free</a>
+        <a href="https://demo.cmdx.ai" class="btn btn-lg btn-light">Live demo</a>
       </div>
     </div>
-    <div style="min-width:0;width:min(100%,560px);justify-self:center">
-      <svg viewBox="0 0 440 360" width="560" height="458" role="img" aria-label="A Command X window with a prompt and a solution block, a learner in front" style="display:block;width:100%;height:auto;font-family:'Stack Sans Text',-apple-system,sans-serif">
-        <circle cx="220" cy="186" r="170" fill="#f3ecfe"/>
-        <rect x="40" y="40" width="360" height="280" rx="16" fill="#fff" stroke="#d0cfd1" stroke-width="2"/>
-        <circle cx="62" cy="62" r="4" fill="#d0cfd1"/><circle cx="76" cy="62" r="4" fill="#d0cfd1"/><circle cx="90" cy="62" r="4" fill="#d0cfd1"/>
-        <text x="220" y="66" text-anchor="middle" font-size="11" letter-spacing="1.5" fill="#7a7a7a">COMMAND X</text>
-        <line x1="40" y1="84" x2="400" y2="84" stroke="#ebe9ee" stroke-width="2"/>
-        <path d="M64 110 L76 120 L64 130" fill="none" stroke="#6840a6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="86" y="104" width="32" height="32" rx="8" fill="#6840a6"/><line x1="94" y1="112" x2="110" y2="128" stroke="#fff" stroke-width="4" stroke-linecap="round"/><line x1="110" y1="112" x2="94" y2="128" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-        <rect x="130" y="116" width="150" height="9" rx="4" fill="#cdbaed"/><rect x="286" y="112" width="3" height="16" fill="#6840a6"/>
-        <rect x="130" y="150" width="240" height="130" rx="12" fill="#f3ecfe"/>
-        <text x="358" y="170" text-anchor="end" font-size="10" letter-spacing="1.5" fill="#6840a6">SOLUTION</text>
-        <circle cx="164" cy="185" r="18" fill="#6840a6"/><path d="M155 185 L162 192 L174 178" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="194" y="178" width="120" height="8" rx="4" fill="#fff"/><rect x="194" y="194" width="90" height="8" rx="4" fill="#fff"/>
-        <rect x="150" y="226" width="180" height="8" rx="4" fill="#fff"/><rect x="150" y="242" width="120" height="8" rx="4" fill="#fff"/>
-        <circle cx="46" cy="250" r="16" fill="#2f1d4d"/><rect x="28" y="270" width="36" height="64" rx="18" fill="#2f1d4d"/><line x1="60" y1="286" x2="84" y2="270" stroke="#2f1d4d" stroke-width="10" stroke-linecap="round"/>
-        <text x="46" y="350" text-anchor="middle" font-size="10" letter-spacing="1.5" fill="#7a7a7a">LEARNER</text>
-      </svg>
+    <div class="hero-shots">
+      <div class="desk"><img src="assets/app/dashboard-collapsed-2x.png" alt="CMDX learner dashboard, collapsed navigation" width="1800" height="1125"></div>
+      <div class="phone"><img src="assets/app/mobile-home-440.png" alt="CMDX mobile app home screen" width="440" height="957"></div>
     </div>
   </div>
 </section>
@@ -131,7 +138,7 @@
         </div>
       </div>
     </div>
-    <div><a href="/features" style="font-size:17px;font-weight:500">How to get started in five steps →</a></div>
+    <div><a href="/features" style="font-size:17px;font-weight:500;color:#714fff">How to get started in five steps →</a></div>
   </div>
 </section>
 
@@ -144,7 +151,7 @@
       </div>
       <div class="stack" style="gap:14px">
         <h3 style="margin:0;font-size:clamp(20px,2vw,24px);font-weight:500;line-height:1.2">A platform that changes with you</h3>
-        <p class="lead">CMDX is open source so organizations are not locked into a rigid learning environment. Host it where you want, change the workflows and interfaces, connect it to your other systems, and add what you need as training requirements change.</p>
+        <p class="lead">CMDX is <span style="color:#cdbaed">open source</span> so organizations are not locked into a rigid learning environment. Host it where you want, change the workflows and interfaces, connect it to your other systems, and add what you need as training requirements change.</p>
       </div>
     </div>
     <div class="oss-card">
@@ -153,10 +160,10 @@
         <p style="margin:0;font-size:17px;line-height:1.55;text-wrap:pretty">Developers, trainers and organizations improve CMDX together on GitHub. Issues, discussions and pull requests are public.</p>
       </div>
       <div class="stack" style="gap:8px;justify-self:end;width:min(100%,320px)">
-        <a href="/download" class="btn btn-primary">Download the open source edition</a>
+        <a href="/download" class="btn btn-lime">Download the open source edition</a>
         <div style="display:flex;gap:8px">
-          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-soft" style="flex:1;padding:0 16px">GitHub repository</a>
-          <a href="/docs/" class="btn btn-soft" style="flex:1;padding:0 16px">Documentation</a>
+          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-light btn-ring" style="flex:1;padding:0 16px">GitHub repository</a>
+          <a href="/docs/" class="btn btn-light btn-ring" style="flex:1;padding:0 16px">Documentation</a>
         </div>
       </div>
     </div>
@@ -167,25 +174,25 @@
   <div class="wrap sec stack" style="gap:clamp(40px,5vw,56px)">
     <div class="split">
       <div class="stack" style="gap:16px">
-        <div class="eyebrow">Join the open source community</div>
+        <div class="eyebrow">Join the <span class="hl-bright">open source</span> community</div>
         <h2 id="community-h2" style="margin:0;font-size:clamp(32px,4vw,52px);font-weight:500;line-height:1.02;letter-spacing:-.025em;text-wrap:balance">Good software is built together</h2>
         <h3 style="margin:0;font-size:clamp(20px,2vw,24px);font-weight:500;line-height:1.2">Join the CMDX community</h3>
       </div>
       <div class="stack" style="gap:14px">
         <p class="lead">CMDX is meant to be shaped by the people who use it: developers, trainers and the organizations that run it.</p>
-        <p class="lead">If you write code, run training, or are weighing up an open source LMS, there is a place for you here.</p>
+        <p class="lead">If you write code, run training, or are weighing up an <span class="hl-bright">open source</span> LMS, there is a place for you here.</p>
       </div>
     </div>
     <div class="cards">
       <div class="card"><h3>For Developers</h3><p>Contribute code, build integrations and fix what bothers you.</p></div>
       <div class="card"><h3>For Organizations</h3><p>Deploy CMDX, report what works and what does not, and help shape the roadmap.</p></div>
       <div class="card"><h3>For Learning Professionals</h3><p>Share training methods and ideas from running real programs.</p></div>
-      <div class="card"><h3>For Open Source Enthusiasts</h3><p>Help with discussions, documentation and testing.</p></div>
+      <div class="card"><h3>For <span class="hl-bright">Open Source</span> Enthusiasts</h3><p>Help with discussions, documentation and testing.</p></div>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:10px">
-      <a href="/open-source" class="btn btn-lg btn-primary">Join the community</a>
-      <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lg btn-light">Contribute on GitHub</a>
-      <a href="/docs/" class="btn btn-lg btn-light">Documentation</a>
+      <a href="/open-source" class="btn btn-lg btn-lime">Join the community</a>
+      <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lg btn-light btn-ring">Contribute on GitHub</a>
+      <a href="/docs/" class="btn btn-lg btn-light btn-ring">Documentation</a>
     </div>
   </div>
 </section>
@@ -202,16 +209,16 @@
         <div class="stack" style="gap:16px">
           <div class="eyebrow">Get started today</div>
           <h2 id="start-h2" style="margin:0;font-size:clamp(32px,4.2vw,60px);font-weight:500;line-height:1.0;letter-spacing:-.03em;text-wrap:balance">Start running your own learning platform <span style="color:#cdbaed">today.</span></h2>
-          <p style="margin:0;font-size:clamp(20px,2vw,24px);line-height:1.2;font-weight:500">Open source, built for organizations, with AI included.</p>
+          <p style="margin:0;font-size:clamp(20px,2vw,24px);line-height:1.2;font-weight:500"><span style="color:#cdbaed">Open source</span>, built for organizations, with AI included.</p>
         </div>
         <div class="stack" style="gap:10px;font-size:18px;line-height:1.55;text-wrap:pretty">
           <p style="margin:0">Clone the repository, run the installer and you have a working LMS in minutes.</p>
           <p style="margin:0;font-weight:500">Everything you need to get started is in the repository and the docs.</p>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
-          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-inv">Download free</a>
-          <a href="https://demo.cmdx.ai" class="btn btn-dim">Live demo</a>
-          <a href="/open-source" class="btn btn-dim">Join the community</a>
+          <a href="https://github.com/CMDxAI/cmdx-LMS" class="btn btn-lime">Download free</a>
+          <a href="https://demo.cmdx.ai" class="btn btn-light">Live demo</a>
+          <a href="/open-source" class="btn btn-light">Join the community</a>
         </div>
       </div>
     </div>
@@ -224,11 +231,11 @@
     <div class="foot-top">
       <div class="stack" style="gap:14px;max-width:420px">
         <img src="assets/wordmark.svg" alt="CMDX" width="132" height="32" style="display:block">
-        <p style="margin:0;font-size:20px;line-height:1.25;font-weight:500;letter-spacing:-.01em">Open source learning, <span class="hl">run on your terms.</span></p>
-        <p style="margin:0;font-size:15px;line-height:1.55;color:#7a7a7a">An open source LMS for organizations, with AI built in.</p>
+        <p style="margin:0;font-size:20px;line-height:1.25;font-weight:500;letter-spacing:-.01em"><span class="hl">Open source</span> learning, run on your terms.</p>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:#d9cff0">An open source LMS for organizations, with AI built in.</p>
         <form class="subscribe" data-subscribe>
           <label for="subscribe-email" class="head">Get product updates</label>
-          <div class="subscribe-row"><input id="subscribe-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com"><button type="submit" class="btn btn-primary btn-md">Subscribe</button></div>
+          <div class="subscribe-row"><input id="subscribe-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com"><button type="submit" class="btn btn-lime btn-md">Subscribe</button></div>
           <input name="hp" class="subscribe-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <p class="subscribe-status" role="status"></p>
         </form>

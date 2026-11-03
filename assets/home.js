@@ -59,3 +59,9 @@ function select(k) {
   clip.show(f.clip);
 }
 select(0);
+
+// Header sits transparent over the violet hero, then fills once the hero scrolls away.
+const header = document.querySelector('.site-header.over-hero');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 560);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
