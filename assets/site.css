@@ -8,6 +8,8 @@ html,body{margin:0;background:#fff;color:#181818;font-family:"Stack Sans Text",-
 a{color:#6840a6;text-decoration:none}a:hover{color:#4e2f80}
 button{font-family:inherit}
 :focus-visible{outline:2px solid #6840a6;outline-offset:2px}
+/* Violet ring vanishes on the dark violet areas; lime there. */
+.site-header :focus-visible,.site-footer :focus-visible,.hero :focus-visible,.dark :focus-visible,.on-dark :focus-visible{outline-color:#e8fd70}
 .wrap{max-width:1200px;margin:0 auto;padding-left:24px;padding-right:24px;box-sizing:border-box}
 .sec{padding-top:clamp(64px,8vw,112px);padding-bottom:clamp(64px,8vw,112px)}
 .stack{display:flex;flex-direction:column}
@@ -27,12 +29,8 @@ button{font-family:inherit}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 20px;border:0;border-radius:9999px;font-size:15px;font-weight:500;white-space:nowrap;box-sizing:border-box;cursor:pointer}
 .btn-md{height:44px}
 .btn-lg{height:52px;padding:0 26px;font-size:16px}
-.btn-primary{background:#6840a6;color:#fff}.btn-primary:hover{background:#4e2f80;color:#fff}
 .btn-light{background:#fff;color:#181818}.btn-light:hover{background:#ebe9ee;color:#181818}
-.btn-soft{background:#f8f7f9;color:#181818}.btn-soft:hover{background:#ebe9ee;color:#181818}
-.btn-inv{background:#fff;color:#2f1d4d}.btn-inv:hover{background:#ebe9ee;color:#2f1d4d}
-.btn-dim{background:#4a3375;color:#fff}.btn-dim:hover{background:#5a4189;color:#fff}
-.btn-lime{background:var(--cmdx-lime,#e8fd70);color:#181818}.btn-lime:hover{background:#d9ee5a;color:#181818}
+.btn-lime{background:#e8fd70;color:#181818}.btn-lime:hover{background:#d9ee5a;color:#181818}
 .btn-ring{box-shadow:inset 0 0 0 1px #d0cfd1}
 .hl-bright{color:#714fff}
 
