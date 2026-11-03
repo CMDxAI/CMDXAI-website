@@ -118,6 +118,10 @@ You can't reopen a closed form.
 
 A learner completes the form when they submit a response, including on an anonymous form.
 
+:::note
+How a submitted feedback form counts toward course progress is being settled. Until then, a form may not show as complete in the course outline after a learner submits it.
+:::
+
 ## Verify
 
 1. Sign in as a learner enrolled in the course, or ask one to check.
