@@ -45,7 +45,8 @@ jobs:
       - run: cp -R docs-site/build dist/docs
 
       # Keep the dev copy out of search results so it never competes with cmdx.ai.
-      - run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+      - run: |
+          printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
