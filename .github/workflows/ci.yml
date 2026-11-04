@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, docusaurus]
+    branches: [main, dev, docusaurus]
 
 jobs:
   lint:
