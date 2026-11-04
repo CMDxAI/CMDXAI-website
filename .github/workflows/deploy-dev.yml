@@ -1,0 +1,58 @@
+name: Deploy dev site
+
+# The dev branch builds to devsite.cmdx.ai. GitHub Pages serves one site per repo and this
+# repo's site is cmdx.ai, so the build is pushed to the gh-pages branch of CMDxAI/devsite.cmdx.ai.
+# DEVSITE_DEPLOY_KEY: private half of a write deploy key on CMDxAI/devsite.cmdx.ai.
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devsite
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: devsite
+      url: https://devsite.cmdx.ai
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            docs-site/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run check
+
+      - run: npm run build
+
+      - run: npm ci && npm run build
+        working-directory: docs-site
+
+      - run: cp -R docs-site/build dist/docs
+
+      # Keep the dev copy out of search results so it never competes with cmdx.ai.
+      - run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.DEVSITE_DEPLOY_KEY }}
+          external_repository: CMDxAI/devsite.cmdx.ai
+          publish_branch: gh-pages
+          publish_dir: dist
+          # Replaces the cmdx.ai CNAME copied from public/.
+          cname: devsite.cmdx.ai
+          force_orphan: true
