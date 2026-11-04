@@ -115,6 +115,49 @@ div[class*='codeBlockContainer'] {
   --admonition-icon: var(--status-danger);
 }
 
+/* Badges and API reference response-code tabs follow the admonition rule: status colours tint
+   and ring, text stays dark. The OpenAPI theme loads after this file, so its colours are
+   overridden through the variables it reads rather than by selector. */
+.badge {
+  color: var(--text-primary);
+  border: 0;
+  background: var(--badge-bg, var(--ifm-badge-background-color));
+  box-shadow: inset 0 0 0 1px var(--badge-ring, transparent);
+}
+.badge--primary {
+  --badge-bg: var(--surface-accent-softest);
+  --badge-ring: var(--border-accent);
+}
+.badge--success {
+  --badge-bg: var(--status-success-bg);
+  --badge-ring: var(--status-success-line);
+}
+.badge--info {
+  --badge-bg: var(--status-info-bg);
+  --badge-ring: var(--status-info);
+}
+.badge--warning {
+  --badge-bg: var(--status-warning-bg);
+  --badge-ring: var(--status-warning-line);
+}
+.badge--danger {
+  --badge-bg: var(--status-danger-bg);
+  --badge-ring: var(--status-danger);
+}
+.openapi-tabs__response-code-item {
+  --ifm-color-white: var(--text-primary);
+  --ifm-color-success: var(--status-success-bg);
+  --ifm-color-info: var(--status-info-bg);
+  --ifm-color-danger: var(--status-danger-bg);
+}
+.openapi-tabs__response-code-item.active {
+  box-shadow: var(--ring);
+}
+/* No red token reaches 4.5:1 as text. */
+body {
+  --openapi-required: var(--text-primary);
+}
+
 /* Navbar */
 .navbar__logo {
   height: 26px;
