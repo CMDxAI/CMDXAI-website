@@ -2,7 +2,7 @@ name: Security & Dependencies
 
 on:
   pull_request:
-    branches: [main, docusaurus]
+    branches: [main, dev, docusaurus]
   schedule:
     - cron: "0 9 * * 1"
   workflow_dispatch:
